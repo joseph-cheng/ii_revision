@@ -1,0 +1,130 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    The typing rules are given below:
+
+    \begingroup
+    \addtolength{\jot}{1em}
+    \begin{align*}
+      \frac{}{\Theta;\Gamma \vdash x : \tau} (\Gamma(x) = \tau)\\
+      \frac{\Theta;\Gamma, x : \tau_1 \vdash M : \tau_2 \hspace{15pt} \Theta \vdash \tau_1 \text{ type}}{\Theta;\Gamma \vdash \lambda x:\tau(M) : \tau_1 \rightarrow \tau_2}\\
+      \frac{\Theta; \Gamma \vdash M_1 : \tau_1 \rightarrow \tau_2 \hspace{15pt} \Theta;\Gamma \vdash M_2 : \tau_1}{\Theta; \Gamma \vdash M_1 M_2 : \tau_2}\\
+      \frac{\Theta,\alpha;\Gamma \vdash M : \tau}{\Theta;\Gamma \vdash \Lambda \alpha(M) : \forall \alpha. \tau}\\
+      \frac{\Theta;\Gamma \vdash M : \forall \alpha. \tau_2}{\Theta;\Gamma \vdash M \tau_1 : [\tau_1 / \alpha]\tau_2}
+    \end{align*}
+    \endgroup
+
+    The rules for the $\rightarrow_\beta$ relation are given below, with $\beta$ reduction on types and normal $\lambda$ abstractions:
+
+    $(\lambda x : \tau(M_1)) M_2 \rightarrow_\beta [M_2 / x]M_1$
+
+    $(\Lambda \alpha(M)) \tau \rightarrow_\beta [\tau / \alpha] M$
+
+    A term is beta-normal if none of the rules for $\rightarrow_\beta$ apply.
+
+  \item
+    We proceed by induction on the structure of terms.
+
+    For a term constructor, we are required to prove that if the property holds for the embedded terms, then it holds for the constructed term, where the property is that if the term is typable and beta-normal, it is head-normal.
+
+    \begin{itemize}
+      \item
+        Case: $M ::= x$
+
+        By the first constructor for $A$, we have that this $M$ is an $A$, and by the first constructor for $H$, we have that this $M$ is also an $H$, so it is in head-normal form.
+
+      \item
+        Case: $M ::= \lambda x : \tau(M')$
+
+        Since this term is typable, we know that its type must have been derived from the typing rule for $\lambda$ abstractions, so we have $\Theta;\Gamma,x:\tau \vdash M' : \tau'$, and that $\Theta \vdash \tau \text{ type}$.
+
+        So, $M'$ is typable. Furthermore, we know that $M'$ must be beta-normal or else $M$ would not be beta normal (which we have by assumption). Therefore, $M'$ is a $H$ by the induction hypothesis.
+
+        Therefore, we can apply the second constructor for $H$ to see that $M$ is a $H$.
+
+      \item
+        Case: $M ::= M_1 M_2$
+
+        Since $M$ is typable, we know $M_1$ and $M_2$ must be typable. Furthermore, they must be beta-normal or else $M$ is not beta-normal, so they are both head-normal by the induction hypothesis.
+
+        Looking at the structure of $H$ terms, we know that $M_1$ must be an $A$, since if it were a $\lambda$ abstraction then $M_1 M_2$ could be beta-reduced, and if it were a $\Lambda$ abstraction then $M_1 M_2$ would not type.
+
+        Therefore, $M$ is of the form $A H$, so it is an $A$ term, and thus it is an $H$ term.
+
+      \item
+        Case: $M ::= \Lambda \alpha(M')$
+
+        Since $M$ is typable, $M'$ is typable, and must be beta-normal or else $M$ is not beta-normal. Therefore, by the induction hypothesis, $M'$ is head-normal, and thus $M$ is of the form $\Lambda \alpha(H)$, so it is a $H$ term.
+
+      \item
+        Case: $M ::= M' \tau$
+
+        Since $M$ is typable, $M'$ is typable, and must be beta-normal or else $M$ is not beta-normal. Therefore, by the induction hypothesis, $M'$ is head-normal.
+
+        $M'$ cannot be a $\lambda$ abstraction or else $M$ is not well-typed, and $M'$ cannot be a $\Lambda$ abstraction or else $M$ is not beta-normal, so $M'$ must be an $A$ term.
+
+        Therefore, $M$ is of the form $A \tau$, so it is an $A$ term, and thus it is an $H$ term.
+    \end{itemize}
+
+  \item
+    Since we are considering closed, beta-normal terms of type $nat$, we know that (c) applies, i.e. these terms are head-normal.
+
+    Therefore, we do case-analysis on the structure of $H$ terms:
+
+    \begin{itemize}
+      \item
+        Case: $H ::= A$
+
+        If this is the case, this term cannot be of type $nat$, since any term of type $nat$ must begin with a $\Lambda$ abstraction, and any $A$ term must begin with a variable $x$.
+
+      \item
+        Case: $H ::= \lambda x: \tau(H)$.
+
+        Similarly, this cannot be of type $nat$, since any term of type $nat$ must begin with a $\Lambda$ abstraction and this term begins with a $\lambda$ abstraction.
+
+      \item
+        Case: $H ::= \Lambda \alpha(H')$
+
+        This term is valid, and we know that $H'$ must be of type $(\alpha \rightarrow (\alpha \rightarrow \alpha) \rightarrow \alpha)$, so we proceed by case-analysis on the structure of this $H'$ term:
+
+        Similarly to the argument for $H$, we know $H'$ must be a $\lambda$ abstraction and thus must be of the structure $\lambda x: \tau(H'')$, with $H''$ being of type $(\alpha \rightarrow \alpha) \rightarrow \alpha$, and $\tau=\alpha$, so we proceed by cases on the structure of $H''$.
+
+        Again, $H''$ must be a $\lambda$ abstraction and thus be of the structure $\lambda y: \tau(H''')$, with $H'''$ being of type $\alpha$, and $\tau = \alpha \rightarrow \alpha$, so we proceed by cases on the structure of $H'''$.
+
+        Since $H'''$ must be of type $\alpha$, it cannot be a $\lambda$ or $\Lambda$ abstraction, this must be an $A$ term, so now we perform case analysis on the structure of $H'''$ as an $A$ term.
+
+        \begin{itemize}
+          \item
+            Case: $H''' ::= x$
+
+            In order for this variable to be of the type $\alpha$, the only thing we can do is use the $x$ from before, so our full term is $\Lambda \alpha(\lambda x:\alpha(\lambda y:\alpha \rightarrow \alpha x))$, which is $\overline{0}$.
+
+          \item
+            Case: $H''' ::= A H''''$
+
+            In order for this to be of type $\alpha$, $A$ must be of type $\beta \rightarrow \alpha$ and $H''''$ of type $\beta$. The only way that $A$ can be of type $\beta \rightarrow \alpha$ is if $\beta = \alpha$, and furthermore we see that $A$ must be the variable $y$, or else we cannot construct a $\alpha \rightarrow \alpha$ term any other way.
+
+            So, we know that $H''' ::= y H''''$, where $H''''$ is of type $\alpha$. So, $H''''$ must be an $A$ term (since it cannot be a $\lambda$ or $\Lambda$ abstraction or else it would not be the correct type), so it must be an $A$ term.
+
+            Through some type of pseudo-induction, we can apply the same argument to $H''''$ as we did to $H'''$ to argue that $H''''$ is either $x$, or some $y H'''''$. We can apply this argument recursively to argue that $H'''$ must therefore be of the form $y (y (y (\ldots ( y x))))$
+
+          \item
+            Case: $H''' ::= A \tau$
+
+            This is not possible, since $A$ would have to be a $\Lambda$ abstraction for $H'''$ to type, which is an impossible construction for $A$ terms.
+        \end{itemize}
+    \end{itemize}
+
+    Therefore, we have seen that the only closed, beta-normal terms of type $nat$ are those of the form $\Lambda \alpha (\lambda x : \alpha(\lambda y: \alpha\rightarrow \alpha (y (y (y \ldots ( y x)\ldots)))))$
+
+        
+\end{enumerate}
+\end{document}

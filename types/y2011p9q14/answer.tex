@@ -1,0 +1,77 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    $\tau$ is a specialisation of $\sigma = \forall \alpha_1, \ldots, \alpha_n (\tau')$, if $\tau$ can be formed from $\tau'$ if there exist some types $\tau_i$ such that $\tau = [\tau_1 / \alpha_1, \ldots, \tau_n / \alpha_n]\tau'$
+
+  \item
+    We give the typing rules below:
+
+    \begingroup
+    \addtolength{\jot}{1em}
+    \begin{align*}
+      &\frac{}{\Gamma \vdash x : \tau}(\Gamma(x) \succ \tau)\\
+      &\frac{\Gamma, x : \tau_1 \vdash M : \tau_2}{ \Gamma \vdash \lambda x(M) : \tau_1 \rightarrow \tau_2} \\
+      &\frac{\Gamma \vdash M_1 : \tau_1 \rightarrow \tau_2 \hspace{15pt} \Gamma \vdash M_2 : \tau_1}{\Gamma \vdash M_1 M_2 : \tau_2}\\
+      &\frac{\Gamma \vdash M_1 : \tau_1 \hspace{15pt} \Gamma, x : \forall A\tau_1 \vdash M_2 : \tau_2}{\Gamma \vdash \texttt{let }x=M_1\texttt{ in }M_2 : \tau_2}A = ftv(\tau) - ftv(\Gamma)\\
+      &\frac{}{\Gamma \vdash \texttt{nil} : \tau \text{ list}} \\
+      &\frac{\Gamma \vdash M_1 : \tau \hspace{15pt} \Gamma \vdash M_2 : \tau\text{ list}}{\Gamma \vdash M_1 :: M_2 : \tau \text{ list}}\\
+      &\frac{\Gamma \vdash M : \tau_1\text{ list} \hspace{15pt} \Gamma \vdash M_1 : \tau_2 \hspace{15pt} \Gamma \vdash M_2 : \tau_2}{\Gamma \vdash \texttt{case }M\texttt{ of nil} => M_1 | x::x => M_2 : \tau_2} \\
+    \end{align*}
+    \endgroup
+
+    $\lambda$-bound variables cannot be used polymorphically within a function abstraction since the typing rule for function abstractions does not abstract over any types, whereas we do abstract over types  in the typing rule for \texttt{let} terms.
+
+    For example, when we type $\lambda f(f f)$, the typing rule for this requires a concrete type for $f$, whereas when typing $\texttt{let }f=\lambda x(x)\texttt{ in }f f$lets us abstract $x$ to $\forall \tau (\tau \rightarrow \tau)$.
+
+  \item
+    Capture-avoiding substitution for type schemes is a substitution $S$ on a scheme $\sigma$, where the variables if $\sigma = \alpha_1, \ldots, \alpha_n(\tau)$, then $\sigma_i$ is different from any type variables in $S(\sigma_i)$.
+
+  \item
+    Let $\tau, \sigma, S$ be arbitrary. Suppose that $\tau \prec \sigma$
+
+    We must now prove that $S(\tau) \prec S(\sigma)$.
+
+    Let $\sigma = \alpha_1, \ldots, \alpha_n (\tau')$
+
+    We know that types $\tau_i$ exist such that $S' = [\tau_1 / \alpha_1, \ldots, \tau_n / \alpha_n]$ is a substitution such that $\tau = S'(\tau')$
+
+    So we are required to prove that $S(S'(\tau')) \prec S(\sigma)$
+
+    We can write $S(S'(\tau'))$ as $S(\tau'[\tau_1 / \alpha_1 ,\ldots, \tau_n / \alpha_n])$
+
+    We then introduce fresh $\beta_i$ instead:
+
+    $S(\tau) = S(\tau'[\beta_1 / \alpha_1, \ldots \beta_n / \alpha_n][\tau_1 / \beta_1, \ldots, \tau_n / \beta_n])$
+
+    We then use the property of simultaneous substitution given in the question, since the $\beta_i$ are fresh:
+
+    $S(\tau) = S(\tau'[\beta_1 / \alpha_1, \ldots, \beta_n / \alpha_n])[S(\tau_1) / \beta_1, \ldots, S(\tau_n) / \beta_n]$
+
+    So we have that $S(\tau) \prec \forall \beta_1, \ldots, \beta_n (S(\tau'[\beta_1 / \alpha_1, \ldots, \beta_n / \alpha_n]))$, with the $S(\tau_i)$ being the specialising types.
+
+    Since the $\beta_i$ are fresh, we can move the $S$ out:
+
+    $S(\tau) \prec S(\forall \beta_1, \ldots, \beta_n (\tau'[\beta_1 / \alpha_1, \ldots, \beta_n / \alpha_n]))$.
+
+    Then, by $\alpha$ equivalence this is equivalent to:
+
+    $S(\tau) \prec S(\forall \alpha_1, \ldots, \alpha_n(\tau'))$
+
+    Therefore, we have that $S(\tau) \prec S(\sigma)$.
+
+
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}
