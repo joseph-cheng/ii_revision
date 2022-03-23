@@ -1,0 +1,45 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    The square and multiply algorithm works by decomposing $e$ into its binary representation, and then using the fact that $m^e = \prod_{i=0}^n (m^{2^i})^{e_i}$, where $e_i$ is the $i$th binary bit of $e$. The algorithm might look like the following:
+
+\begin{verbatim}
+a = m
+b = 1
+for i in range(n):
+  if e & (2**i):
+    b = b * a
+  a = a * a
+return b
+\end{verbatim}
+
+We can see that on every iteration, we calculate \texttt{a*a}, but only when there is a 1-bit in \texttt{e} do we calculate \texttt{b*a}.
+
+Since we see consecutive $A$s in our sound sequence, we know that $A$ must correspond to \texttt{a*a}, so each $B$ corresponds to \texttt{b*a}.
+
+In the algorithm we give above, we process the least-significant-bit first, so our value for $e$ will be 101 1011, which is 91.
+
+\item
+  \begin{enumerate}[label=(\roman*)]
+    \item
+      Let $F_0, F_1, F_2, F_3$ be arbitrary. Then, construct $MHash(4, F_0, F_1, F_2, F_3)$. In this calculation, we get $h_2 = H(H(F_0)||H(F_1))$ and $h_3 = H(H(F_2)||H(F_3))$
+
+      So, if we then construct $F_0'$ and $F_1'$ such that $F_0' = H(F_0)||H(F_1)$ and $F_1' = H(F_2)||H(F_3)$, then $MHash(2, F_0', F_1')$ is the same value as $MHash(4, F_0, F_1, F_2, F_3)$, since both of them use the same values for $h_2$ and $h_3$, and thus result in the same $h_1$.
+
+    \item
+      The fundamental issue is that it no information about the depth of the tree is used, so an adversary can create two sequences of files that effectively cull the tree at a certain depth, whilst keeping the values the same.
+
+      So, we can make a simple change that keeps a counter of how many times we call $H$ (which is a proxy for the depth of the tree), and return $H(h_1||c)$, where we encode $c$ as a binary string. 
+  \end{enumerate}
+
+
+
+\end{enumerate}
+\end{document}
