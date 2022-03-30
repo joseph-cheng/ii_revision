@@ -1,0 +1,30 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        In such a switching fabric, head of line blocking can occur as follows:
+
+        Suppose there are only two input queues. Queue $A$  contains a packet switched towards output \texttt{0}, and queue $B$ contains a packet switched towards output \texttt{0} at its head, and behind it a packet switched towards output \texttt{1}.
+
+        Even though there are no other packets waiting for output \texttt{1}, the packet that wants to be switched there in queue $B$ might have to wait for queue $A$, since the heads of both of these input queues are contending for the same output.
+
+        We can mitigate this in a few ways. For example, if the output lines are clocked faster then the time that head-of-line blocked packets have to wait for their queues to diminish gets shorter.
+
+        Furthermore, we can use virtual output queuing. This works by separating an input port into a number of virtual queues for each output port, so when traditionally a packet might experience head-of-line blocking, it can now be switched to its destination because congestion on an output port blocks only the virtual queues for that output port. This is not necessarily trivial to implement, since we have to maintain many pointers into our queue for each output port, so it scales linearly with the number of output ports.
+
+    \item
+
+        One of the difficulties of routing in the Internet is that it is difficult to know the behaviour of traffic in advance, or the topology of the network in advance (since they are all constantly changing).
+
+        In a data centre, however, we effectively both define and know the traffic behaviour and topology of our network, which makes implementing quality of service much easier.
+
+        For example, QJump utilises priority queueing, which is never used in regular internet routing due to the risk of starvation, but in a data center we can control the traffic to ensure starvation does not occur. This allows us to ensure low latency on the applications that require it (like clock synchronisation), whilst ensuring that larger bandwidth applications (like Hadoop) are not able to starve other application, by not allowing them to use a high priority.
+        
+    \end{enumerate}
+\end{document}

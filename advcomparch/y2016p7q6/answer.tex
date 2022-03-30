@@ -1,0 +1,31 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        One way of designing such a on-chip network is to use a mesh network. For this network, we arrange the SRAM banks into a 4x8 grid,and each SRAM bank has a direct point-to-point connection to its neighbours. The entry-point into the network should be into the middle of the topology, to minimise the longest distance from the entry point to any SRAM bank.
+
+        Routing can be relatively simple. For example, we can use XY routing since our overall topology is Cartesian, where we route horizontally, and then vertically. This helps to keep latency relatively low, although we may still run into latency issues due to the sheer number of routers that a packet has to pass through. To solve this, we could move to a concentrated mesh network, where each router is responsible for routing to a number of different SRAM banks, say 4, which reduces the size of our grid to 2x4, so the diameter is much smaller, at the expensive of larger crossbars for the routers.
+
+    \item
+        To optimise the cache's average access latency, we need to put the hottest cache lines in the closest banks.
+
+        There a number of ways to implement this. For example, if we used a LRU replacement policy, we could use these bits to create an ordering for our cache lines, such that the cache lines are ordered in order of how recently they are used. This has a lot of copy overhead, however, since any accesses of the set might end up requiring $n$ copies, which is very expensive.
+
+        A cheaper, but less sophisticated solution, might involve just considering the most recently used cache line, and always having this in the closest bank. This requires at most one copy for each cache line access, which scales much better.
+
+    \item
+        An H-tree structure would be applicable here. This is a topology constructed by drawing an arbitrary length line segment, and then drawing perpendicular segments at the endpoints (such that the initial segment hits the midpoints of the new lines), with length reduced by factor $\sqrt{2}$. This is then repeated for each of the new line segments, until the number of endpoints is the number of SRAM banks (in our case, 32), so we would iterate this algorithm 4 times.
+
+        With this construction, the distance from each endpoint to the center of the tree (along the line segments) is the same. So, if we place each SRAM bank at a line endpoint, the access time should be the same for each bank.
+
+    \item
+        If we do not manage the resources used in a shared cache by each thread, it may be possible for a thread to drastically reduce the performance of other applications, for example by accessing many different memory addresses, the cache will get filled with lines for a single application/thread. By partitioning the cache, or managing the amount cores can access in some way, we ensure some notion of `guaranteed' performance for each core, at least in terms of how much cache will be available to it.
+    
+\end{enumerate}
+\end{document}

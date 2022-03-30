@@ -1,0 +1,59 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+
+        The conditional probability $p(X|Y)$ is defined as follows:
+
+        \[
+            p(X|Y) = \frac{p(X, Y)}{p(Y)}
+        \] 
+
+        By Bayes' rule, we know that $p(Y|X) = \frac{p(X|Y) p(Y)}{p(X)}$
+
+        So the information gained from observing $Y$ after observing $X$ is $-\log_2 p(Y|X) = -\log_2 p(X|Y) + -\log_2 p(Y) + \log_2 p(X)$
+
+    \item
+
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                $H(p)$ is calculated through $-\sum_x p(x) \log_2 p(x)$
+
+                So we get $H(p) = \frac{1}{2} + \frac{1}{2} + \frac{3}{8} + \frac{1}{4} + \frac{1}{4} = \frac{15}{8}$ bits.
+
+                Likewise, we get $H(q)=\frac{1}{2} + \frac{3}{8} + \frac{3}{8} + \frac{3}{8} + \frac{3}{8} = 2$ bits.
+
+                $D(p||q) = \sum_x, p(x) \log_2 \frac{p(x)}{q(x)}$
+
+                So, we get $D(p||q) = 0 + \frac{1}{4} +0 -\frac{1}{16} - \frac{1}{16} = \frac{1}{8}$
+
+                Likewise, we get $D(q||p) = 0 -\frac{1}{8} + 0 + \frac{1}{8} + \frac{1}{8} = \frac{1}{8}$
+
+            \item
+
+                The average codeword length of $C_1$ under $p$ is just the expected codeword length: $1 \cdot \frac{1}{2} + 2\cdot \frac{1}{4} + 3\cdot \frac{1}{8} + 4 \cdot \frac{1}{16} + 4 \cdot \frac{1}{16} = \frac{1}{2} + \frac{1}{2} + \frac{3}{8} + \frac{1}{4} + \frac{1}{4} = \frac{15}{8} = H(p)$, so $C_1$ is optimal for $p$.
+
+                The average codeword length of $C_2$ under $q$ is then $1 \cdot \frac{1}{2} + 3 \cdot \frac{1}{8} + 3 \cdot \frac{1}{8} + 3 \cdot \frac{1}{8} + 3 \cdot \frac{1}{8} = 2 = H(q)$, so $C_2$ is optimal for $q$.
+
+                (Also note that $C_1$ and $C_2$ are uniquely decodable because they are prefix codes, which is required for optimality).
+
+            \item
+                We calculate as follows: $1 \cdot \frac{1}{2} + 3 \cdot \frac{1}{4} + 3 \cdot \frac{1}{8} + 3 \cdot \frac{1}{16} + 3 \cdot \frac{1}{16} = 2$ bits.
+
+                We see that this exceeds the entropy of $H(p)$ by $\frac{1}{8}$ bits, the same as $D(p||q)$.
+
+            \item
+                We calculate as follows: $1 \cdot \frac{1}{2} + 2 \cdot \frac{1}{8} + 3 \cdot \frac{1}{8} + 4 \cdot \frac{1}{8} + 4 \cdot \frac{1}{8} = \frac{17}{8}$
+
+                This exceeds $H(q)$ by $\frac{1}{8}$ bits, the same as $D(q||p)$.
+        \end{enumerate}
+
+        
+    \end{enumerate}
+\end{document}
