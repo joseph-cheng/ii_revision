@@ -1,0 +1,77 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                We can first ask `Is the symbol E?'.
+
+                Then, `Is the symbol B?'
+
+                Then, `Is the symbol C?'
+
+                Then, arbitrarily, `Is the symbol A?'
+
+            \item
+                At each question, we halve our entropy. This means that each question removes on average 1 bit of entropy, which is maximal (any more entropy and we violate the Source Coding Theorem), and thus this is optimal.
+
+            \item
+                The probability we ask 1 question is $\frac{1}{2}$
+
+                The probability we ask 2 questions is $\frac{1}{4}$
+
+                The probability we ask 3 questions is $\frac{1}{8}$
+
+                The probability we ask 4 questions is $\frac{1}{8}$
+
+                Overall, the expected number of questions we ask is $\frac{1}{2} + \frac{1}{2} + \frac{3}{8} + \frac{1}{2} = \frac{15}{8}$.
+
+            \item
+                \begin{tabular}{cc}
+                    Symbol&Code\\
+                    \hline
+                    A&1110\\
+                    B&10\\
+                    C&110\\
+                    D&1111\\
+                    E&0
+                    
+                \end{tabular}
+
+                This is uniquely decodable because it is never ambiguous as to which codeword we mean in a sequence of bits. This comes from the prefix property, where no codeword is a prefix of another, and so we never read the prefix of some code and misunderstand it as the whole code of another symbol.
+
+            \item
+                These bits correspond to whether or not we say yes/no for each question in (i). For example, the symbol C corresponds to saying `no' to the first two questions and `yes' to the third. This applies to all of the codewords.
+
+
+            
+        \end{enumerate}
+
+    \item
+        Not relevant
+
+    \item
+
+        The Shannon-Hartley theorem tells us that capacity is given by the following:
+
+        \[
+            C = \omega \log_2 (1 + \frac{P}{N_0 \omega})
+        \] 
+
+        In our case, we get about $10^7$ bits.
+
+        When the signal to noise ratio is about four times better, the capacity is then:
+
+        \[
+            C = \omega \log_2 (1 + 4\frac{P}{N_0 \omega})
+        \] 
+
+        Since 1 is small in comparison, this is approximately $\omega \log_2(4 \frac{P}{N_0 \omega}) = \omega(2 + \log_2 \frac{P}{N_0 \omega})$, so the capacity is  increased by a factor of $2 \cdot 10^6$, to around $1.2 \cdot 10^7$ bits per second.
+    
+
+
+
+    
+    \end{enumerate}
+\end{document}

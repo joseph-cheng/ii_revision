@@ -1,0 +1,91 @@
+\input{../../template.tex}
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        Available expression analysis is a forwards data-flow analysis to keep track of all expressions who have had their values calculated (and not subsequently invalidated by a variable re-definition).
+
+        It works using the following data-flow equations:
+
+        \[
+            in-avail(n) = \bigcap_{p \in pred(n)} out-avail(p)
+        .\] 
+
+        \[
+            out-avail(n) = in-avail(n) \setminus kill(n) \cup gen(n)
+        .\] 
+
+        Where $kill(n)$ is the set of expressions that $n$ changes a variable in, and does not subsequently recompute the value of, and $gen(n)$ is the set of expressions that are always calculated by $n$ and that $n$ does not subsequently redefine any variables in
+
+        This leads to the holistic equation:
+
+        \[
+            avail(n) = \begin{cases}\bigcap_{p \in pred(n)} (avail(p) \setminus kill(p) \cup gen(p)) & pred(n) \neq \emptyset \\ \{\} & pred(n) = \emptyset\end{cases}
+        .\] 
+
+        (We require the second case so we do not mistakenly assume every expression is available at the entrypoint to a program)
+
+        This makes sense because an expression is only available if it is calculated in every possible path up to a node. We safely underestimate this with syntactic availability, since it is undecidable in general to determine the \textit{possible} control flow paths in a program.
+
+        An algorithm works as follows, since we are able to enumerate all expressions in a program (and provide a bitmask for their availability).
+
+        Then, we construct an array \texttt{avail}, which contains the set of available expressions at node \texttt{i}:
+
+\begin{verbatim}
+avail[0] = {}
+while (avail[] changes) {
+  for (int ii=0; ii < n; ii++) {
+    avail[i] = big_intersect(p <- pred(i), avail(p) \ kill(p) U gen(p))
+  }
+}
+\end{verbatim}
+
+\item
+    Available expression analysis helps to perform common sub-expression elimination by finding sub-expressions that are available at a node, and replacing their calculation with a MOV from an already existing calculation of the expression.
+
+    More precisely, we find a node $n$ that calculates an expression $e$, such that $e \in avail(n)$. Then, we replace the calculation of $e$ with an instruction that copies a register $t$ into the destination register instead. Then, we backtrack on every path from $n$, finding the first instance where $e$ is calculated, make that instruction calculate into $t$ instead, then insert a copy from $t$ into the original destination register.
+
+    We then repeat this until we cannot find any more expressions in nodes to eliminate.
+
+\item
+    The following code might get naively compiled down to the following:
+
+\begin{verbatim}
+t1 = b * c
+arg1 = a + t1
+t2 = b * c
+arg2 = a + t2
+u = call f
+t3 = b * c
+t4 = a + t3
+v[t4] = u
+\end{verbatim}
+
+The described algorithm for CSE will eliminate the second calculation of \texttt{b*c}, with something like the following:
+
+\begin{verbatim}
+s0 = b * c
+t1 = s0
+arg1 = a + t1
+t2 = s0
+arg2 = a + t2
+u = call f
+t3 = s0
+t4 = a + t3
+v[t4] = u
+\end{verbatim}
+
+But we are no longer able to perform any more common sub-expression elimination, even though there is some (since \texttt{t1} and \texttt{t2} will always be the same). Since \texttt{b} and \texttt{c} are local, we can eliminate the calculation after the call to \texttt{f}.
+
+\item
+    Even though neither \texttt{b} nor \texttt{c} are modified in our loop, \texttt{b * c} is not available in our do-while loop, since \texttt{b*c} is not available on first entry to our loop.
+
+    In the second example, however, \texttt{b*c} is available since it is calculated both on first entry, and in subsequent iterations of the loop.
+
+    This means that we can perform CSE to replace \texttt{x} with \texttt{x += t} and \texttt{z = b * c} with \texttt{t = b*c; z = t}
+
+    This has effectively lifted a loop-invariant out, but required that we specifically pre-calculate the expression \textit{before} the loop begins, so this will not work for every loop-invariant, and a more sophisticated loop-invariant lifting analysis/algorithm would be able to find more instances of this.
+
+
+        
+    \end{enumerate}
+\end{document}

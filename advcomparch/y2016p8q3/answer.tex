@@ -1,0 +1,87 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        There are numerous factors that might influence or constrain the design of a new processor:
+
+        \begin{itemize}
+            \item
+                We might be restricted by power. Many devices are now used without mains power, like mobile phones. In these cases, we are likely operating on battery power, which means we need to conserve power as much as possible so that the battery life is conserved as long as possible.
+
+            \item
+                We might also be constrained by area. If we need to design a very small chip, like for an embedded device, then we might not have space for large SRAM caches, for example.
+
+            \item
+                We might be constrained by security requirements. For example, speculative execution is known to potentially leak information to an adversary, and thus we may be unable to implement speculative execution or other similar features if we are developing a processor for a secure purpose.
+
+            \item
+                We might be influenced by the expected workload of the processor. For example, if we know that a processor will be performing lots of tasks with data-level parallelism, we might move to a processor that is closer to a vector architecture in order to exploit this data-level parallelism, as opposed to other cores that try and exploit instruction-level parallelism.
+
+            \item
+                We might be influenced by the environments we expect our processor to be used in. For example, if our  processor is only going to be used in one device, for example a games console, we might be able to get the benefits of a VLIW architecture, whereas for general purpose processors that might have to accommodate a popular instruction set (like x86) for competitiveness, we would not be able to.
+
+            \item
+                We might also be influenced by requirements for guaranteed performance. A lot of design techniques aim to improve average performance (like caching) without much regard for worst performance.
+        \end{itemize}
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                Consider the following assembly program
+
+\begin{verbatim}
+loop_start:
+1: ST r1, 16(r0)
+2: LD r3, 16(r2)
+3: LD r4, 8(r2)
+4: CMP r3, r4
+5: ADD r3, r5, #1
+6: ADD r0, r0, #32
+7: ADD r2, r2, #32
+8: BNE loop_start
+\end{verbatim}
+
+An explanation for how each of the hardware enhancements help to benefit execution of this program:
+
+\begin{itemize}
+    \item
+        This program benefits from branch prediction since it is a loop. Assuming that the loop has on average more than one iteration (which most do), then branch prediction helps us reduce stalls/flushes when branching.
+
+    \item
+        This program benefits from register renaming due to the existence of false dependencies. There is a false dependency between instructions 4 and 5, namely a WAR dependency. Register renaming allows us to use a different physical register for the destination of the \texttt{ADD}, allowing us to reorder these instructions.
+
+    \item
+        This program benefits from out-of-order execution to avoid load-use dependencies. For example, without out-of-order execution we might have to stall the pipeline between instructions 3 and 4, but with out-of-order execution we can reorder instruction 4 and 5 to come after instruction 6 and 7 and avoid the stall.
+
+    \item
+        This program benefits from the speculative reordering of load instructions (assuming that \texttt{r0} and \texttt{r2} do not point to the same address) since we would no longer have to wait for the result of the calculation of \texttt{16 + r0} before we execute our loads.
+
+    \item
+        This program benefits from strided prefetching because we are accessing memory in a very predictable manner. Strided prefetching would allow fetching of this memory into cache before we ask for it, which reduces average latency for the loads.
+ 
+\end{itemize}
+
+\item
+    Programs that access data in an unpredictable way would not gain much benefit. For example, iterating through a linked list would not get any benefits from these techniques, and a pre-fetcher might even reduce performance by polluting the cache.
+
+    Some programs also might have good enough performance without these enhancements, for example:
+
+\begin{verbatim}
+MUL r1, r0, #1
+MUL r2, r0, #2
+MUL r3, r0, #3
+MUL r4, r0, #4
+MUL r5, r0, #5
+MUL r6, r0, #6
+...
+\end{verbatim}
+
+This is likely to saturate our ALUs, and no amount of re-ordering or register renaming would improve performance.
+
+
+            
+        \end{enumerate}
+        
+    \end{enumerate}
+\end{document}

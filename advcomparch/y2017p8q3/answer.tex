@@ -1,0 +1,37 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        A snoopy cache coherence protocol relies on the broadcast properties of a bus, i.e. that we can be sure that any message we send on the bus is received by all cores. Without this, we might be unaware that a different core holds a line in an M state, for example.
+
+        A snoopy cache coherence protocol also relies on the total ordering property of a bus. This is important because without it, two cores could both issue \texttt{BusRdX} transactions simultaneously, and observe these transactions in two different orders, meaning at some point, both of these cores have a line in the M state at the same time (assuming some kind of MSI protocol).
+
+    \item
+        Typically, GPUs do not use caches to reduce memory latency. Instead, they make use of huge thread-level parallelism and hide memory latency by switching to another thread whilst a memory request is carried out. This means that every single time a GPU needs some data not in a register, it will have to make a memory request (which general-purpose cores are not required to do, providing they have the data in cache).
+
+        This means that the GPU will generate a huge number of coherence requests, meaning that the coherence overhead for all participants (i.e. both the GPU and general-purpose cores) will become very significant.
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+
+                By adopting a private L2 caches, we get the benefit that no application/thread can starve other applications/threads of cache performance by taking up a large amount of the L2 cache space. Therefore, private L2 caches offer some form of quality of service.
+
+                We also get the benefit that private L2 caches can be placed physically closer to their respective cores, resulting in lower access times.
+
+                However, private L2 caches means that we might get more capacity misses. It is likely that some cores will not use up the entirety of their L1 and L2 cache space, but some cores will need more than the L1 and L2 cache space they have available, and having a shared L2 cache means that the space would be able to be utilised  better than private caches, leading to fewer misses.
+
+                It also becomes more expensive to communicate with other cores through shared memory, since we can no longer utilise a shared LLC, and must instead use main memory.
+
+            \item
+                When an L1 cache miss occurs, we should always check our tile's local L2 slice first, since it is possible that this line was evicted from our L1 and thus placed in our L2 (instead of existing in some other tile's L2 slice).
+
+                Previously, when we received an invalidation request, we would only need to invalidate the line in the L1 cache. Now, the local L2 slice could also hold a line, so we have to check both the local L2 slice and the private L1 for each tile in order to properly serve an invalidation request.
+
+            
+        \end{enumerate}
+
+        
+\end{enumerate}
+\end{document}
