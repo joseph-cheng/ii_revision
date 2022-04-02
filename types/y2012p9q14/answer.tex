@@ -1,0 +1,158 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        We use the following term for $None$:
+
+        $\Lambda \alpha. \Lambda \beta (\lambda b : \beta. \lambda f : \alpha \rightarrow \beta. b)$
+
+        With $\Gamma = \{b : \beta, f : \alpha \rightarrow \beta\}$ and $\Theta = \{\alpha, \beta\}$, we get:
+
+        $\Gamma ; \Theta \vdash b : \beta$ (by var)
+
+        $\{\} ; \Theta \vdash (\lambda b : \beta. \lambda f : \alpha \rightarrow \beta . b) : \beta \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$ (by fn twice)
+
+        $\{\} ; \{\} \vdash None : \forall \alpha O_\alpha$ (by $\forall$ twice)
+
+      \item
+        We use the following term for $Some$:
+
+        $\Lambda \alpha. (\lambda a: \alpha. \Lambda \beta (\lambda b : \beta. \lambda f : \alpha \rightarrow \beta. f a))$
+
+        With $\Gamma = \{a: \alpha, b : \beta, f : \alpha \rightarrow \beta\}$ and $\Theta = \{\alpha, \beta\}$, we get:
+
+        $\Gamma ; \Theta \vdash f : \alpha \rightarrow \beta$ (by var)
+
+        $\Gamma ; \Theta \vdash a : \alpha$ (by var)
+
+        $\Gamma ; \Theta \vdash f a : \beta$ (by app)
+
+        $\{\} ; \{\} \vdash Some : \forall \alpha (\alpha \rightarrow O_\alpha)$ (through interleaving fn and $\forall$)
+
+
+      \item
+        We use the following term for $Case$:
+
+        $\Lambda \alpha. \Lambda \beta. (\lambda b : \beta. \lambda f : \alpha \rightarrow \beta. \lambda o : O_\alpha. o \beta b f)$
+
+        With $\Gamma = \{b : \beta, f : \alpha \rightarrow \beta, o : O_\alpha\}$ and $\Theta : \{\alpha, \beta\}$ we get:
+
+        $\Gamma ; \Theta \vdash o : O_\alpha$ ( by var)
+
+        $\Gamma ; \Theta \vdash b :\beta$ (by var) 
+        
+        $\Gamma ; \Theta \vdash f : \alpha \rightarrow \beta$ ( by var)
+
+        $\Gamma ; \Theta \vdash  o \beta : \beta \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$ (by app$\forall$)
+
+        $\Gamma ; \Theta \vdash o \beta b : (\alpha \rightarrow \beta) \rightarrow \beta$ (by app)
+
+        $\Gamma ; \Theta \vdash o \beta b f : \beta$ (by app)
+
+        $\{\} ; \{\} Case : \forall \alpha, \beta(\beta \rightarrow (\alpha \rightarrow \beta) \rightarrow O_\alpha \rightarrow \beta)$ (through fn and $\forall$)
+
+
+      \item
+        Consider the following steps of $\beta$ reduction:
+
+        $Case \alpha \beta y f (None \alpha) \rightarrow^5$
+
+        $(None \alpha) \beta y f \rightarrow^4$
+
+        $y$
+
+
+
+      \item
+        Consider the following steps of $\beta$ reduction:
+
+        $Case \alpha \beta y f (Some \alpha x) \rightarrow^5$
+
+        $(Some \alpha x) \beta y f \rightarrow^5$
+
+        $f x$
+
+        
+    \end{enumerate}
+
+  \item
+
+    We use the following expression for Lift:
+
+    $\Lambda \alpha_1. \Lambda \alpha_2. (\lambda f : \alpha_1 \rightarrow O_{\alpha_2}. \lambda o: O_{\alpha_1}. Case \alpha_1 O_{\alpha_2} (None \alpha_2) f o)$
+
+    We first prove the type of this is of the type we expect.
+
+    First, let $\Gamma = \{f : \alpha_1 \rightarrow O_{\alpha_2}, o :O_{\alpha_1}\}$ and $\Theta = \{\alpha_1, \alpha_2\}$
+
+    Then, we get:
+
+    $\Gamma ; \Theta \vdash f : \alpha_1 \rightarrow O_{\alpha_2}$ by (var)
+
+    $\Gamma ; Theta \vdash o : O_{\alpha_1}$ by (var).
+
+    $\Gamma ; \Theta \vdash (None \alpha_2) : O_{\alpha_2}$ (by app$\forall$)
+
+    $\Gamma ; \Theta \vdash Case \alpha_1 : \forall \beta. (\beta \rightarrow (\alpha_1 \rightarrow \beta) \rightarrow O_{\alpha_1} \rightarrow \beta)$ (by app$\forall$)
+
+    $\Gamma; \Theta \vdash Case \alpha_1 O_{\alpha_2} : O_{\alpha_2} \rightarrow (\alpha_1 \rightarrow O_{\alpha_2}) \rightarrow O_{\alpha_1} \rightarrow O_{\alpha_2}$ (by app$\forall$)
+
+    $\Gamma;\Theta \vdash Case \alpha_1 O_{\alpha_2} (None \alpha_2) : (\alpha_1 \rightarrow O_{\alpha_2}) \rightarrow O_{\alpha_1} \rightarrow O_{\alpha_2}$ (by app)
+
+    $\Gamma;\Theta \vdash Case \alpha_1 O_{\alpha_2} (None \alpha_2) f : O_{\alpha_1} \rightarrow O_{\alpha_2}$ (by app)
+
+    $\Gamma ; \Theta \vdash Case \alpha_1 O_{\alpha_2} (None \alpha_2) f o : O_{\alpha_2}$
+
+    Finally, we get $\{\} ; \{\} \vdash Lift : \forall \alpha1, \alpha_2. ((\alpha_1 \rightarrow O_{\alpha_2}) \rightarrow O_{\alpha_1} \rightarrow O_{\alpha_2)$ through two application of (fn) and two of ($\forall$)
+
+
+
+
+    To prove that this term behaves as expected, let $\tau$ be an arbitrary closed type, and let $M$ be an arbitrary expression of type $O_\alpha[\tau / \alpha]$
+
+    Consider the term $Lift \tau \tau(Some \tau) M$
+
+    Here, $Some \tau$ is of type $\tau \rightarrow O_\tau$, by currying.
+
+    So, $Lift \tau \tau$ reduces to $\lambda f : \tau \rightarrow O_\tau. \lambda o: O_\tau. Case \tau O_\tau (None \tau) f o$, by simply substituting $\tau$ in place of $\alpha_1$ and $\alpha_2$
+
+    Then, since we know $Some \tau$ is of type $\tau \rightarrow O_\tau$, we know that $Lift \tau \tau (Some \tau)$ properly types, and reduces to:
+
+    $\lambda o: O_\tau. Case \tau O_tau ( None \tau) (Some \tau) o$
+
+    By substitution, we have that $O_\alpha[\tau / \alpha] = O_\tau$
+
+    Therefore, we get that $Lift \tau \tau (Some \tau) M$ is beta-convertible to $Case \tau O_\tau (None \tau) (Some \tau) M$
+
+    Since well-typed expressions in the PLC all have beta-normal forms, let $M$ have beta-normal form $M'$.
+
+    Then, $Case \tau O_\tau (None \tau) (Some \tau) M$ beta converts to $Case \tau O_\tau (None \tau) (Some \tau) M'$
+
+    We now proceed by cases:
+
+    \begin{itemize}
+      \item
+        In this case, let $M'$ be beta-convertible to $None \tau$
+
+        So we consider $Case \tau O_\tau (None \tau) (Some \tau) (None \tau)$
+
+        Through definition of $Case$, we get that this beta-reduces to $(None \tau)$, which we know beta-converts to $M$, so we have that $Lift \tau \tau (Some \tau) M =_\beta M$
+
+      \item
+        In this case, let $M'$ be beta-convertible to $Some \tau N$, where $N$ is some beta-normal form of type $\tau$.
+
+        We consider $Case \tau O_\tau (None \tau) (Some \tau) (Some \tau N)$
+
+        By definition of $Case$, this beta-reduces to $(Some \tau) N$, which is the same as $Some \tau N$, which we know is beta-convertible to $M$, so we have that $Lift \tau \tau (Some \tau) M =_\beta M$
+    \end{itemize}
+
+    In all cases, we have our result, so $Lift$ works as expected.
+
+
+        
+    \end{enumerate}
+\end{document}

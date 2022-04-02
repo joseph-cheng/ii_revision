@@ -1,0 +1,83 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+      \item
+
+        Collision-resistant hash functions require a key $s$ and security parameter $n$ because otherwise, a theoretical adversary exists that always outputs two $x, x'$ that collide. This adversary exists because the entire operation of the hash function is known beforehand, so the adversary can be pre-constructed with this collision in mind.
+
+        By including a key $s$ and security parameter $n$, we require that the adversary cannot rely on pre-computation to derive a collision.
+
+      \item
+        \begin{enumerate}[label=(\roman*)]
+          \item
+            In this case, $H_s$ is not a collision-resistant hash function, because it is not even a hash function! Hash functions require a fixed-length output, but this is a variable-length output.
+
+          \item
+            In this case, $H_s$ is a collision-resistant hash function. If it was not, then $h_s(x)$ would not be a collision-resistant hash function, which would be a contradiction:
+
+            Suppose an adversary $A$ exists that given key $s$ can derive a collision between $x$ and $x'$ for $H_s(x)$ with negligible probability in PPT, such that $h_s(x) || LSB(x) = h_s(x') || LSB(x')$.
+
+            This requires that $h_s(x) = h_s(x')$, so we can use adversary $A$ to find a collision between $x$ and $x'$ with negligible probability in PPT.
+
+          \item
+            In this case, $H_s$ is not a collision resistant hash function. We construct the following adversary:
+
+            \begin{itemize}
+                
+              \item
+            Input key $s$
+
+              \item
+            Choose $x = 0$, $x' = 1$
+
+              \item
+            Return $x, x'$
+            \end{itemize}
+
+            Since $x | 1 = 1 = x' | 1$, $H_s(x) = H_s(x')$, so we win with probability 1.
+        \end{enumerate}
+
+      \item
+        Euler's theorem tells us that if $gcd(a,n) = 1$, then $a^{\varphi(n)} \equiv 1 \pmod{n}$. This means that $a^{\varphi(n) - 1}$ is the modular inverse of $a$ modulo $n$.
+
+        In this case, $a=5$ and $n=8$, so $gcd(a,n) = 1$
+
+        $\varphi(n) = 4$, which can be found by counting (1, 3, 5, 7)
+
+        So we need to calculate $5^3 \pmod{8}$
+
+        $5^3 = 125$, and $125 \pmod{8} \equiv 5$
+
+        Therefore, $5^{-1} \mod 8 = 5$
+
+      \item
+        \begin{enumerate}[label=(\roman*)]
+          \item
+
+            The downsides of using $Z^*_p$ come from the fact that it has order $p-1$, which is not prime.
+
+            This gives two disadvantages:
+
+            \begin{itemize}
+                \item
+                  Finding a generator is hard. In a prime order group (like a prime order subgroup of $Z^*_p$), every element is a generator, so it is easy to find one.
+
+                \item
+                  We are vulnerable to the Pohlig-Hellman algorithm for computing discrete logarithms, which allows us to reduce the problem of calculating a discrete logarithm for a group of size $p-1$ to calculating discrete-logarithms for prime-order subgroups, which at least halves the time it takes to find one.
+            \end{itemize}
+
+          \item
+            There exists an algorithm for computing discrete logarithms in $Z_p^*$ (and thus its subgroups) called the Index Calculus Algorithm. It has runtime $2^{O(\sqrt{\log p \log \log p})}$, which is sub-exponential. Generic algorithms are still exponential in $q$
+
+            This runtime does not include $q$, so $p$ has to be very big to be resistant to these attacks, but $q$ does not have to be much bigger. We are still able to choose a small $q$ and be resistant from generic algorithms for DLP since they have exponential runtime. Choosing a smaller $q$ allows the bit-length of group elements to be smaller, and thus computations on the group elements are faster.
+
+            
+        \end{enumerate}
+
+
+
+        
+    \end{enumerate}
+\end{document}
