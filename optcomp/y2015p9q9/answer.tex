@@ -1,0 +1,52 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    A classical data-flow analysis can be seen as the format described by emitting a constraint at each node based on the definition of our $live$ set (or equivalent set for other analyses).
+
+    For example, at a node $n$, we simply emit the constraint $live(n) = \bigcup_{s \in succ(n)} live(s) \setminus kill(n) \cup gen(n)$, where $kill(n)$ is the set of variables that a node kills, i.e. it defines, and $gen(n)$ is the set of variables that a node references.
+
+    Since we can enumerate every variable used by a program, we can turn our sets of variables into bit-arrays, one element for each variable, which is the space of values that equality will act on.
+
+    To be a `least' solution, we mean that there is no other solution such that any live sets for any node are smaller (wrt $\subseteq$) then our least solution.
+
+  \item
+    To do this, we simply generate the inequality constraints $live(n) \supseteq \bigcup_{s \in succ(n)} live(s) \setminus kill(n) \cup gen(n)$. It is important not to use $\subseteq$ here, or else the empty set is trivially a solution for each constraint. We also retain the same least solution as in (a), since the only additional solutions we allow are `bigger' than the set of solutions we allow for (a), so we cannot generate a new least solution.
+
+  \item
+    We can alter the flowgraph walker to instead emit a new constraint for each $s \in succ(n)$, i.e. if node $n$ has successors $s_1$ and $s_2$, then we generate two constraints: $live(n) \supseteq live(s_1) \setminus kill(n) \cup gen(n)$ and $live(n) \supseteq live(s_2) \setminus kill(n) \cup gen(n)$.
+
+    By moving to $\supseteq$ instead of $=$, we allow the creation of these alternative constraints.
+
+    In the example, we treat each line of code as a separate node, numbered 1 through 5
+
+    It generates the following constraints:
+
+    $L_1 \supseteq L_2 \setminus \{x\} \cup \{\}$
+
+    $L_2 \supseteq L_3 \setminus \{y\} \cup \{\}$
+
+    $L_3 \supseteq L_4 \setminus \{z\} \cup \{y\}$
+
+    $L_4 \supseteq L_5 \setminus \{\} \cup \{x\}$
+
+    $L_4 \supseteq L_6 \setminus \{\} \cup \{x\}$
+
+    $L_5 \supseteq L_6 \setminus \{\} \cup \{z\}$
+
+  \item
+
+    The purpose of 0-CFA is to try and compute the possible values that are available at any given `program point'. This is useful in trying to determine possible control flows. Naively, when we perform a jump to some value not known at compile-time, our flow-graph might include edges to every instruction for safety. 0-CFA lets us potentially reduce the amount of edges we have to generate, since a program point cannot branch to a value if there was no way for it to flow to it.
+
+    It fits the description of `walking a data structure and emitting constraints' relatively well, but the data structure in this case is a syntax tree of our program, as opposed to a flow graph. At each node in the tree, we can emit a constraint.
+
+  \item
+    For this example, we will take the case of function calls in a functional programming language. Since functions are first-class, we do not necessarily know the destination of a function when we apply it.
+
+    This means that we cannot immediately generate 0-CFA constraints, since this would require knowing the possible function values at time of constraint generation, which is the whole point of the analysis in the first place!
+
+    For this reason, we generate meta-constraints. For example, suppose we have expression $(\_^a \_^b)^c$, where each $^i$ represents program point $i$. For this, we generate meta-constraints $(\lambda x^p. e^q) \in \alpha_a \implies \alpha_p \supseteq \alpha_b$ and $(\lambda x^p. e^q) \in \alpha_a \implies \alpha_c \supseteq \alpha_q$, where each $\alpha_i$ represents the set of flow-values at program point $i$. We generate these constraints because the argument to out function (at program point $b$) can flow to the formal parameter in any function that program point $a$ might have, and the return value of that function can flow to the overall value of the function application (at program point $c$).
+    \end{enumerate}
+\end{document}

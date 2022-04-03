@@ -1,0 +1,55 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Let $A$ be the event that a person lives beyond 80
+
+    Let $M$ be the event that someone is male.
+
+    For this, we want to calculate the surprisal of $M|A$, so we need $P(M|A)$.
+
+    From the question, we know that $P(M|A) = \frac{1}{4}$, so the surprisal is just $-\log_2 P(M|A) = 2$.
+
+  \item
+    Since we care about maximising $P(x_1, \ldots, x_n)$, we get this when each of the variables are independent.
+
+    When this happens, our joint entropy becomes the sum of the individual entropies, so the upper bound is $\sum_{i=1}^n H(X_i)$.
+
+    When minimising our joint entropy, we cannot reduce the entropy more than the entropy in any of the random variables, so therefore our lower bound is $H(X_L)$.
+
+  \item
+    We can consider $H(S^n)$ as $H(S_1, \ldots, S_n)$, and if each of the $S_i$ are independent, we get our upper bound, and since they are distributed equally we get $H(S^n) = nH(S)$. 
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        We can get a 0 from a non-flipped 0 or a flipped 1, so we get $P(Y=0) = 0.5(1-\alpha) + 0.5(\beta)$
+
+        We can get a 1 from a non-flipped 1 or a flipped 0, so we get $P(Y=0) = 0.5\alpha + 0.5(1-\beta)$.
+
+      \item
+        Maximal capacity occurs when we can always perfectly decode the input, which happens at $(\alpha,\beta) = (0,0)$, since our input is equal to our output, and at $(\alpha, \beta) = (1,1)$, since simply by flipping every bit we get our input.
+
+        The capacity of this channel is then $H(Y) - H(Y|X)$, and in both cases we get this is just $H(X)$, which is 1.
+
+      \item
+        We minimise the capacity when no information can be gained from our output about our input. This can happen when $(\alpha, \beta) = (0.5, 0.5)$, since our output becomes random. Furthermore, if we have $(\alpha, \beta) = (1,0)$ or $(0,1$, we also get no information.
+
+        Since we get no information, the capacity is 0.
+
+    \end{enumerate}
+
+      \item
+        This is the Kraft-McMillan inequality, which says that $\sum_{i=1}^n  N^{-n_i} \leq 1$.
+
+      \item
+        Nyquist's theorem tells us that if we are attempting to encode a signal with frequency $f$, we must sample at a frequency of at least $2f$ in order to be able to encode the signal discretely such that exact reconstruction is possible.
+
+        Logan's theorem tells us that if we have a continuous signal such that the highest frequency component present $f_H$ is no more than double the lowest frequency component $f_L$, i.e. we have $f_H \leq 2f_L$, then it is enough to give just the points in time where the signal has 0 amplitude (its zero crossings) in order to be able to exactly reconstruct it. 
+
+
+        
+\end{enumerate}
+\end{document}

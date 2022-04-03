@@ -1,0 +1,43 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Not relevant
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        The most efficient possible sequence of such questions is to ask as follows:
+
+        Is $X=1$?
+
+        Then ask, is $X=2$?
+
+        Then ask, is $X=3$?
+
+        etc.
+
+        We do this because at each point, we split the probability of the remaining hypotheses in half. This means that each questions removes the most entropy it can, and thus we are optimal (by the Source Coding Theorem).
+
+      \item
+
+        The number of questions we end up asking is the value of $X$, so the average number of questions we ask is $E[X]$.
+
+        $P(X=x) = 0.5^x$, since we require the perfect sequence of flips up to $x$
+
+        Then, $E[X] = \sum_{i=1}^\infty \frac{i}{2^i}$
+
+        This has well-known limit 2, so the average number of questions we need to ask is 2.
+
+      \item
+        We encode $X$ with a code with 0s representing `no', and 1s representing `yes', so each code is a number of 0s, followed by a 2. For example, 3 is encoded as \texttt{001}.
+
+
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}
