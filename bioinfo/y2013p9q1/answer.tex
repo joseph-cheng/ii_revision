@@ -1,0 +1,75 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    
+  \item
+
+    In phylogeny, the bootstrap technique is used to attempt to validate whether or not a constructed phylogenetic tree is valid.
+
+    It works as follows: 
+
+    \begin{enumerate}[label=\textbf{\arabic*.}]
+        
+      \item
+    For each sequence, generate a variation of the initial sequence by randomly choosing nucleotides from the sequence (with replacement!). This generates a pseudo-sample.
+  \item
+
+    Run the tree construction algorithm on the new pseudo-sample.
+
+  \item
+    Compare the topology of this tree to the tree we are trying to validate, by counting the number of times interior branches match (and times they do not match).
+
+  \item
+    Repeat steps 1-3 many times.
+
+  \item
+    Calculate the sum of the matching interior branches over the sum of the number of all of the branches to obtain a bootstrap value as a percentage.
+    \end{enumerate}
+
+    The idea here is that a high bootstrap value means that perturbations of our initial sequence still result in many similar interior branches, so we are likely to have a valid tree with a high bootstrap score (we often use 95\%).
+
+  \item
+
+    We define the following terms:
+
+    $PP$: when our HMM predicts positive
+
+    $PN$: when our HMM predicts negative
+
+    $AP$: when the underlying truth is positive
+
+    $AN$: when the underlying truth is negative
+
+    Then, we calculate $TP$, $TN$, $FP$, $FN$, as follows:
+
+    $TP = PP \cap AP$
+
+    $TN: PN \cap AN$
+
+    $FP: PP \cap AN$
+
+    $FN: PN \cap AP$.
+
+    We can use these to generate further evaluation metrics for our HMM. For example, we can generate the sensitivity/recall/true positive rate, which tells us the how well our HMM is able to identify when the underlying truth is actually positive, calculated as $\frac{TP}{TP + FN}$.
+
+    We can also generate the specificity/true negative rate, which tells us how well our HMM is able to identify when the underlying truth is actually negative, calculated as $\frac{TN}{TN + FP}$
+
+    We can also calculate the precision of our HMM, which tells us the probability that a positive prediction is correct: $\frac{TP}{TP + FP}$.
+
+    We can also combine some of these even further, for example the f-score combines precision and recall: $\frac{2 \cdot precision \cdot recall}{precision + recall}$
+
+    Each of these tells us different things about our HMM, and depending on what kind of HMM we are looking for (for example, we might only care about precision), we can evaluate our HMM accordingly.
+
+  \item
+
+    We might evaluate the result of a $k$-means clustering by trying to determine whether our chosen $k$ was a good choice. For example, we might try and calculate the average distance to the center for each cluster, since a high average distance implies that we have clustered together items that should not be clustered. This is not a perfect metric, however, since we could choose $k$ to be very high and get a very low metric, so we might solve this by multiplying by $k$. This would mean that results with lots of clusters are sometimes considered worse, because they are too granular.
+
+  \item
+    Not relevant
+
+
+
+
+\end{enumerate}
+\end{document}

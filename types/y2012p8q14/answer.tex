@@ -1,0 +1,88 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    \begin{align*}
+      \textsc{var}&\frac{}{\Gamma \vdash x : T'} (\Gamma(x) = T, T \succ T')\\
+      \textsc{true}&\frac{}{\Gamma \vdash true : bool}\\
+      \textsc{false}&\frac{}{\Gamma \vdash false : bool}\\
+      \textsc{cond}&\frac{\Gamma \vdash e_1 : bool \hspace{10pt} \Gamma \vdash e_2 : T \hspace{10pt} \Gamma \vdash e_3 : T}{\Gamma \vdash if e_1 then e_2 else e_3 : T}\\
+      \textsc{fn}&\frac{\Gamma, x : \forall \{\}T \vdash e : T' \hspace{10pt}}{\Gamma \vdash \lambda x : T. e : T'}( x \not \in dom(\Gamma))\\
+      \textsc{app}&\frac{\Gamma \vdash e_1 : T \rightarrow T' \hspace{10pt} \Gamma \vdash e_2 : T}{\Gamma \vdash e_1 e_2 : T'}\\
+      \textsc{let}&\frac{\Gamma \vdash M_1 : T \hspace{10pt} \Gamma, x : \forall A(T) \vdash M_2 : T'}{\Gamma \vdash let x=M_1 in M_2 : T'}(x \not \in dom(\Gamma), A = ftv(T) - ftv(\Gamma))
+    \end{align*}
+
+  \item
+    \begin{align*}
+      \textsc{unit}&\frac{}{\Gamma \vdash () : unit}\\
+      \textsc{ref}&\frac{\Gamma \vdash M : T}{\Gamma \vdash ref M : T ref}\\
+      \textsc{read}&\frac{\Gamma \vdash  M : T ref}{\Gamma \vdash !M : T}\\
+      \textsc{write}&\frac{\Gamma \vdash M_1 : T ref \hspace{10pt} \Gamma \vdash M_2 : T}{\Gamma \vdash M_1 := M_2 : unit}
+    \end{align*}
+
+    Here, we choose that assignment returns unit, as opposed to something else, like the value returned.
+
+  \item
+
+    Type soundness is a combination of both progress and preservation, meaning that well-typed programs never get stuck.
+
+    Progress gives us that well-typed programs are either values, or can take a step of computation.
+
+    Preservation gives us that well-typed programs remain well-typed after computation.
+
+  \item
+    The issue here is that let-expressions allow us to specify function types differently when combined with references.
+
+    For example, with the given expression, we get the following behaviour.
+
+    When evaluating the let-expression, we add $r : \lambda x. x$ in our store.
+
+    Then, when we evaluate the body of the let-expression, we pass $(r := \lambda x(if x then false else true))$ as a parameter to the function $\lambda y (!r ())$
+
+    Assuming that we evaluate the argument of this function first, this sets $r$ to be the function $\lambda  x. if x then false else true$, which is then called with argument $()$, which is a run-time error because $()$ is a unit, not a bool.
+
+    Regardless of this run-time error, this is a typeable expression, since $r$ is of type $T \rightarrow T$, and $\lambda x (if x then false else true)$ is of type $bool \rightarrow bool$.
+
+    So, we type $\{r : T \rightarrow T, y : T'} \vdash !r () : unit$ according to our typing rules, so there is no type error that we find.
+
+    More formally:
+
+    $\{x:T', r: T \rightarrow T ref\} \vdash x : T'$ (by var)
+
+    $\{x : T', r : T \rightarrow T ref\} \vdash if x then false else true : bool$ (by cond)
+
+    $\{r : T \rightarrow T ref\} \vdash \lambda x. if x then false else true: bool \rightarrow bool$ (by fn)
+
+    $\{r : T \rightarrow T ref \} \vdash r : T \rightarrow T ref$ (by var)
+
+    $\{r : T \rightarrow T ref \} \vdash r := \lambda x (if x then false else true) : unit$ (by write)
+
+    $\{r : T \rightarrow T ref\} \vdash !r : T \rightarrow T$ (by read)
+
+    $\{r : T \rightarrow T ref, y: T''\} \vdash !r () : unit$ (by app and weakening)
+
+    $\{r : T \rightarrow T ref\} \vdash \lambda y (!r ()) : T'' \rightarrow unit$
+
+    $\{x : T\} \vdash  x : T$ (by var)
+
+    $\{\} \vdash \lambda x(x) : T \rightarrow T$ (by fn)
+
+    $\{\} \vdash ref \lambda x(x) : T \rightarrow T ref$ (by ref)
+
+    $\{\} \vdash (whole expr) : T'' \rightarrow unit$
+
+
+    To solve this, we need to stop type variables being generalised when part of the store. To do this, we replace the condition of $A = ftv(T) - ftv(\Gamma)$ with:
+
+      $A = \begin{cases}\{\} & M_1\text{ is not a value}\\ftv(T) - ftv(\Gamma) & \text{otherwise}\end{cases}$
+
+      Where references are not permitted to be values (but functions, variables, unit, bools, are)
+
+      This means that the given expression is no longer typeable, since the ref is not a value, so it is assigned type $\forall \{\}((T \rightarrow T) ref)$, instead of $\forall \{T\}((T \rightarrow T) ref)$, so the application of $!r$ no longer types, and the assignment to $r$ no longer types.
+
+
+
+\end{enumerate}
+\end{document}

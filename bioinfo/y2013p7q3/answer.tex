@@ -1,0 +1,60 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    We provide the edit graph as follows:
+
+    \begin{tabular}{c|c|c|c|c|c|c|c}
+      &$\varepsilon$&G&C&A&C&T&T\\
+      \hline
+      $\varepsilon$& 0&-1&-2&-3&-4&-5&-6\\
+      \hline
+      C&-1&-1&0&-1&-2&-3&-4\\
+      \hline
+      C&-2&-2&0&-1&0&-1&-2\\
+      \hline
+      C&-3&-3&-1&-1&0&-1&-2\\
+      \hline
+      A&-4&-4&-2&0&-1&-1&-2\\
+      \hline
+      A&-5&-5&-3&-1&-1&-2&-2\\
+      \hline
+      T&-6&-6&-4&-2&-2&0&-1\\
+    \end{tabular}
+
+    So the overall score is -1, and we obtain an alignment by backtracking from the bottom-right cell. In this case, there are multiple alignments we could extract, we give just one:
+
+\begin{verbatim}
+-GCACTT
+CCCA-AT
+\end{verbatim}
+
+\item
+  Choices for these parameters influence what kind of results we get. By making the gap penalty harsher (relative to the other parameters), we make it less likely that our final alignment will contain gaps, and will prefer to find mismatches over them. Similarly, by making the mismatch penalty harsher, we encourage the algorithm to insert gaps over mismatches. Making the match score higher makes the algorithm more selective with its mismatches, in the hope of finding matches later on.
+
+\item
+
+  We use the following DNA sequences:
+
+\begin{verbatim}
+a: GCCACCTCG
+b: GCACCTTCG
+c: AACATCACT
+d: AACCTCAAT
+\end{verbatim}
+
+This will likely generate the correct tree relation because $a$ and $b$ are similar (while dissimilar from $c$ and $d$), and vice versa for $c$ and $d$.
+
+\item
+  For phylogenetic tree building techniques, for example the large parsimony problem, we use a score matrix to determine some measure of distance between two DNA sequences. For example in the large parsimony problem, we use the score matrix to determine whether a base substitution was likely or not.
+
+  We can also use a score matrix in distance-based phylogeny techniques, although by proxy. For example, we can use a score matrix to generate distances between each of the DNA sequences of organisms for input into something like UPGMA.
+
+  These score matrices are derived either through chemical analysis of the amino acids/bases, or through a frequentist approach.
+
+
+
+        
+\end{enumerate}
+\end{document}
