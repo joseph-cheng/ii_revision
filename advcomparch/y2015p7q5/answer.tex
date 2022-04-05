@@ -1,0 +1,38 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Adding multiple hardware threads to a single multithreaded processor might seem attractive at first. However, there are a few difficulties that come with this approach.
+
+    For example, we really need our core to be superscalar in order to execute multiple threads in parallel, and probably require reasonably complex issue logic to issue instructions from different instruction streams (like we do in SMT, of course less granular alternatives are available, but come with their own set of downsides). There comes a point, however, where attempting to extract more ILP has diminishing returns, however, and this is where a single multithreaded processor starts to fail.
+
+    On the other hand, having multiple cores might require a lot more space on the die, but we do not necessarily require as complex logic for each of the cores, but we are able to scale up the cores to be more complex if we want better performance. There is the overhead of problems like cache coherency and memory consistency, but these are relatively small compared to the performance benefits available with multiple cores. Having multiple cores also allows a design to scale further. As mentioned before, single multithreaded processors will start to see harsh diminishing returns since they only really try to extract ILP, whereas processors with multiple cores can simply have more cores, and hopefully get better performance as long as our workload is parallel.
+
+  \item
+    In a vector processor, vector chaining and tailgating allows us to get better performance when sequential instructions use the same vector register (in particular, when we have dependencies) and different functional units, by overlapping their execution.
+
+    For example, suppose we have an instruction that performs an \texttt{ADD} into \texttt{r1}, and the next instruction performs a multiply, reading from \texttt{r1}. The trick here is that  instead of waiting for the \texttt{ADD} to write its data into \texttt{r1}, and then have the \texttt{MUL} read from \texttt{r1}, the \texttt{ADD} can `chain' its output into the input of the multiplier functional unit, so that the \texttt{MUL} can begin processing on the already computed data, but before all of the data is computed. This is vector chaining.
+
+    Now, suppose we have the inverse, a WAR or WAW hazard, where we have one instruction, say an \texttt{ADD} that is reading from \texttt{r1}, and the subsequent instruction, say a \texttt{MUL}, is writing to \texttt{r1}. We can again overlap their execution, by ensuring that we start the \texttt{MUL} late enough so that the old values are still available for the \texttt{ADD}. This is vector tailgating.
+
+  \item
+    Die stacking is used in fabrication of system-on-chips (SoCs). Die stacking allows us to decompose our SoC into smaller chips, called chiplets, that we can then stack on top of some common silicon interposer, and have thru-silicon vias that allow the chiplets to communicate.
+
+    There are two main benefits here: reduces cost through better yield and targeted fabrication, and better performance also through targeted fabrication.
+
+    By allowing us to fabricate each of the chiplets separately, we get better yield for our SoCs, since we no longer have to waste (almost) good SoCs if there is a fabrication error in one of the components: we can now just fabricate separate chiplets, and only use the ones with no (or few) fabrication errors. We can also choose low-cost fabrication technologies for particular chiplets that do not need any better, and thus reduce cost even further.
+
+    We can get better performance by fabricating high-bandwidth memory interfaces that we can stack on top of the interposer, which we create by choosing a good fabrication technology for the interface, which allows us to achieve higher performance.
+
+
+  \item
+    Suppose we wanted to achieve a particular level of performance in a microprocessor without parallelism. This means that we essentially have to build a complex super-scalar design, potentially with logic like branch predictors, out-of-order execution, deep pipelines, etc. The issue with this design is that a significant portion of our power budget goes into the logic for extracting ILP, and not actually doing the work. This is not ideal if we want to reduce our power consumption.
+
+    By exploiting parallelism, we can reduce power consumption. For example, we could instead have a processor with many simple cores, each without the complex logic we described for the previous processor. We might still be able to attain the same performance, however, since we are exploiting parallelism, and at the same time we do not have to deal with as much complex logic for completeness, and thus a higher portion of our power budget will be spent on actually doing useful work.
+
+    We can also see the reduced power benefits in vector processors, where by exploiting data-level parallelism, we use less instructions to specify the same amount of work, and thus spend less power dealing with the overhead of issuing instructions.
+
+        
+\end{enumerate}
+\end{document}

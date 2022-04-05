@@ -1,0 +1,62 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Since $h_1$ and $h_2$ are secure one-way functions, we will only be able to predict $r_n$ if the corresponding $s_n$ is an $s_n$ that has been used before, and we know that it has been used before.
+
+    In order for an $s_n$ to be used for, we require a cycle to have been created in our hash chain for generating the $s_i$s. If a cycle is generated, i.e. we have $r_x = r_{x + y}$, we know that our cycle length is $y$, and we can deduce any $r_n$ with $n > x+y$ by simply observing the hashes in between $r_x$ and $r_{x+y}$.
+
+    So we simply need to find the probability that a cycle in our hash has occurred after $n$ hashes, with an output space of size $|G|$.
+
+    We can see this as almost analogous to our birthday problem. If we assume that $|G|$ is reasonably large, then we will find that the probability of a collision is very small before $\sqrt{|G|}$, and then quickly jumps up to near 1 after we reach $\sqrt{|G|}$.
+
+    So we use the following probability function:
+
+    $p = \begin{cases}0 & n < \sqrt{|G|}\\1 & n \geq \sqrt{|G|}\end{cases}$.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        In order for $u$ and $v$ to be reasonably described as one way functions, we need to ensure that they are generates in $Z^*_p$. Since this group is of size $p-1$, this is not trivial (as it is for groups of size $p$). This means that inverting $x \mapsto u^x$ becomes as hard as the discrete logarithm problem, which we assume to be hard for large $p$, as we have.
+
+        To generate suitable $u$, $v$, we can choose $p$ such that $p-1 = 2q$, where $q$ is a large prime.
+
+        This means that we have $q$ quadratic residues. If we take the quadratic residues as a subgroup, then since $q$ is prime we get that any element is a generator.
+
+        So, by using a group that is the quadratic residues of $Z^*_{p}$ with an appropriate $p$, then any element is a generator.
+
+      \item
+        Assuming that we are using the quadratic residues, as described earlier, then it is easy to determine if the output of our pseudo-random generator is a quadratic residue if $f$ is the identity function using Euler's criterion.
+
+        Since we have $q$ quadratic residues, then after seeing $n$ outputs of our pseudo-random generator, then if it was random we would expect to see all quadratic residues with probability $\frac{1}{2^n}$, so we win with non-negligible probability.
+
+        By letting $f(x) = x \mod{2^{2048}}$, we ensure that not all outputs will be quadratic residues of our group
+
+      \item
+        Suppose that $v = u^{e} \mod{p}$. This means that $h_2(x)$ becomes $f(u^{ex} \mod{p})$.
+
+        Or, that $h_2(x) = h_1(ex)$
+
+        This means that $r_i = h_1(s_i)$, and $s_{i+1} = h_1(es_i)$
+
+        This means, however, that since Mallory knows $e$, they can compute the internal state $s_{i+1}$ after seeing $r_i$, by simply having $r_1^e$, which is equivalent to:
+
+        $((u^x \mod {p}) \mod{2^{2048}})^e$
+
+        We can move the exponent inside to get:
+
+        $(u^{ex} \mod {p}) \mod {2^{2048}}$, which is equivalent to $h_2(x)$, which is exactly what is needed to compute $s_{i+1}$, so Mallory has a backdoor.
+
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

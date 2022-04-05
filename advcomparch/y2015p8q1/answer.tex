@@ -1,0 +1,27 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    As the question describes, we have a separate directory in our L2 that tells us which L1 caches have a particular cache line.
+
+    When we process a write from a particular core, we use the directory to find the cores that share the cache line, and send an invalidation request to each of them, and clear the sharer bits. Because we are write-through, and no-allocate on stores, we do not allocate a block in the L1 cache, we just write it to the L2 cache and main memory (but we do write if the core was a sharer).
+
+    When we process a read from a particular core (that is not already a sharer), we set its bit in the directory for the cache line it reads, and then read its data from L2, allocating a cache block in the L1.
+
+    Since we only have a single crossbar switch per direction for communication between the L2 cache and the cores, we ensure that we get a total ordering of cache coherence messages for any particular cache line, which is required for any cache coherence protocol.
+
+  \item
+    In this simple scheme, L1 cache lines can only be in two states: valid, or invalid. We do not have the concept of a modified or shared state, as we do in something like an MSI protocol.
+
+  \item
+    Since we only have 8 scalar cores, and each only has 16KB of private L1 cache, there is only 256KB of private cache in our whole system. However, our L2 cache can store 4MB of data, so if we were to add state to each L2 cache line, we end up storing extra state for at least 3840KB of cache lines that is simply useless, since no core will have these lines in their L1 caches. Although we end up duplicating the tags in the directory, this will be smaller than the 3840KB of useless state required by adding state to each L2 cache line.
+
+  \item
+    A simple snooping coherence protocol running over a shared bus has quite a few issues that we avoid. One of the biggest issues is that we are bottlenecked by the bandwidth of the bus. Since a bus can only serve a single transaction at a time, we can only ever serve one coherence request at a time, which bottlenecks us. We also have to deal with the overhead of bus arbitration. Powering this huge bus for each transaction is also likely to use a lot of power also, more than our crossbar uses.
+
+    Furthermore, when using a snoopy protocol over a shared bus, every core must serve every coherence request, since the medium only allows for broadcast. This means that each core has to deal with requests that are not even pertinent to the core if they do not have the cache line. Our protocol avoids this by using a directory system.
+
+        
+\end{enumerate}
+\end{document}

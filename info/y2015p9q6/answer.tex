@@ -1,0 +1,49 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        $A: \frac{1}{4}$
+
+        $B: \frac{1}{4}$
+
+        $C: \frac{1}{4}$
+
+        $D: \frac{1}{8}$
+
+        $E: \frac{1}{8}$
+
+      \item
+        The entropy of this distribution is found by summing the negative log probabilities of each element, weighted by the probability:
+
+        $H = \frac{1}{2} + \frac{1}{2} + \frac{1}{2} + \frac{3}{8} + \frac{3}{8}= \frac{9}{4}$ bits.
+
+      \item
+        The average codeword length of this distribution comes from weighting the length of each codeword by its probability:
+
+        $\frac{2}{4} + \frac{2}{4} + \frac{2}{4} + \frac{3}{8} + \frac{3}{8} = \frac{9}{4}$ bits
+
+        We can see here that the average codeword length is the same as the entropy. Since our code is optimal, we have been unable to compress our information more than the entropy, which is what the Source Coding Theorem tells us.
+    \end{enumerate}
+
+  \item
+    Not relevant
+
+  \item
+    Not relevant
+
+  \item
+    Not relevant, but I happen to know it.
+
+    The Kolmogorov algorithmic complexity $K$ of a string of data is the length of the shortest program that produces the string of data (in bits). 
+
+    We can view producing a program that outputs a string of data as a form of compression, and thus we expect the Kolmogorov complexity $K$ to always be at least bigger than the Shannon entropy $H$ (i.e. $K \geq H$, and perhaps even that $K \simeq H$), or else we would have contradicted the Source Coding Theorem, which tells us that we can never compress more than our entropy.
+
+    Fractals can often be very easy to compute, since they are just simple iterated functions, so we might expect a Kolmogorov complexity in the hundreds.
+
+
+        
+\end{enumerate}
+\end{document}
