@@ -1,0 +1,69 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    An effect system is an augmentation to a type system that also tries to capture any side effects that a program might have, so judgements move from $\Gamma \vdash e : t$ to $\Gamma \vdash e : t, F$, so we also specify the effects a program has in the set $F$.
+
+    $F$ only contains immediate effects, i.e. effects that actually occur on execution of a program, but we also have latent effects, which are `stored' in an expression. For example, a function whose body has an effect has a latent effect as a whole, and this fact is normally embedded in the type system, e.g. by altering function types from $T \rightarrow T'$ to $T \xrightarrow{F} T'$
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        We will have separate effects for reads and writes to different channels, so the set of effects will be $R\xi$ and $W\xi$, corresponding to reading/writing from/to channel $\xi$.
+
+      \item
+        \begin{align*}
+          \textsc{var}\frac{}{\Gamma \vdash x : T, \{\}}(\Gamma(x) = T)\\
+          \textsc{fn}\frac{\Gamma, x : T \vdash e : T', F}{\Gamma \vdash \lambda x. e : T \xrightarrow{F}T', \{\}}\\
+          \textsc{app}\frac{\Gamma \vdash e_1 : T \xrightarrow{F}T', F'\hspace{15pt}\Gamma \vdash e_2 : T, F''}{\Gamma \vdash e_1 e_2 : T', F' \cup F'' \cup F}\\
+          \textsc{int}\frac{}{\Gamma \vdash n : int, \{\}}\\
+          \textsc{cond}\frac{\Gamma \vdash e_1 : int, F \hspace{10pt} \Gamma \vdash e_2 : T, F' \hspace{10pt}\Gamma \vdash e_3 : T, F''}{\Gamma \vdash if e_1 then e_2 else e_3 : T, F \cup F' \cup F''}\\
+          \textsc{let}\frac{\Gamma \vdash e_1 : T, F \hspace{10pt} \Gamma, x : T \vdash e_2 : T', F'}{\Gamma \vdash let x = e_1 in e_2 : T', F \cup F'}\\
+          \textsc{read}\frac{\Gamma \vdash e_1 : int, F \hspace{10pt}\Gamma \vdash e_2 : T, F'}{\Gamma \vdash \xi!e_1.e_2 : T, F \cup \{R\xi\} \cup F'}\\
+          \textsc{write}\frac{\Gamma, x : int \vdash e : T, F}{\Gamma \vdash \xi?x.e : T, \{W\xi\} \cup F}\\
+        \end{align*}
+
+    \end{enumerate}
+      \item
+        Assuming that any non-zero integer is truthy:
+
+        $if z then \lambda x. x+1 else \lambda x. c?y. x + y$
+
+        This should be well typed, both functions take an integer and return an integer, but the first function does not have any latent effects, so its type is $int \rightarrow int$, but the second does, so its type is $int \xrightarrow{\{Rc\}} int$, so we cannot use the \textsc{cond} rule here because the two branches do not have the same type.
+
+        This can be fixed by introducing a rule for subtyping of effects:
+
+        \[
+          \textsc{sub}\frac{\Gamma \vdash e : T \xrightarrow{F} T', F''}{\Gamma \vdash e : T \xrightarrow{F'} T', F''}(F \subseteq F')
+        \] 
+
+        This means that $\lambda x. x+1$ can have type $int \xrightarrow{\{Rc\}} int$, even though it does not read from that channel.
+
+      \item
+
+        In this answer, we assume that the machines have infinite memory, if they do not then we, for example, cannot have both expressions write to some channel, since we might get out-of-memory when we would not otherwise.
+
+        This is safe as long as we do not have that $e_1$ writes to a channel $c$ that $e_2$ reads/writes from, or vice versa.
+
+        It is safe to have the expressions access entirely different channels, since they cannot interfere with each other. It is also safe to have the expressions read from the same channel, since they still cannot influence the behaviour of each other. If one of them writes to a channel, the other cannot access that channel, or else we could end up reading an incorrect value, or updating the channel to hold the wrong value.
+
+      \item
+        This program cannot be parallelised, due to a lack of polymorphism in our type system.
+
+
+        Here, \texttt{add1} has type $int \xrightarrow{\{\}} int, \{\}$, and \texttt{add2} has type $int \xrightarrow{\{Wprint\}} int, \{\}$.
+
+        When we have \texttt{apply add2 20}, this means that \texttt{apply} must have type $(int \xrightarrow{\{Wprint\}} int) \xrightarrow{\{\}} int \xrightarrow{\{Wprint\}} int, \{\}$
+
+        Therefore, \texttt{apply add2 20} has type $int, \{Wprint\}$, and by the \textsc{sub} rule we also type \texttt{apply add1 10} as $int, \{Wprint\}$
+
+        Therefore, since both expressions write to the same channel, we cannot parallelise this.
+
+        In order to avoid this issue, our type system would have to be polymorphic in some way, so that \texttt{apply} actually has type $\forall F, T ((T \xrightarrow{\{F\}} T) \xrightarrow{\{\}} T \xrightarrow{\{F\}} T)$, which allows the two calls to \texttt{apply} to specialise differently, and the first one not have to have the effect of writing to the \texttt{print} channel.
+
+
+        
+        
+\end{enumerate}
+\end{document}
