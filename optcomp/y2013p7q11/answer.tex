@@ -1,0 +1,104 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    If a variable is semantically live at a program point means that if that variable's value were to be changed at that program point, then the execution behaviour of the rest of the program would also change.
+
+    This is problematic to calculate because it can be hard to determine the set of \textit{possible} program flows, for example:
+
+\begin{verbatim}
+program point
+if ((y+1) * (y+1) == 0) {
+  x = 0
+}
+if (y * y + 2 * y + 1  != 0) {
+  x = 1
+}
+\end{verbatim}
+
+Here, we see that at the marked program point, $x$ should not be live, because it will always be set to \texttt{0} or \texttt{1}, but we only see this is true because we can understand the Boolean conditions, but this is undecidable in general and so we cannot reliably capture semantic liveness.
+
+A simpler to calculate notion of liveness is syntactic liveness, which overestimates semantic liveness, where we consider all branching basic block as possible program flows, even if no execution of the program could ever use one of those flows.
+
+We derive data-flow equations:
+
+\[
+  live(n) = \left(\bigcup_{s \in succ(n)} live(s)\right) \setminus kill(n) \cup gen(n)
+\] 
+
+Where $kill$ is the set of variables killed (defined) in $n$, and $gen$ is the set of variables generated (referenced) in $n$.
+\item
+
+  We simply consider $kill$ and $gen$ on a more granular level of instructions:
+
+  \[
+    live(n) = \left(\bigcup_{s \in succ(n)} live(s)\right) \setminus kill(i_1) \cup gen(i_1) \setminus \ldots \setminus kill(i_p) \cup gen(i_p)
+  \] 
+
+  Where $i_k$ is the $k$th instruction in our basic block. This takes $O(p) + O(q)$ operations because creating the $gen$ and $kill$ sets for each instruction happens in $O(p)$ time, and calculating $\bigcup_{s \in succ(n)} live(s)$ obviously happens in $O(q)$ time, because there are $q$ successors.
+
+  We can calculate this in $O(q)$ time by using just one $\cup$ and one $\setminus$ if we are allowed to pre-calculate some sets, that may involve more than one $\cup$ and $\setminus$.
+
+  The key here is that we can union together all the $kill$ sets: $K_x = \bigcup_{k \in x..p} kill(i_k)$. We can minus these from $\bigcup_{s \in succ(n)} live(s)$ all at once, and then add the $gen$ sets together, making sure not to include variables that we killed after that node: $G = \bigcup_{k \in 1..p} (gen(i_k) \setminus K_{k+1})$
+
+  Note that these can all be pre-calculated before we run our liveness, which we may iterate more than once, so there really is a saving here.
+
+  Then, we reformulate our data-flow equations:
+
+  \[
+    live(n) = \left(\bigcup_{s \in succ(n)} live(s)\right) \setminus K_1 \cup G
+  \] 
+
+\item
+  We initially assume that no variables are live at any nodes.
+  
+  This is useful because it ensures that we find the least solution (wrt $\subseteq$), whilst still retaining safety, since the data-flow equations are safe and do not make assumptions about any initial starting values.
+
+\item
+  If we do not have cycles, then we can assume that all branches are forwards branches. Then, we just need to calculate the data-flow equations `backwards', since we know the live sets at each nodes immediately, since we have no cycles.
+
+To capture this idea of `backwards', we can use a topological sort, which sorts our nodes based on the control flow graph structure, such that the last element has no successor. Then, we reverse this topological sort, and perform our analysis on that reversed sequence.
+
+Suppose we have a program as follows:
+
+\begin{verbatim}
+if (y==0) goto end
+...
+if (y==n) goto end
+do_something(x)
+end: return y
+\end{verbatim}
+
+If we perform our analysis starting at the first line (assuming each line is a separate basic block due to the tests), then the liveness of $x$ where it used in the call to \texttt{do\_something} takes $n+1$ iterations to propagate backwards to the starting node. Since $n+2= k$, this takes $k-1$ iterations overall.
+
+\item
+  \begin{enumerate}[label=(\roman*)]
+    \item
+      First, we establish the gen and kill sets of each block:
+
+\begin{verbatim}
+B1: gen = {},     kill = {x,y,z}
+B2: gen = {z, x}, kill = {}
+B3: gen = {z, y}, kill = {}
+B4: gen = {z},    kill = {}
+\end{verbatim}
+
+And we get final liveness of $x,y,z$ all being live at $B2$ and $B3$.
+
+However, we cannot reach this in one iteration, since both $B2$ and $B3$ depend on each other. Suppose we calculated the liveness of $B2$ before $B3$, then $B2$ would only have liveness $\{z,x\}$, and vice versa we would get that $B3$ only has liveness $\{z,y\}$, so we require another iteration.
+
+\item
+  As a general principle, we apply topological sort. So, we get $[B4, B3, B2, B1]$. We can't really apply topological sort properly here, since we have cycles, so we can try and do cycles backwards as well, but this is not very precise.
+
+  After one iteration, $B3$ has liveness $\{z,y\}$ and $B2$ has liveness $\{x,y,z\}$, and after another iteration $B3$ gets liveness $\{x,y,z\}$.
+    
+\end{enumerate}
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

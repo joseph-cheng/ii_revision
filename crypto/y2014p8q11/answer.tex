@@ -1,0 +1,58 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    Such a game works as follows.
+
+    User $\mathcal{U}$ picks a security parameter $\ell$ and random key $K$ from $\{0,1\}^\ell$.
+
+    Then, $\mathcal{A}$ may send a message $M \in \mathcal{M}$ to $\mathcal{U}$, and the user must return $Enc_K(M)$. The adversary can repeat this a polynomial number of times.
+
+    Then, $\mathcal{A}$ presents $\mathcal{U}$ with two messages, $M_0$ and $M_1$.
+
+    $\mathcal{U}$ then chooses a random bit $b \in \{0,1\}$, and returns $Enc_K(M_b)$.
+
+    $\mathcal{A}$ may then send messages and receive their encryptions as before, again a polynomial number of times.
+
+    The adversary then wins if they are able to guess $b$ correctly.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item This $\Pi'$ is secure. If it were not, then an adversary $\mathcal{A}$ that beats the CPA game against it with non-negligible probability.
+
+        We could use this adversary $\mathcal{A}$ to build another adversary $\mathcal{A'}$ that simply bit-flips all of the messages that $\mathcal{A}$ wants to send. $\mathcal{A'}$ would then be an adversary for $\Pi$ that wins with non-negligible probability, which is a contradiction.
+
+      \item
+        This is not CPA-secure. We can create an adversary that chooses $M_0 = 0^m$ and $M_1 = 1^m$, and then use the last bit of $Enc_K(M_b)$ to determine $b$, winning with probability 1, which is not negligible.
+
+      \item
+        This is CPA-secure. If it were not, then an adversary $\mathcal{A}$ exists that beats the CPA game against it with non-negligible probability.
+
+        Then, we could construct another adversary $\mathcal{A'}$ as follows:
+
+        Make a guess for $LSB(K)$.
+
+        Append this bit to every message that $\mathcal{A}$ receives from the encryption oracle.
+
+        We therefore win with probability half of what $\mathcal{A}$ beats $\Pi'$, which is not negligible.
+
+      \item
+        This is not CPA secure, since the adversary has access to $Enc$ (just not $K$) and can therefore send any distinct $M_0$ and $M_1$ and calculate their encryptions by itself to determine $b$ with probability 1.
+
+        
+    \end{enumerate}
+
+  \item
+    This construction is not CPA secure because the CPA game permits multiple oracle queries. So, with the first query, the adversary learns the last block of the first cipher-text message, and thus the IV for encrypting the next message. Since we can anticipate the IV, we can construct an $M_0$ and $M_1$ that let us win the game.
+
+    To do this, we have $M_0$ and $M_1$ both have the first block as the IV, for example, e.g. choosing $M_0 = IV||0^128$ and $M_1 = IV||1^128$.
+
+    Then, the first block in the output becomes $AES_K(0^128)$, since the XOR cancels out the first block.
+
+    We can then later submit queries for $IV'||0^128$, and since we can anticipate the IV, we turn this into the same encryption as $M_0$, so we can then distinguish between $Enc_K(M_0)$ and $Enc_K(M_1)$, so we win the game with probability 1.
+
+        
+\end{enumerate}
+\end{document}

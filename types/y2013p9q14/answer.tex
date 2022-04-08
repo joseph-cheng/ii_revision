@@ -1,0 +1,65 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    The typing rule is as follows:
+
+    \[
+      \textsc{(let)}\frac{\Gamma \vdash M_1 : T \hspace{15pt} \Gamma, x:\forall A(T) \vdash M_2 : T'}{\Gamma \vdash \texttt{let }x=M_1\texttt{ in }M_2 : T'}(A = ftv(T) - ftv(\Gamma) \wedge x \not \in dom(\Gamma))
+    \] 
+
+    The full condition restricts $A$ to be empty in the case that $M_1$ is not a value, since if we do not then we end up with type unsoundness in combination with reference types, since we end up being able to specialise types in different ways, e.g. if $M_1$ is a reference to some polymorphic $T$, then in one place we can write a specific type to $T$, and in another try to read another specific type $T$ out.
+
+    So, we use the following side condition instead:
+
+    $A = \begin{cases}\{\} & M_1 \text{ is not a value}\\ftv(T) - ftv(\Gamma) \text{ otherwise}\end{cases}$
+
+    Where values are syntactically of the form $x | \lambda x(M) | () | true | false |...$
+
+  \item
+    A solution for a Mini-ML typing problem $\Gamma \vdash M : ?$ is a pair $(S, \sigma)$ where $S$ is a substitution and $\sigma$ is a type scheme such that $S \Gamma \vdash M : \sigma$, where $S \Gamma$ applies $S$ to all of the types that variables have.
+
+    A solution is principal if for any other solution $(S', \sigma')$, there exists another type substitution $T$ such that $T S = S'$ and $T(\sigma) \prec \sigma'$, i.e. that $(S, \sigma)$ is more general than any other solution.
+
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        This does not have any solution.
+
+        If it were, then $\{f : \forall \{\}(\alpha \rightarrow \beta)\} \vdash (f \texttt{ true}) f : T$, for some $T$.
+
+        At some point, we would have to deduce a type $\Gamma \vdash f \texttt{ true} T'$, and $T'$ would have to be $(\alpha \rightarrow \beta) \rightarrow T$, so we must have $\Gamma \vdash f : bool \rightarrow (\alpha \rightarrow \beta) \rightarrow T$.
+
+        This further implies that $\beta = (\alpha \rightarrow \beta) \rightarrow T$, which is an impossible type.
+
+      \item
+        This does have a solution, in particular we can use $(\{\alpha : bool\}, \forall \beta(\beta))$
+
+        A typing derivation is given below:
+
+        $\Gamma \vdash f : bool \rightarrow (bool \rightarrow \alpha) \rightarrow \beta$ by (var)
+
+        $\Gamma \vdash true : bool$ by (true)
+
+        $\Gamma \vdash (f true) : (bool \rightarrow \alpha) \rightarrow \beta$ by (app)
+
+        $\Gamma \vdash f : bool \rightarrow \alpha$ by (var)
+
+        $\Gamma \vdash (f true) f : \beta$
+
+      \item
+        This does have a solution: $(\{\}, \forall \{\gamma, \delta\} (\gamma \rightarrow \delta \rightarrow \delta))$
+
+        We see that we can type $\lambda x(\lambda y(y))$ as $(\gamma \rightarrow \delta \rightarrow \delta)$ by two applications of the (fn) rule, so we can apply the let rule (and this is also a value)
+
+        Then, we can type $\Gamma \vdash f : bool \rightarrow (\gamma \rightarrow \delta \rightarrow \delta) \rightarrow (\gamma \rightarrow \delta \rightarrow \delta)$
+
+        Since we can also type $\Gamma \vdash true : bool$, we get $\Gamma \vdash f true : (\gamma \rightarrow \delta \rightarrow \delta) \rightarrow (\gamma \rightarrow \delta \rightarrow \delta)$ by the (app) rule
+
+        Finally, we then get $\Gamma \vdash (f true) f : \gamma \rightarrow \delta \rightarrow \delta$ using the (app) rule again.
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}
