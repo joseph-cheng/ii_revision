@@ -1,0 +1,8 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alpha*)]
+  \item
+        
+\end{enumerate}
+\end{document}

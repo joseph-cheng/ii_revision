@@ -1,0 +1,42 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A suitable $d$ is a $d$ such that $ed \equiv 1 \pmod{\phi(n)}$, i.e. the modular inverse of $e$ modulo $\phi(n)$
+
+    Since $n = pq$, and $p,q$ are prime, we know that $\phi(n) = (p-1)(q-1)$, which is easy to calculate.
+
+    Then, since $gcd(\phi(n), e) = 1$, we know that the extended Euclidean algorithm $egcd(\phi(n), e)$ will give us integers $a,b$ such that $a\phi(n) + be = 1$. Taking this modulus $\phi(n)$ we get $be \equiv 1 \pmod{\phi(n)}$, so $b$ is a suitable $d$.
+
+  \item
+    This would affect its security. If $n=p$, then anyone who knows $n$ (which is public!) can calculate $\phi(n)$ as $n-1 = p-1$.
+
+    At this point, since they also know $e$, they can use the extended Euclidean algorithm to find the multiplicative inverse of $e$ modulo $\phi(n)$, as we did in (a), giving them the private key $(n,d)$, so it is easy to find the private key given the public key, which is very bad.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The issue with this scheme is that $m \ll n$, whilst $e$ is small. This means that $m^e \mod{n}$ will be the same as $m^e$, and since $e$ is publicly 3, any eavesdropper can just compute the cube root of $c = m^e$ to obtain $m$.
+
+      \item
+        There are really two options: make $e$ significantly bigger, or make $m$ significantly bigger. We don't really want to make $e$ much bigger because it drastically slows down encryption times, so we should make $m$ bigger.
+
+        We can instead do something like picking $m \in \{0,1\}^{1024}$, by reading from \texttt{/dev/random}.
+
+        Then, we send $c = m^e \mod{n}$ to Bob.
+
+        Bob then decrypts $c$ into $m$
+
+        Both parties calculate $k = h(m)$, where $h$ is some 256-bit hash function.
+
+        This is better than the method given above, since we are very unlikely to pick an $m$ small enough to not have the modulus take effect, we would need $\lceil \frac{1024}{3} \rceil$ leading 0 bits, which is very unlikely.
+
+
+
+        
+    \end{enumerate}
+
+        
+\end{enumerate}
+\end{document}
