@@ -1,0 +1,100 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        The typing rules are given below:
+
+        \begin{align*}
+            \textsc{fn}&\frac{\Gamma, x : T \vdash e : T'}{\Gamma \vdash \lambda x:T (e) \vdash T \rightarrow T'}\\
+            \textsc{app}&\frac{\Gamma \vdash e_1 : T \rightarrow T' \hspace{15pt} \Gamma \vdash e_2 : T}{\Gamma \vdash e_1 e_2 : T'}\\
+            \textsc{ref}&\frac{\Gamma \vdash e : T}{\Gamma \vdash \texttt{ref }e : T ref}\\
+            \textsc{read}&\frac{\Gamma \vdash e : T ref}{\Gamma \vdash !e : T}\\
+            \textsc{write}&\frac{\Gamma \vdash e_1 : T ref \hspace{15pt} \Gamma \vdash e_2 : T}{\Gamma \vdash e_1 := e_2 : unit}\\
+        \end{align*}
+
+    \item
+        The non value-restricted form of the typing rule for let-expressions in ML looks like the following:
+
+        \[
+            \textsc{let}\frac{\Gamma \vdash e_1 : T \hspace{15pt} \Gamma, x : \forall A(T) \vdash e_2 : T'}{\Gamma \vdash \texttt{let }x = e_1\texttt{ in }e_2}(x \not \in dom(\Gamma), A = ftv(T) - ftv(\Gamma))
+        \] 
+
+        The value-restricted form changes the side-condition for $A$ to be the following:
+
+        $A = \begin{cases}\{\} & \text{$e_1$ is not a value}\\ftv(T) - ftv(\Gamma) & \text{otherwise}\end{cases}$
+
+        Where values are not allowed to be references, and of the form $V ::= x | (\lambda x.e) | () | ...$
+
+        The purpose of this is that when non-value-restricted let-expressions are allowed in ML in  conjunction with references, we lose type safety (basically because we can specify a reference type in two different ways), so we ensure that we only allow free type variables in non-reference, value bindings.
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                This is provable:
+
+                $\{x : bool \rightarrow bool\} \vdash x : bool \rightarrow bool$ (by var)
+
+                $\{x : bool \rightarrow bool\} \vdash x \texttt{ true} : bool$ (by app)
+
+                $\{\} \vdash \lambda x (x true) : (bool \rightarrow bool) \rightarrow bool$ (by fn)
+
+                $\{\} \vdash ref \lambda x (x true) : ((bool \rightarrow bool) \rightarrow bool)ref$ (by ref)
+
+                Let $\Gamma= \{r : \forall \{\}(((bool \rightarrow bool) \rightarrow bool) ref)\}$
+
+                $\Gamma, z : bool \rightarrow bool \vdash true : bool$ ( by true)
+
+                $\Gamma \vdash \lambda z(true) : (bool \rightarrow bool) \rightarrow bool$ (by fn)
+
+                $\Gamma \vdash r:= \lambda z(true) : unit$ (by write)
+
+                So the whole expression is of type $unit$.
+
+            \item
+                This is not provable.
+
+                We need $r$ to be of type $((bool \rightarrow T) \rightarrow T) ref$, for some concrete type $T$.
+
+                The use of it inside the assignment, $r := \lambda z(true)$ implies that this $T$ should be bool (since $\lambda z(true)$ returns a bool, and must be of the form $(bool \rightarrow T) \rightarrow T$).
+
+                However, the use of it inside the read, $!r (\lambda y(r := \lambda z(true)))$ implies that $T$ should be of type unit, since $r := \lambda z(true)$ is of type unit, and thus that is the return type of $\lambda y(r := \lambda z(true))$.
+
+                This is a contradiction, so the given expression is not even typeable.
+
+                This only arises because of the value-restriction we put on let-expressions.
+
+            \item
+                This is not provable.
+
+                We get our context to be $\{r : \forall\{\alpha, \beta\}(\alpha \rightarrow \beta \rightarrow \alpha)\}$
+
+                This means our call $r ()$ is well typed, by substituting $\alpha$ for $unit$, and thus $\Gamma \vdash r () : \forall \{\beta\}(\beta \rightarrow unit)$
+
+                In our next call, $r (r ())$, this types well, substituting $\alpha$ for $\beta \rightarrow unit$, so $\Gamma \vdash r (r ()) : \forall \{\beta\}(\beta \rightarrow (\beta \rightarrow unit))$.
+
+                However, there is no such $\beta$ that makes this equal to bool, so the given typing is not provable
+
+            \item
+                This is provable.
+
+                We get our context to be $\{r : \forall \{\alpha\}(\alpha \rightarrow bool)\}$.
+
+                This means our call $r ()$ is well typed, by substituting $\alpha$ for $unit$, and thus $\Gamma \vdash r () : bool$.
+
+                Our second call, $r (r ())$ is also well typed (but only because we do not need to restrict the type variables that $r$ has available to it since it was defined as a value!), substituting $\alpha$ for $bool$, and thus $\Gamma \vdash r (r ()) : bool$.
+
+
+
+
+
+        \end{enumerate}
+
+        
+
+
+
+
+        
+    \end{enumerate}
+\end{document}

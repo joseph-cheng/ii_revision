@@ -1,0 +1,18 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+    \item
+        The Curry-Howard correspondence describes a correspondence between types, programs, etc., and mathematical proofs.
+
+        In particular, we have that types correspond to formulae, and programs correspond to proofs: so having a program of type $T$ is a proof for the corresponding formula for $T$.
+
+        For example, we can consider function types $T_1 \rightarrow T_2$ to be like implication: if we have a proof for $P \implies Q$, and a proof for $P$, we have a proof for $Q$. Similarly, if we have a program of type $T_1 \rightarrow T_2$, and a program of type $T_1$, then we can construct a program of type $T_2$ (through function application).
+
+    \item
+        Not relevant
+
+        
+    \end{enumerate}
+\end{document}

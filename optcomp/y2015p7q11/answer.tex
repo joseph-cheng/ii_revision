@@ -1,0 +1,89 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+
+        This is a forwards-propagating analysis
+
+        We construct the two mutually recursively defined sets:
+
+        $in-reaching(n) = \bigcup_{p \in pred(n)} out-reaching(p)$
+
+        $out-reaching(n) = in-reaching(n) \setminus kill(n) \cup gen(n)$
+
+        Where $kill(n)$ is the set of instructions that $n$ kills, i.e. all of the instructions that assign to the same variable that $n$ assigns to, and $gen(n)$ is the set of instructions that $n$ generates, i.e. itself if it assigns to a variable.
+
+        We then take $reaching = in-reaching$:
+
+        $reaching(n) = \bigcup_{p \in pred(n)} (reaching(p) \setminus kill(p) \cup gen(p))$
+
+        An algorithm for computing this function might look as follows:
+
+\begin{verbatim}
+for i=1 to n do reaching[i] = {}
+while (reaching[] changes) {
+  for i=2 to n do {
+    reaching[i] = big_union(p in pred(i), reaching(p) \ kill(p) U gen(p))
+  }
+}
+\end{verbatim}
+
+This algorithm/formulation provides an over-approximation of semantic reaching definitions, since we consider syntactic control flow as opposed to semantic control flow.
+
+For example:
+
+\begin{verbatim}
+if ((x +1) * (x+1) == x*x + 2*x + 1) {
+  y = 1
+} else {
+  y = 2
+}
+print y
+\end{verbatim}
+
+In this program, the definition $y=2$ should not reach $print(y)$, since it never gets executed, but in our algorithm we would mark it as reaching $print(y)$.
+
+As long as we keep this in mind, we can still use this safely, by ensuring that our future transformation relies on the fact that instructions \textit{not} in $RD(i)$ definitely do not reach instruction $i$, and not the inverse.
+
+\item
+
+    This analysis is flow-sensitive. The analysis relies on control flow, and the order in which assignments execute, so a flow-insensitive analysis of this kind would be nonsensical.
+
+\item
+    Suppose an instruction $I$ reads from operand $y$, and our reaching-definitions analysis shows us that every definition that reaches $I$ and writes to $y$ is of the form $y=k$, for some constant $k$.
+
+    This means, we can replace the use of operand $y$ with constant $k$, which gives us constant propagation.
+
+\item
+
+    The following code would be generated:
+
+\begin{verbatim}
+int t,r,x;
+x = read();
+if (x > 91) t=7; else t=6;
+r = t/2;
+return r+39
+\end{verbatim}
+
+We are unable to do any constant propagation!
+
+This is because both definitions $t=7$ and $t=6$ reach $r=t / 2$.
+
+This loses optimality, however, since assuming that division between two integers is floor division, then $t / 2$ is always 3, regardless of whether $t$ is 6 or 7.
+
+So, the source of the information loss is not considering the results of each branching path: doing so would make us realise that each path results in $r=3$ (and presumably we then also optimise to return $3 + 39$
+
+\item
+    In SSA form, we only ever assign to a variable once. This means that every assignment that occurs before an instruction will reach that instruction.
+
+    Furthermore, each instruction in $RD(i)$ will be the only instruction that assigns to its variable.
+
+
+
+
+
+    
+\end{enumerate}
+\end{document}

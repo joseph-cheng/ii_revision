@@ -1,0 +1,112 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                We give the following term:
+
+                $\Lambda \alpha( \lambda t : \tau. \Lambda \beta(\lambda f : \forall \alpha(\tau \rightarrow \beta). f \alpha t))$
+
+                We get the following proof:
+
+                Letting $\Gamma = \{t : \tau, f : \forall \alpha(\tau \rightarrow \beta)\}$, and $\Theta = \{\alpha, \beta\}$.
+
+                $\Theta;\Gamma \vdash f : \forall \alpha(\tau \rightarrow \gamma)$ (by var)
+
+                $\Theta;\Gamma \vdash t : \tau$ (by var)
+
+                $\Theta \vdash \alpha type$
+
+                $\Theta;\Gamma \vdash f \alpha : \tau \rightarrow \beta$ (by $\forall$ app)
+
+                $\Theta;\Gamma \vdash f \alpha t : \beta$ (by app)
+
+                Then through some applications of the $fn$ and $\forall fn$ rules, we get:
+
+                $\{\};\{\} \vdash pack : \forall \alpha (\tau \rightarrow \forall \beta((\forall \alpha(\tau \rightarrow \beta)) \rightarrow \beta)$, or $\{\};\{\} \vdash pack : \forall \alpha (\tau \rightarrow \exists \alpha(\tau))$.
+
+            \item
+                We give the following term:
+
+                $M \tau' (\Lambda \alpha(\lambda  x : \tau (M')))$
+
+                We give the following proof:
+
+                $\Theta;\Gamma \vdash M : \exists \alpha(\tau)$ by assumption
+
+                $\Theta;\Gamma \vdash M \tau' : (\forall \alpha (\tau \rightarrow \tau')) \rightarrow \tau'$, by $\forall app$
+
+                $\Theta,\alpha;\Gamma,x:\tau \vdash M' : \tau'$ (by assumption)
+
+                $\Theta;\Gamma \vdash \Lambda \alpha(\lambda x:\tau(M')) : \forall \alpha (\tau \rightarrow \tau')$ (through some fn and $\forall fn$).
+
+                $\Theta;\Gamma \vdash M \tau' (\Lambda \alpha (\lambda x:\tau (M'))) : \tau'$ (by app).
+        \end{enumerate}
+
+    \item
+        This reduces to $M'[N / x][\tau' / \alpha]$
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                We give the following term:
+
+                $\lambda x : \forall \alpha(\neg \tau) (\lambda t : \neg \exists \alpha (\tau) (t (\forall \alpha (\alpha)) x))$
+
+                With $\Gamma = \{x : \forall \alpha(\neg \tau), t : \neg \exists \alpha(\tau)\}$, we get:
+
+                $\{\};\Gamma \vdash t : \forall \beta((\forall \alpha (\tau \rightarrow \beta)) \rightarrow \beta)$  (by var)
+
+                $\{\alpha\} \vdash  \alpha type$
+
+                $\{\} \vdash \forall \alpha(\alpha) type$
+                
+                $\{\};\Gamma \vdash t (\forall \alpha(\alpha)) : (\forall \alpha (\tau \rightarrow (\forall \alpha(\alpha))) \rightarrow (\forall \alpha(\alpha)))$ (by $\forall$ app)
+
+                $\{\};\Gamma \vdash x : \forall \alpha( \tau \rightarrow (\forall \alpha (\alpha)))$
+
+                $\{\};\Gamma \vdash t (\forall \alpha(\alpha)) x  : (\forall \alpha(\alpha))$
+
+                So the whole expression types as expected.
+
+            \item
+                We give the following term:
+
+                $\lambda x: \exists \alpha(\neg \tau) (\lambda y : \forall \alpha(\tau) (x (\forall \alpha (\alpha)) (\Lambda \beta (\lambda t : \neg\tau  (t (y \beta)))))$
+
+                We give the following proof:
+
+                Let $\Gamma = \{x : \exists \alpha(\neg \tau), y : \forall \alpha(\tau)\}$ and $\Theta = \{\beta\}$, and $\Gamma' = \Gamma, t : \tau \rightarrow  \forall \alpha(\alpha)$
+
+                Then:
+
+                $\{\};\Gamma \vdash x : \forall \beta((\forall \alpha ((\tau \rightarrow (\forall \alpha (\alpha)))) \rightarrow \beta) \rightarrow \beta)$  (by var)
+
+                $\Theta \vdash \alpha type$
+
+                $\{\} \vdash \forall \alpha(\alpha) type$
+
+                $\Theta;\Gamma' \vdash t : \tau \rightarrow \forall \alpha(\alpha)$ (by var)
+
+                $\Theta;\Gamma' \vdash y : \forall \alpha(\tau)$ (by var)
+
+                $\Theta \vdash \beta type$
+
+                $\Theta;\Gamma' \vdash y \beta : \tau$
+
+                $\Theta;\Gamma' \vdash t (y \beta) : \forall \alpha( \alpha))$
+
+                Through some applications of $fn$ and $\forall fn$, we then get:
+
+                $\{\};\{\} \vdash wholeexpr : \exists \alpha(\neg\tau) \rightarrow \neg \forall \alpha(\tau)$.
+
+
+            
+        \end{enumerate}
+
+
+        
+    \end{enumerate}
+\end{document}
