@@ -1,0 +1,31 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Not relevant
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        The conditions that would maximise the channel capacity are when the input source is uniformly distributed, and when either $p=0$ or $p=1$ (in both cases, we are able to perfectly reconstruct the original message).
+
+      \item
+        Such a scheme fails when we have any more than 1 bit flip in 7 bits.
+
+        The probability we get 0 bit flips is $(1-p)^7$, and the probability we get a single bit flip is $7p(1-p)^6$, so the probability that we get more than 1 bit flip is $P_e = 1 - (1-p)^7 - 7p(1-p)^6$.
+
+      \item
+        The repetition scheme fails when we get $m+1$ bit flips in $2m+1$ bits.
+
+        The probability this happens can be derived if we model this as a binomial distribution $X \sim B(2m+1, p)$, where we need $P(X \geq m+1)$.
+
+        $P_e = P(X \geq m) = \sum_{i=2m+1}^{m+1} \binom{2m+1}{i} p^i(1-p)^{2m+1-i}$
+        
+    \end{enumerate}
+
+  \item
+    Not relevant
+        
+    \end{enumerate}
+\end{document}
