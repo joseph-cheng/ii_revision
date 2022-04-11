@@ -1,0 +1,39 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        By implementing deep pipelines, the idea is that we are able to extract more ILP by executing more instructions simultaneously, and keeping more of the hardware active at any given point. This should, in theory, give us better performance. We also potentially reduce the length of the critical path, allowing us to drive clock frequencies higher.
+
+        However, there are a few issues with having very deep pipelines, for example whenever we have to flush our pipeline, for example on a branch mispredict, we end up having to throw away a lot more work than we would have done if we had a shallower pipeline. We also hit a limit on clock frequency due to Dennard scaling breaking down. Furthermore, we began to run into issues of power consumption, and having more concurrent instructions, as well as extra logic for managing the pipeline stages, consumes a lot of power.
+
+      \item
+        In order to support O3 execution, we require a few extra microarchitectural components. For example, we require some kind of buffer (a reorder buffer) that holds instructions that are fetched and stores their order, so they can be safely committed. We also need an issue queue, which holds the instructions that need issuing, and hardware that reads from this queue and chooses a safe instruction to issue (or a no-op if there are none).
+
+        We also need hardware to keep track of data dependencies, like register scoreboarding, to ensure that we only issue instructions before others if we will not cause a hazard. Normally, we will also implement some kind of register renaming to avoid dealing with name dependencies (which never affect us with in-order execution).
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      A tournament predictor essentially combines a global and local branch history predictor. This means that we maintain two branch predictors: a local branch history predictor that keeps track of the history of particular branch instructions and associated predictions; and a global branch history predictor that keeps track of overall branch history and associated prediction.
+
+      The reason for using a tournament predictor is because most of the time, local history predictors work well, but branches that local history is not useful for, local history predictors perform very poorly (and global history predictors perform well). A tournament predictor essentially tries to predict whether a local or global history predictor would be better for a particular branch, allowing us to obtain good predictions for both types of branches.
+
+    \item
+      In order to manage this, we need to ensure that we at least try to generate a new address to fetch instructions from for a given branch. Therefore, we should augment our pipeline with a second, less accurate, but faster (1 cycle) predictor. When we issue a branch instruction, this second predictor should make a prediction, and we fetch from this address. Then, when we later use our more accurate branch predictor, we see if we made the same prediction, and perform some small amount of clean-up (flushing, rollback, etc.) if we predicted differently, and continue as normal if we did not. This clean-up is less than we would have to do with just the second predictor on its own, and means that we do not always introduce a pipeline bubble with our accurate predictor.
+
+    \item
+      We might not use predicated execution because predicated execution requires that instructions are executed in a particular order, and this order is not explicit in the program. With branches, it is clear which instructions should execute based on a particular condition, because the instructions will be located in different parts of memory.
+
+      For example, if we have some conditional instruction, we need this to execute after the last instruction that evaluates a condition, which means that with conditional execution we have lots of data dependencies, so we may lose a lot of benefits of out-of-order execution.
+
+      Along with that, the benefits that we are left with do not come for free: we have to use instruction bits to hold condition bits (likely restricting opcode size), and when we find we have to replace instructions with no-ops after a condition is evaluated, we waste a lot of cycles.
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

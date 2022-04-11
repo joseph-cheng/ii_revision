@@ -1,0 +1,21 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A `best effort' service means that there are no guarantees on performance or service, there is no guarantee that packets will reach their destination, they may be dropped, and there is no guarantee that you will be able to utilise a particular level of bandwidth at any given time.
+
+    Unlike traditional multiplexing, for example where each sender is given a particular time slot to send in, the Internet relies instead on statistical multiplexing, where we make use of the fact that not all senders will be transmitting as much as they can, all the time, so we are able to still support some kind of multiplexing, where many users can transmit at the same time, but without the overhead of managing the multiplexing explicitly. We also get more flexibility, since we could support a sender with large bandwidth requirements and a sender with small bandwidth requirements, but traditional multiplexing could not.
+
+    This does, however, mean that the Internet does not provide very good end-to-end fairness properties, since senders sending large volumes of data could stop senders that only send small amounts of data from operating as well (since statistical multiplexing works on \textit{average} sender behaviour), which might not seem fair. We instead rely on each end user to keep fairness and manage congestion, for example by all using TCP or another congestion control mechanism that slows them down when congestion occurs.
+
+  \item
+    In this answer, we make reference to the standard OSI layers, although layered services need not necessarily adhere to this model.
+
+
+    In communications systems, layering provides abstraction for protocol implementers and designers. This makes systems modular, and allows us to flexibly choose a protocol stack that fits our needs best. For example, IP does not need to know how the data is being transmitted over each particular link, which means that we do not need to create a separate layer 3 protocol for every layer 2 technology, so we can run IP over wired, wireless, or (humourously) over carrier pigeon.
+
+    However, this of course comes at the expense of performance. In order to obtain abstraction, we are required to throw away (or at least hide) information from higher layers in the protocol stack, and it could be the case that these higher layers would be able to benefit from this hidden information. For example, the layer 2 protocol might be able to discern between different types of packet loss, whether or not its link is faulty versus congestion further into the network, but this information is not transmitted to the layer 4 protocol, who might be able to make better flow control decisions if they know how a particular packet loss occurs.
+        
+\end{enumerate}
+\end{document}
