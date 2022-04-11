@@ -1,0 +1,32 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        Parsimony and distance phylogenetic methods are both techniques to generate a phylogenetic tree from some data about a collection of species/organisms. Distance techniques work by constructing the tree from some distance matrix, i.e. some measure of distance between each species (e.g. the score of an alignment between two DNA sequences). Parsimony methods instead work by using the DNA sequences themselves.
+
+        There are two parsimony problems: small and large. The small parsimony problem has complexity $O(mnk^2)$, where there are $m$ species, each with DNA sequences $n$ characters long, with $k$ states (since the small parsimony problem requires as input an unrooted tree). The large parsimony problem is NP-complete.
+
+        On the other hand, distance phylogenetic techniques can be much faster: UPGMA can be completed in $O(m^2)$ time, and neigbour-joining can be completed in $O(m^3)$ time (which is faster, since $n$ and $k$ are likely to be much bigger than $m$).
+
+    \item
+        Hierarchical clustering and MCL are both techniques for clustering, but hierarchical clustering clusters N-dimensional points, whereas MCL clusters graphs.
+
+        Hierarchical clustering is similar to UPGMA in that we just join the two nearest clusters progressively, until we reach the top-level, and then we can cut off the resulting tree at any point to give us $k$ clusters, for any $k$.
+
+        The MCL algorithm, on the other hand, does not require us to know how many clusters we are looking for, and works instead by randomly walking through an inferred graph, and then weakening/strengthening links based on distance. 
+
+        The hierarchical clustering algorithm scales linearly with the number of nodes, whereas the MCL algorithm has runtime $O(n^3)$ where $n$ is the number of nodes, although can be significantly sped up in most cases since the matrices become sparse.
+
+    \item
+        To identify gene features using a Hidden Markov Model (HMM), we consider the hidden states to be the gene features, and the emissions to be the DNA bases. Assuming we have some ground truth model, we can establish transition and emission probability matrices for our HMM that we can use to discover gene features for other genes.
+
+        Then, given a gene sequence, we wish to use our HMM to infer the hidden states. We can do this using the Viterbi algorithm, which is a dynamic programming algorithm that solves this exact problem. Using this, we can estimate what the underlying gene features of a gene sequence might be.
+
+    \item
+        Non-examinable?
+
+
+        
+\end{enumerate}
+\end{document}

@@ -1,0 +1,87 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+
+        $Z$ is of type $\forall \alpha (\alpha \rightarrow (\alpha \rightarrow \alpha) \rightarrow \alpha)$, or $nat$
+
+        $S$ is of type $nat \rightarrow nat$
+
+    \item
+        We define $I$ as follows:
+
+        $\Lambda \alpha(\lambda x : \alpha (\lambda f: \alpha \rightarrow \alpha (\lambda n : nat (n \alpha x f))))$
+
+        We see that $I \alpha x f Z$ reduces to $Z \alpha x f$, which by definition of $Z$ reduces to $x$, as required.
+
+        We see that $I \alpha x f (S y)$ reduces to $(S y) \alpha x f$, which by definition of $S$ reduces to $f (y \alpha x f)$, and from before we know that $y \alpha x f$ is beta-convertible to $I \alpha x f y$, so this is all convertible to $f (I \alpha x f y)$, as required.
+
+    \item
+        The beta-normal form of $S^0 Z$ is just $Z$, since $S^0 Z = Z$, and $Z$ is beta-normal.
+
+        $S^1 Z = S Z$, so this beta-reduces to $\Lambda \alpha(\lambda x : \alpha (\lambda f : \alpha \rightarrow \alpha (f (Z \alpha x f))))$, which reduces to  $\Lambda \alpha (\lambda x : \alpha (\lambda f : \alpha \rightarrow \alpha (f x)))$
+
+        By similar reasoning, $S^2 Z$ reduces to $\Lambda \alpha(\lambda x : \alpha (\lambda f : \alpha \rightarrow \alpha (f ((S Z) \alpha x f))))$, which reduces to $\Lambda \alpha(\lambda x : \alpha (\lambda f : \alpha \rightarrow \alpha (f (f x))))$
+
+        In general, we can see that the beta-normal form of $S^n Z$ is $\Lambda \alpha (\lambda x : \alpha (\lambda f : \alpha \rightarrow \alpha (f^n x)))$, where $f^n$ is defined analogously to $S^n$.
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                We define $A$ as follows:
+
+                $\lambda n : nat (\lambda m : nat (I nat n S m))$.
+
+                This essentially works by iteratively applying $S$ to $n$, $m$ number of times, giving us $S^{n+m}Z$
+
+                From the types of $I$ and $S$, we easily see this has type $nat \rightarrow nat \rightarrow nat$ as required.
+
+                To prove the required property of $A$, we use induction over the natural numbers.
+
+                Base case $m=0$:
+
+                $A(Z)(S^n Z)$ reduces to $I nat (S^n Z) S Z)))$, and by definition of $I$ we get this reduces to $S^n Z$, as required.
+
+                Inductive case, assume the result holds for $m=k$, try $m=k+1$:
+
+                $A(S^{k+1}Z)(S^n Z)$ reduces to $I nat (S^nZ) S (S^{k+1}Z)$, which by definition of $I$ and $S^{k+1}$ converts to $S(I \alpha (S^nZ) S (S^k Z))$. By induction, we have that $I \alpha (S^n Z) S (S^k Z)$ converts to $S^{n+k}Z$, so the whole thing converts to $S (S^{n+k} Z)$, which is $S^{n+k+1} Z$.
+
+                Therefore, by induction, we are done.
+
+            \item
+                Again, through the types of $A$ and $I$, $M$ has the required type.
+
+                We again proceed by induction over the natural numbers to prove the required property.
+
+                Base case $n=0$:
+
+                $M(S^m Z)(Z)$ reduces to $I nat Z (A (S^m Z)) Z$
+
+                By definition of $I$ this reduces to $Z$, which is the same as $S^{m \cdot 0} Z$.
+
+                Inductive case: assume the result holds for $n=k$, try $n=k+1$:
+
+                $M(S^m Z)(S^{k+1}Z)$ reduces to $I nat Z (A (S^m Z)) (S^{k+1} Z)$
+
+                Again, by definition of $I$ and $S^{k+1}$ this converts to:
+
+                $(A (S^m Z)) (I nat Z (A (S^m Z)) S^k Z)$
+
+                By induction, we have that $I nat Z (A (S^m Z)) S^k Z$ converts to $S^{k \cdot m} Z$, so the whole thing converts to:
+
+                $(A (S^m Z)) (S^{k\cdot m} Z)$, which from (i) converts to $S^{(k+1) \cdot m} Z$, as required.
+
+                Therefore, by induction, $M$ has the required property.
+
+
+
+
+            
+        \end{enumerate}
+
+
+
+        
+    \end{enumerate}
+\end{document}
