@@ -1,0 +1,59 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+    \item
+        Firstly, whilst register allocation often uses live ranges to construct its clash graphs and perform colouring, transformation to SSA form does not use live ranges. Transformation to SSA form simply requires changing each assignment to use a new temporary, and inserting $\phi$ functions to choose the right temporary when branches merge, live ranges do not need to be considered.
+
+        There is some truth to the statement, in that transformation to SSA form and register allocation have somewhat opposite effects (minimising registers used versus maximising registers used), although they are not inverse, since transformation to SSA form might produce more registers than there were before register allocation.
+
+    \item
+        In classical data-flow analysis, address-taken variables cause issues because when a register may hold the address of another variable, we cannot always know which variable the address is of, and thus it becomes hard to accurately model the data-flow, e.g. a naive solution might assume that it could be any variable's address.
+
+        This is a similar problem to constructing a call-graph in a language with higher-order functions, since the variables hold addresses which might be branched to. In data-flow analysis, we had that the data-flow become hard to predict at compile-time, band in this case we have that the control-flow is hard to predict at compile time, and thus building an accurate call graph is difficult. Again, naive solutions may treat the target as any possible address.
+
+    \item
+        Points-to analysis is a forwards analysis. If we suppose that before a particular instruction (often we use procedures in practice), we know the addresses that other variables might point to, then we take the big union to get a safe approximation.
+
+        Andersen's analysis is flow-insensitive, meaning that we only store one record of a points-to relation, whereas the data-flow analysis stores one for each program point. This makes the Andersen's example less precise.
+
+        For example:
+
+\begin{verbatim}
+p = &c
+q = *p
+p = &d
+\end{verbatim}
+
+In the data-flow analysis, we get that \texttt{q} only aliases with \texttt{c}, whereas Andersen's analysis tells us that \texttt{q} might alias with \texttt{c} or \texttt{d}.
+
+We might prefer the imprecise analysis when dealing with entire programs, since Andersen's algorithm is \textit{significantly} less time and memory hungry than the data-flow analysis.
+
+\item
+    Strictness functions are a form of abstract interpretation, and turn a function of $k$ arguments into a function $2^k \rightarrow 2$, where $2$ is the set $\{0,1\}$. The abstract interpretation here maps a value to 0 if it definitely does not terminate, and 1 if it may terminate.
+
+    A strictness function is then a logical expression that represents whether a function will terminate or not based on which of its arguments will terminate or not (we use `will terminate' in the same was as we did before, as to respect the halting problem).
+
+    This is more expressive than simply a list of which parameters a function is strict in, since we essentially replace all of the nuance with disjunction.
+
+    We give the following source language functions that have corresponding strictness functions:
+
+    \begin{itemize}
+        \item
+            $\lambda x,y. x + y$ has strictness function $x \wedge y$
+
+        \item
+            $\lambda x,y. \text{if }rand()\text{ then }x\text{ else y}$ has strictness function $x \wedge y$
+
+        \item
+            $\lambda x,y. x$ has strictness function $x$
+
+        \item
+            No such function exists, or else a function exists that terminates on a non-terminating argument, and does not terminate on a terminating argument, which violates the halting problem.
+    \end{itemize}
+
+
+        
+    \end{enumerate}
+\end{document}

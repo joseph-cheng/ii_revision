@@ -1,0 +1,38 @@
+\input{../../template.tex}
+
+\begin{document}
+Done this before, but will do again for practice...
+\begin{enumerate}[label=(\alph*)]
+    \item
+        A heterogeneous or asymmetric CMP might be preferable to a homogeneous or symmetric one because asymmetry means that we can allocate different workloads to cores that suit them best. This gives us both power and performance benefits.
+
+        For example, ARM's big.LITTLE chip has two chips: a large, power-hungry chip with high performance, and a smaller, less power-intensive chip with low performance. Workloads that require high performance can be sent to the larger chip, but those that do not can be sent to the smaller chip, making a saving on power. We still get parallel computing benefits in the same way that a heterogeneous CMP would, but with better power consumption.
+
+        For a more extreme example, we can look at accelerator-level parallelism. In mobile phones, we often have dedicated accelerators for video/audio codecs, and using these instead of a powerful O3, super-scalar processor is often faster, and uses less power, since the circuit is dedicated to this single function.
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+                There are a few ways that we could offer this on a processor.
+
+                One way of doing this would be to have two pipelines on the chip: a high performance one, and a low performance one. The high performance one might have a deep pipeline, complex branch predictors, many feed-forward paths, out-of-order execution, and be super-scalar, whereas the low performance pipeline might be shallower, have a simple branch predictor, one set of functional units, and be in-order. We might also have less physical registers (assuming the high-performance pipeline does register renaming so these changes are not architecturally visible).
+
+                This requires a large area budget, however. A solution that requires less area might be able to selectively turn off parts of the pipeline, for example turn off the global history portion of a tournament predictor, or disable the register renaming unit and stop powering some of the registers.
+
+                We might have to add additional hardware to support switching so that state is maintained, for example copying register to and from the two pipelines, if the first technique is used, and this might limit how often we can switch between modes due to this large overhead.
+
+            \item
+                We might imagine that user experience will be mostly impacted when a program is just being started, or is being interacted with. Since processes are not a hardware-level concept, this requires us to have some extra instruction in our ISA that allows this switch, and programmers/compilers can insert instructions that switch us to high power mode at the beginning of a program, and on input callback functions. We might then go back to low power mode after a time quanta expires.
+
+                We might also be able to switch based on metrics that the hardware measures, for example if the high-performance processor is able to measure how well the low-performance mode would be able to cope (e.g. through frequency of branches, how much instructions get reordered, etc.), and switch if it determines the workload doesn't require the high-performance.
+
+
+
+
+
+            
+        \end{enumerate}
+
+        
+    \end{enumerate}
+\end{document}
