@@ -1,0 +1,65 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+
+    We use the following integral:
+
+    $f'(t) = \int_{-\infty}^\infty f(\tau) \cdot f(t + \tau) \mathrm{d}\tau$
+
+    The reason this works is, even though there is noise, the pulsar signal buried inside is periodic. This means that the autocorrelation will be able to extract the underlying behaviour by amplifying the periodicity of the noisy signal, and attenuating out the noise which will average out.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        This is just $H(X)$.
+
+      \item
+        The whole thing is $H(X) \cup H(Y)$, so the intersection with $I(X;Y)$ reduces the quantity down to $I(X;Y)$.
+
+      \item
+        Taking the conditional entropy removes the overlap between the two entropies, so there is no overlap between $H(X|Y) \cup H(Y|X)$ and $I(X;Y)$, so we get $\{\}$.
+
+      \item
+        This is just $H(Y)$
+
+      \item
+        These are disjoint, so we get $\{\}$.
+        
+    \end{enumerate}
+
+  \item
+    Dictionary coding essentially exploits the very biased probability distribution of English words. There is no point being able to encode words like \texttt{xcsdvhbeja}, since they will never appear in English text, so we are wasting bits by letting ourselves encode these words. Since English text is sparse in the words that it allows, we instead just want to be able to encode these words, which is exactly what dictionary coding allows for.
+
+    If we encode letter-by-letter, then (assuming we do not encode punctuation, numbers, or capital letters), we have 26 options for each letter, and with 15 bits, we can therefore encode all 1-letter, 2-letter, 3-letter, and some 4-letter words, but most of these are not real English words. This is clearly not enough to properly encode English text. With dictionary coding, we can represent $2^15$ words, but we can choose these words, and it is likely that most text will consist of not more than these $2^15$ words (by Zipf's law).
+
+    The added cost of this strategy is that we need to also transmit our lexicon, which is added overhead, so this may not be suitable for small texts.
+
+  \item
+
+
+    The differential entropies are given below:
+
+    $h(X) = -\int_0^2 p(x)\log_2 p(x) \mathrm{d}x$
+
+    $h(X) = \int_0^2 \frac{1}{2} \mathrm{d}x$
+
+    $h(X) = 1$
+
+    $h(Y) = -\int_0^8 p(y)\log_2p(y) \mathrm{d}y$
+
+    $h(Y) = \int_0^8 \frac{3}{8} \mathrm{d}y$
+
+    $h(Y) = 3$.
+
+    An upper bound on the joint entropy is $h(X,Y) \leq h(X) + h(Y)$, so its upper bound is 4.
+
+    This is reached when $X$ and $Y$ are independent, i.e. there is zero mutual information.
+
+
+
+        
+    \end{enumerate}
+\end{document}

@@ -1,0 +1,40 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    If a pipelined implementation is planned, then ideally we want the length of each pipeline stage to be the same (or at least similar). 
+
+    This means that we want fixed length instructions so that instruction fetch and decode can be reliably fast.
+
+    We also do not want too much complex arithmetic to be done in each instruction (like the VAX's \texttt{POLY} instruction, which evaluated a polynomial).
+
+    We also do not want registers to be able to be accessed in too many different pipeline stages, since we then either have to have many register ports, or introduce stalls.
+
+    We might also want a load-store architecture, so that we do not have to fetch register operands from memory, which is hard to fit into the pipeline.
+
+  \item
+    One of the main benefits of deeper pipelining is that we are able to reduce the critical path, and thus increase the clock frequency. However, as we construct deeper pipelines, it becomes harder to design balanced pipeline stages such that we reduce the critical path enough. Furthermore, we reach limits on clock frequency due to the breakdown of Dennard scaling, so it is hard to get performance gains this way since we end up being unable to drive the clock much faster.
+
+    Furthermore, the introduction of deeper pipelines likely introduces more data hazards, since more instructions are present in the pipeline at any particular time, so we might end up introducing more stalls, for example. We also suffer more from branch mispredicts, since we end up flushing more instructions, wasting more work, and potentially have to do more cleanup in the case of handling precise exceptions.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        If we were to have a large, monolithic design, as opposed to a clustered design, then we require that we are able to forward any FU result to any other FU through the data forwarding network, and the sheer size of a superscalar processor (and thus magnitude of wire delays) means that we are required to either reduce the clock frequency, or force forwarding to take more than one cycle. Neither of these options are ideal.
+
+        Clustering attempts to solve this problem by allowing 1-cycle forwarding within a cluster, but having 2 or 3-cycle forwarding for forwarding between clusters. The idea is that we avoid having to reduce the clock frequency, and hope that most forwarding happens within a cluster, so most of it still happens in a single cycle.
+
+        We get a similar result for the issue logic, since we must wake up a number of instructions that have their operands ready, and the magnitude of wire delays means that this may increase the critical path, but clustering allows us to take the same approach we did with the data forwarding network.
+
+      \item
+        A good steering policy should steer dependent instructions to the same cluster. This minimises the inter-cluster forwarding that occurs, and thus minimises delays.
+
+        A good steering policy should also send roughly equal numbers of instructions to each cluster, such that we balance the workload and do not waste cycles by leaving one cluster idle (without this goal, a trivial steering policy is to send all instructions to one cluster, which we clearly don't want).
+        
+    \end{enumerate}
+
+        
+\end{enumerate}
+\end{document}

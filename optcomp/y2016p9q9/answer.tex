@@ -1,0 +1,73 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    Strictness optimisation is useful in pure functional languages, with lazy evaluation (either call-by-name or call-by-need).
+
+    In these languages, strictness optimisation can be used to replace CBName/Need arguments with CBV arguments. The benefit of this is that in the case of call-by-name we potentially reduce the amount of times we evaluate a parameter, and with call-by-need we do not have to carry around the overhead of a closure, which gives us better asymptotic space complexity.
+
+    The strictness analyser will annotate every user-defined function with a bit-array, which marks each parameter as lazy or strict, which determines which arguments we can replace with CBV.
+
+    Consider the following program, in an assumed call-by-need programming language:
+
+\begin{verbatim}
+f(x, y) = if x = 0 then y else f(x-1, y+1)
+\end{verbatim}
+Which computes $x+y$ for positive integers.
+
+After strictness optimisation, we see that this is strict in $y$, so we can replace $y$ with CBV instead of call-by-need. In call-by-need, we have to carry around a closure for each of the calls to $f$, so we have $O(x)$ space complexity, whereas with CBV we do not, so we have $O(1)$ space complexity.
+
+\item
+
+  The domain and range of its associated strictness function is $2^n \rightarrow 2$, where $2$ is the set $\{0,1\}$, and 0 represents never terminating, and 1 represents possible termination.
+
+  Such a strictness function can be used to produce the annotations in (a) by, for every $k$, computing $f^{\#}(1,...,1,0,1,...,1)$, where the 0 is the $k$th argument of strictness function $f^{\#}$ for $f$, and if the result is 0, we can mark that parameter as strict.
+
+\item
+  A strictness function is really just a propositional formula. For this reason, we could use OBDDs to represent our strictness functions. This has a few benefits over other options like using internal functions in the language.
+
+  For example, OBDDs have very fast tests for equality, since they are simply checking equality of pointers (we never store the same formula more than once), which is useful for the fixed-point iteration we do in computing strictness functions.
+
+  We are also able to determine equality in a way that we could not with ordinary functions. In the question, we are given two different strictness functions $\lambda(x,y,z).x \wedge(y \vee z)$ and $\lambda(x,y,z).(x\wedge y)\vee(x \wedge z)$, which both have the exact same behaviour, and thus are the same function, but we would not be able to easily distinguish them using internal functions of the language (unless perhaps we try every combination of $x,y,z$ as input).
+
+  Again, these two strictness functions do not enable different strictness optimisations, since they have the same behaviour.
+
+\item
+  \begin{enumerate}[label=(\roman*)]
+    \item
+
+      $add^{\#}(x,y). x \vee y$
+
+      $cond^{\#}(x,y,z). x \wedge (y \vee z)$
+
+    \item
+
+      We now have an extra condition: we might terminate even if  $x$ does not terminate, as long as both $y$ and $z$ terminate:
+
+      $pcond^{\#}(x,y,z). (x \wedge (y \vee z)) \vee (y \wedge z)$
+
+    \item
+
+      For this, we need to perform some fixed-point iteration because we have recursion. We begin by assuming that that the strictness function of $f$ is $\lambda (x,y,z,t,u). 0$.
+
+      We also have the equality, subtraction, and multiplication functions having the same strictness function as addition.
+
+      We then get the following iterations:
+
+      $f^{\#}(x,y,z,t,u) = x \wedge (y \vee 0) = x \wedge y$
+
+      $f^{\#}(x,y,z,t,u) = x \wedge (y \vee (x \wedge t)) = x \wedge y \vee x \wedge t$
+
+      $f^{\#}(x,y,z,t,u) = x \wedge (y \vee (x \wedge t \vee x \wedge y)) = x \wedge y \vee x \wedge t$
+
+      We have reached a fixed point, so our final strictness function is $\lambda(x,y,z,t,u). x \wedge y \vee x \wedge t$.
+
+      
+  \end{enumerate}
+
+
+        
+\end{enumerate}
+\end{document}

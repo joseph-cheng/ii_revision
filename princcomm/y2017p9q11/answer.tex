@@ -1,0 +1,18 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Data centre networks and the general Internet vary widely in many aspects.
+
+    For example, in data centre networks, we know the all of the traffic and source behaviour, because we control it! We have centralised control over the entire network, so all of this knowledge is known to us. The Internet, however, has very different behaviour: the network is so vast and distributed that it is impossible to know traffic and source behaviour at any time, and even further, even if we are able to measure the traffic and source behaviour, it changes so frequently that this information becomes stale very quickly. Overall, this means that it is hard to make routing decisions that are based upon traffic behaviour in the Internet. For example, in data centre networks we can offer priority queueing through QJump, because we can ensure that the high-priority traffic does not starve the low-priority traffic, but such a system could never work in the Internet.
+
+    We also get similar observations for network topologies: we construct the data centre network topology, so we can choose a topology that is optimal (or at least very good) for our application. In the Internet, network topology changes all of the time, and we do not have any control over it.
+
+    Another reason the data centre network differs from the general Internet is that the Internet has to somehow deal with politics (like with BGP) and be able to deal with arbitrary requirements, as well as information hiding (i.e. hiding the internal structure of AS networks), whereas in data centres, we can know the entire state of the network at any point, with no concerns about dealing with arbitrary requirements to satisfy politics.
+
+  \item
+    Not relevant
+        
+\end{enumerate}
+\end{document}
