@@ -1,0 +1,60 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        We use dynamics programming algorithms for sequence alignment because sequence alignment problems can be reduced to solving a set of overlapping sub-problems.
+
+        In the case of pairwise sequence alignment, if we have sequences $x$ and $y$, and we want to align them starting at the $i$th and $j$th index respectively, then the best alignment score $F(i,j)$ comes from:
+
+        $F(i,j) = \max \begin{cases}F(i, j-1) - \delta\\F(i-1, j) - \delta\\F(i-1, j-1) + \epsilon & x_i=y_j\\F(i-1, j-1) - \epsilon' & x_i\neq y_j\end{cases}$
+
+        Where $\delta$ is the penalty for inserting a gap, $\epsilon$ is the reward for a match, and $\epsilon'$ is the penalty for a mismatch.
+
+        The use of dynamic programming in computing $F$ means that this only takes $O(|x| \cdot |y|)$ time.
+
+      \item
+        In DNA sequence alignment, we might want to reduce the penalty of gaps if we are in a long chain, since we expect that when gaps occur, they occur in large contiguous bunches, so we do not necessarily want to penalise large gaps significantly more than smaller gaps.
+
+        To do this, we might use a convex gap penalty function instead of a linear one, but this increases the asymptotic runtime, so we might instead use affine gaps, where we have a large gap opening penalty, and a smaller gap extension penalty.
+
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        (PatternHunter and BLAST not relevant)
+
+        The Smith-Waterman and Needleman-Wunsch algorithms are both algorithms for sequence alignment, but the Smith-Waterman algorithm is an algorithm for local alignment, i.e. finding closely-matching subsequences between two sequences, and the Needleman-Wunsch algorithm is for global alignment, i.e. finding an alignment between two entire sequences.
+
+        The Needleman-Wunsch algorithm works similarly to described in (a)(i): we decide on an indel penalty $d$, and a score matrix $s$, and solve with dynamic programming the following:
+
+        $F(i,j) = \max \begin{cases}F(i-1, j) - \delta\\F(i, j-1) - \delta\\F(i-1, j-1) + s(x_i, y_j)\end{cases}$
+
+        We do this by building a $|x| \times |y|$ matrix, where the bottom-right cell is the final alignment score.
+
+        Alongside, we build a pointer matrix that essentially stores the direction we moved in to get to that cell, allowing us to reconstruct an alignment.
+
+        The Smith-Waterman algorithm is similar, but we instead add an additional case into our $F$:
+
+        $F(i,j) = \max \begin{cases}0\\F(i-1, j) - \delta\\F(i, j-1) - \delta\\F(i-1, j-1) + s(x_i, y_j)\end{cases}$
+
+        This extra case ensures that we are always looking at the best local case, and not being punished by arriving at a particular $(i,j)$.
+    \end{enumerate}
+
+  \item
+    Dynamic programming can be easily extended to multiple alignment, but at a cost: runtime complexity. For an $n$-alignment, it runs in time $O(|x|^n)$, where $|x|$ is the maximum length of the strings in the set, so we essentially have exponential run-time.
+
+    Other techniques, like CLUSTAL, use heuristics to speed up the alignment, but at the cost of not necessarily being optimal.
+
+    The idea behind CLUSTAL is the idea that a multiple alignment induces pairwise alignments, and so by constructing each of the pairwise alignments (which is reasonably fast), we can construct a tree that groups similar sequences together (by turning the alignment scores into distance measures, attempting to represent evolutionary distance, and then e.g. using Neighbour-Joining), and then using this tree to guide an order of iterative multiple alignment: where we create a multiple alignment by aligning each sequence in turn to our overall multiple alignment so far.
+
+    This has runtime $O(|x|^2n^2)$, which is much faster than the dynamic programming method.
+
+        
+\end{enumerate}
+\end{document}
