@@ -1,0 +1,77 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    The Curry-Howard correspondence is a correspondence between elements of a programming language and mathematical logic. In this particular case, we look at the PLC, and 2IPC.
+
+    With this correspondence, we have that types correspond to formulas. Ideas like universal quantification in 2IPC correspond to quantification over types in PLC. Implication corresponds to functions.
+
+    Programs correspond to proofs. In particular, a program with type $T$ corresponds to a proof of the corresponding formula for $T$. For example with implication, a function of type $T \rightarrow T'$ tells us that if we have a program of type $T$, we can obtain a program of type $T'$. Analogously, if we know $A \Rightarrow B$, and we know that $A$ is true, we can deduce that $B$ must be true.
+
+    Conjunction and disjunction corresponds with product and sum types respectively, which we can encode with the PLC, e.g. the encoding of $p \vee q$ is given in the question.
+
+    Furthermore, $\beta$ reduction in the PLC corresponds to simplification of a proof in 2IPC.
+
+    We now give the typing rules for the PLC, which correspond to deduction rules in 2IPC:
+
+    \begin{align*}
+      \textsc{var}&\frac{}{\Theta;\Gamma \vdash x : T}(\Gamma(x) = T)\\
+      \textsc{fn}&\frac{\Theta;\Gamma, x : T \vdash e : T'}{\Theta;\Gamma \vdash \lambda x : T.e : T\rightarrow T'}\\
+      \textsc{app}&\frac{\Theta;\Gamma \vdash e : T \rightarrow T' \hspace{15pt} \Theta;\Gamma \vdash e' : T}{\Theta;\Gamma \vdash e e' : T'}\\
+      \textsc{$\forall$ fn}&\frac{\Theta, \alpha;\Gamma \vdash e : T}{\Theta;\Gamma \vdash \Lambda \alpha(e) : \forall \alpha (T)}\\
+      \textsc{$\forall$ app}&\frac{\Theta;\Gamma \vdash e : \forall \alpha (T) \hspace{15pt} \Theta \vdash T' type}{\Theta;\Gamma \vdash e T' : T[T' / \alpha]}\\
+    \end{align*}
+
+    To give a proof of $\{\} \vdash \forall p,q,r ((p \rightarrow r) \rightarrow (q \rightarrow r) \rightarrow (p \vee q) \rightarrow r$, we simply need to find a program that has a corresponding type.
+
+    We use the program given below.
+
+    Let $\Gamma = \{x : p \rightarrow r, y : q \rightarrow r, z : p \vee q\}, \Theta = \{p,q,r\}$
+
+    We get the following typing derivation:
+
+    $\Theta;\Gamma \vdash z : \forall r((p \rightarrow r) \rightarrow (q \rightarrow r) \rightarrow r)$ (by var)
+
+    $\Theta \vdash r type$
+
+    $\Theta;\Gamma \vdash z r : (p \rightarrow r) \rightarrow (q \rightarrow r) \rightarrow r$ (by $\forall$ app)
+
+    $\Theta;\Gamma \vdash x : p \rightarrrow r$ (by var)
+
+    $\Theta;\Gamma \vdash z r x : (q \rightarrow r) \rightarrow r$ (by app)
+
+    $\Theta;\Gamma \vdash y : q \rightarrow r$ (by var)
+
+    $\Theta;\Gamma \vdash z r x y :r$ (by app)
+
+    $\Theta;\{\} \vdash \lambda x : p \rightarrow r, y : q \rightarrow r, z : p \vee q (z r x y) : (p \rightarrow r) \rightarrow (q \rightarrow r) \rightarrow (p \vee q) \rightarrow r$ (through 3 applications of fn)
+
+    $\{\};\{\} \vdash \Lambda p,q,r (\lambda x : p \rightarrow r, y : q \rightarrow r, z : p \vee q (z r x y)) : \forall p,q,r((p \rightarrow r) \rightarrow (q \rightarrow r) \rightarrow (p \vee q) \rightarrow r)$
+
+    As required.
+
+  \item
+    As mentioned before, $\beta$ reduction on PLC expressions can be used to simplify proofs in 2IPC.
+
+    Suppose we have a program $e$ that is a proof for some type $T$.
+
+    Since $e$ is a proof for a type $T$, it is typeable. We then use the following properties of the PLC:
+
+    \begin{itemize}
+      \item
+        Type safety: this tells us that if a program $e$ has type $T$, and $e \rightarrow_\beta e'$, then $e'$ has type $T$.
+
+      \item
+        Strong normalization: this tells us that no typeable programs result in an infinite chain of $\beta$-reduction.
+
+      \item
+        The Church-Rosser theorem: this tells us that if $e \rightarrow_\beta^* e_1$ and $e \rightarrow_beta^* e_2$, then there exists some $e'$ such that $e_1 \rightarrow_\beta^* e'$ and $e_2\rightarrow_\beta^* e'$.
+    \end{itemize}
+
+    The last two properties give us that our program $e$ must reduce to some $\beta$ normal form $e'$, for which no beta-reduction is possible (which we assume to be simpler than $e$).
+
+    Combined with the first property, we get that this $e'$ must have type $T$, and therefore by $\beta$ reducing a term until it reaches its $\beta$ normal form, we are able to obtain a simpler expression that is still a proof for our original formula.
+        
+\end{enumerate}
+\end{document}

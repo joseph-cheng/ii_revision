@@ -1,0 +1,31 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    We provide three circumstances below:
+
+    \begin{itemize}
+      \item
+        The receiver window is smaller than the congestion window, meaning that we are unlikely to encounter packet loss through congestion, and thus the congestion control mechanism will not be triggered.
+
+      \item
+        The sender is rate-limited, for example in YouTube's TCP implementation, where the sender refuses to send data faster than a particular rate. If this rate is smaller than the average rate under TCP, then we would expect that the TCP congestion control mechanism would not be triggered.
+
+      \item
+        If there is a middle-box after the sender that does something like splitting the TCP connection into many, This means that the congestion window within each of the TCP connections will be less than what it should be, allowing the congestion control mechanism to be avoieded.
+    \end{itemize}
+
+  \item
+    This scenario is similar to route flapping, where if a link quickly changes between up and down, then the router will continuously advertise new routes.
+
+    In BGP, we punish routers that send too many route update messages, and we can apply the same concept here to the Wikipedia authors.
+
+    We can measure the rate at which each author (either by user, or IP address if anonymous) updates a particular page, and if this rate exceeds some threshold, then we apply a penalty, which limits the rate at which they can update that page for a certain amount of time. If they continue to exceed the threshold after the penalty, then the next penalty that is applied is even more severe, perhaps up until the point that they become unable to make edits to that article (or all articles) anymore, so we essentially dampen the edit rate.
+
+    If there is an edit war, we expect the rate of edits for the authors involved to be quite high, so they should exceed the threshold for rate limiting. When this occurs, they will stop being incentivised to continue the edit war since they cannot respond as quickly to state changes, and if they do, then there will eventually become a point where they stop being able to make changes.
+
+    This should not affect regular usage of Wikipedia, since we assume that we choose the threshold intelligently such that the normal rate of editing would not exceed the threshold.
+        
+\end{enumerate}
+\end{document}

@@ -1,0 +1,34 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Superblock scheduling is a compiler technique to allow more extraction of ILP by the compiler, by attempting to only consider the most common control flow path. With this estimated most common control flow path, we remove all side entrances by duplicating the tail of the superblock instead of allowing a side entrance. This means that the superblock is effectively linear (apart from side exits), so more ILP can be extracted because we do not have to consider state from side entrances.
+
+    Trace scheduling is a hardware technique to allow more extraction of ILP at run-time. This works by caching instructions in the order that they are executed, as opposed to according to their locations in memory. This means that when we execute along some control flow path, we are likely to be able to extract ILP across branches because we are likely to know the upcoming instructions, regardless of branches.
+
+  \item
+    A programmer might be able to improve the performance of a program by tailoring it to the memory hierarchy. For example, they may make the trade-off of slower algorithms for less space, in order to get the working set of the program to fit in a cache, instead of slightly overflowing it (which drastically increases performance).
+
+    They might also optimise the order in which data is accessed. For example, if they are iterating over elements of some matrix and performing some independent operation on each one, then they can optimise the order in which they iterate over them based on the memory hierarchy, e.g. in blocks as opposed to columns/rows in order to increase temporal locality.
+
+    They might also change the memory layout of certain data structures, for example a common technique is to store a struct of arrays, instead of an array of structs, such that iterating over a particular field in every struct is faster, since we have better spatial locality.
+
+    If available, they might also be able to exploit prefetching by including an explicit \texttt{prefetch} instruction when they know they will need data soon, to avoid compulsory misses.
+
+  \item
+    There are numerous reasons that larger networks are not analogous to on-chip networks. For example, larger networks are often restricted by cable cost, whereas wires are very cheap in on-chip networks comparatively, and joining wires together is basically free.
+
+    On-chip networks are also heavily limited by power consumption, in a way that larger networks are not, which means we have to be careful about lengths of individual wires, and complexity of routing algorithms.
+
+    In larger networks, it is often the case that bandwidth is the most important factor, whereas in on-chip networks we mostly care about incredibly low latencies more than anything else, to ensure that we do not introduce wasted cycles. This means that we are harshly limited by complexity of routing protocols and physical wire length.
+
+    We may also have very limited space for packet queues than compared to larger networks, since the area available to each router is likely to be very small.
+
+  \item
+    This is particularly problematic when attempting to increase the performance of superscalar processors because superscalar processors contain large amounts of state that we need to access all in one cycle: the instruction window, the data-forwarding network, multi-ported register files, etc. In order for these to scale up, we require many wires, and long wires. This means that it gets harder to ensure that all of the state can be accessible in one clock cycle without reducing the clock frequency, which means that we either have to reduce the clock frequency, introduce bubbles, or implement complex techniques that allow us to access the state that we need in one clock cycle \textit{most} of the time.
+
+
+        
+\end{enumerate}
+\end{document}
