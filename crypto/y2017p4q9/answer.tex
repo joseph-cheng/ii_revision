@@ -1,0 +1,28 @@
+\input{../../template.tex}
+
+\begin{document}
+Only (a) is relevant
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        Here, they are combined as $(Enc_{K_E}(M), Mac_{K_M}(M))$
+
+        Here, we are unlikely to provide CCA security because we cannot even provide CPA security, since the Mac is deterministic, and since CCA security requires CPA security, we cannot provide CCA security.
+
+      \item
+        Here, they are combined as $(Enc_{K_E}(M || Mac_{K_M}(M)))$.
+
+        This is unlikely to provide CCA security, since a very careful implementation would have to be done to ensure that side channel attacks are not possible. This is because the decryption oracle parses the decrypted message into $M$ and $Mac_{K_M}(M)$, and then attempts to verify the authentication, but the verifier may leak information about $M$, resulting in a side-channel attack.
+
+      \item
+        Here, they are combined as $(Enc_{K_E}(M), Mac_{K_M}(Enc_{K_E}(M)))$
+
+        This does provide CCA security, since the MAC verifier will no longer leak information about $M$, but $Enc_{K_E}(M)$, which we assume to be indistinguishable from random.
+        
+    \end{enumerate}
+        
+    \end{enumerate}
+\end{document}
