@@ -1,0 +1,67 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+            \item
+
+                \begin{enumerate}[label=(\Alph*)]
+                    \item
+                    
+                To decrypt this, we simply read a character on the bottom row of the table, and output the character on top:
+
+                \texttt{SKYTALE}
+
+            \item
+                Here, we simply perform modulo-subtraction with the encryption of the previous ciphertext block, starting at the first index (since the zeroth index is the IV):
+
+                Encrypting the ciphertext blocks, we get:
+
+                \texttt{CVQLHBL}
+
+                Adding this to our ciphertext (shifting forward one character), we get:
+
+                \texttt{TURING}
+
+            \item
+                Here, we produce our $R$ chain, and subtract it from our ciphertext to get the plaintext.
+
+                \texttt{R = LJZKOIY}
+
+                Then our plaintext is:
+
+                \texttt{ENIGMA}
+
+                \end{enumerate}
+
+            \item
+
+                To compute CBC-MAC, we simply feed our message into $E_K$, adding the last output into the input before we do so, and then outputting the output for the last block.
+
+                So, we get that the output of each block is:
+
+                \texttt{HMBCCV}, and then take the last block, so our output is V.
+
+
+
+
+        \end{enumerate}
+
+    \item
+        Here, we can perform a length extension attack.
+
+        We know that the computation of this MAC comes from $E_K(E_K(E_K(1) \oplus 0) \oplus 0)= E_K(E_K(E_K(1))) = 4$
+
+        Suppose we choose message $1007$, then the MAC of this will be $E_K(4 \oplus 7) = E_K(1)$
+
+        Now, if we choose message $10070$, we see the MAC becomes $E_K(E_K(1) \oplus 0) = E_K(E_K(1))$, and finally choosing message $100700$, we see the MAC becomes $E_K(E_K(E_K(1))) = 4$, so we send that message and tag 4, and we will verify correctly.
+
+    \item
+        The issue here is that CBC-MAC is not suitable for variable-length messages, since it reveals internal state of the computation, so the designer should choose something like ECBC-MAC instead, which does not.
+
+
+        
+    \end{enumerate}
+\end{document}

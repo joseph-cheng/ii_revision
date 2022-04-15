@@ -1,0 +1,46 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+    \item
+        A pseudo-random generator is a function $\{0,1\}^n \rightarrow \{0,1\}^{e(n)}$ (where $e(n) > n$), such that no distinguisher exists that can distinguish between a single output of a PRG, and a single output of a truly random number.
+
+        A (keyed) pseudo-random function is a function $F : \{0,1\}^k \rightarrow \{0,1\}^m \rightarrow \{0,1\}^n$, such that no distinguisher exists that can distinguish between outputs from $F_K$ (given oracle access), and a function $f$ chosen at random from the set of all functions $\{0,1\}^m \rightarrow \{0,1\}^n$.
+
+        The key difference here between the security definitions is that a PRG is only required to generate a single indistinguishable number, whereas a PRF is required for the entire function to be indistinguishable from a random function.
+
+    \item
+        Not relevant
+    \item
+        Existential unforgeability is a security definition for MACs that essentially requires that no adversary can construct a MAC for a message on its own, given oracle access to the MAC function.
+
+        We describe the game as follows:
+
+        The user $\mathcal{U}$ chooses a key $K$
+
+        An adversary $\mathcal{A}$ is able to send a message $M_i$ to $\mathcal{U}$. $\mathcal{U}$ must reply with tag $T_i = MAC_K(M_i)$
+
+        The previous step can be completed a polynomial number of times.
+
+        $\mathcal{A}$ then sends a pair $(M,T)$ to $\mathcal{U}$, with $M \neq M_i$ for all $i$
+
+        The adversary wins if $Vrfy_K(M,T) = 1$, and loses otherwise.
+
+        We say a MAC has existential unforgeability if no adversary exists that wins this game with non-negligible probability.
+
+    \item
+        The problem with CBC-MAC is that it only provides existential unforgeability for fixed-length messages. If variable-length messages are allowed, an adversary can send $M_1$ as arbitrary, and receive $T_1 = E_K(M_1)$. Then, they can maliciously choose $M = M_1||(T_1 \oplus M_1)$. Since $CBC-MAC_K(M)= E_K((T_1 \oplus M_1) \oplus E_K(M_1)) = E_K((T_1 \oplus M_1) \oplus T_1) = E_K(M_1) = T_1$, we can choose $T = T_1$ and win with probability 1.
+
+        ECBC-MAC solves this with adding an additional use of $E$: $ECBC-MAC_{K,M'}(M) = E_{K'}(CBC-MAC_K(M))$
+
+        This stops the length-extension attack, since the output from ECBC-MAC is no longer what gets fed into the next block.
+
+    \item
+        Not relevant
+
+
+
+        
+    \end{enumerate}
+\end{document}

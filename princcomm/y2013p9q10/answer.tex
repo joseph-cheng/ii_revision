@@ -1,0 +1,41 @@
+\input{../../template.tex}
+\usepackage{parskip}
+
+\begin{document}
+In a circuit-switched network, as was used in previous voice communication, we are able to guarantee certain qualities of communication to users, e.g. guaranteed delay or bandwidth properties.
+
+Furthermore, real-time voice communication is inelastic: we cannot adjust to different delays or throughputs very well.
+
+To deal with this, we need to be able to implement some kind of QoS in the Internet, which being a packet-switched network does not trivially support QoS in the same way a circuit-switched network does.
+
+There are a few technical enhancements we might require in order to be able to support this: we discuss admission control, changing queueing/scheduling policies, and traffic management/engineering.
+
+First, we discuss admission control, where a user sends a request to start a connection with a description of the network parameters they require (e.g. guaranteed average rate), and the network decides based on these parameters whether or not to admit the request. Then, if the request is admitted, data transmission can proceed and the network will monitor the call, policing it if it breaks the parameters of its request.
+
+This requires two enhancements: we need to be able to know what kind of resources the network has available to it, and we need to implement monitoring of traffic in order to police calls.
+
+\vspace{15pt}
+
+We might also change the queueing and scheduling policies within our network. For example, we might implement class-based queuing, such that we have a class for regular traffic, and a class for real-time voice/video traffic. Link capacity will be split between these two classes at each node, ensuring that the real-time traffic is able to continue, even when there is heavy load from non-real-time traffic, essentially helping us to implement QoS.
+
+If we have distinct physical queues for the different classes, we can also change our scheduling policy, for example using something simple like FIFO for the non-real-time traffic, but WFQ for the real-time traffic, to ensure that of the voice/video calls gets a similar share of the bandwidth.
+
+\vspace{15pt}
+
+Finally, we might implement traffic engineering, which at a high-level lets us satisfy different network requests, i.e. providing QoS.
+
+To implement traffic engineering, we require some kind of model of traffic/user behaviour, which it is likely we can do to some extent given that mobile phone providers will be able to track all transmissions (both of data and voice/video calls), providing a decent model for which to base our policies on.
+
+So, we have each flow tell the network their utility function (their utility as a function of flow properties), and the network tries to maximise each flow's utility function.
+
+This is of course all non-trivial, we have to do work to implement each of these things.
+
+First, flows might tell the network their utility function through RSVP, where a sender transmits a message to the receiver, with the routers keeping track of the path, and the receiver sends back a message asking each of the routers to reserve resources to meet some service.
+
+Then, data transmission can occur, and again, the network will police each flow based on the resources it requested, similar to admission control.
+
+
+
+
+
+\end{document}
