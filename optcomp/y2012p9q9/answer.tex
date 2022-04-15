@@ -1,0 +1,140 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+    \item
+        The idea behind strictness analysis is to try and approximate termination behaviour. Non-function values are abstractly interpreted as an element from $2 = \{0,1\}$, where 0 represents `the computation to evaluate this definitely does not terminate' and 1 represents `the computation to evaluate this may terminate'. The concrete values are the set of expressions in the programming language.
+
+        Functions $f$ of $k$ arguments are abstracted to strictness functions $f^{\#} : 2^k \rightarrow 2$. This tells us that if a function is executed where parameters have certain termination behaviour (given by their abstract interpretation), what the termination behaviour of the execution of the function is interpreted as.
+
+        Strictness functions for user-defined functions are defined by composing manually decided strictness functions for built-in functions.
+
+        $\lambda(x,y).x+y$ has strictness function $\lambda(x,y) x \wedge y$
+
+        $\lambda(x,y). if random() then x else y$ has abstract interpretation $x \vee y$.
+
+    \item
+        \begin{enumerate}[label=(\roman*)]
+
+            \item
+                This is an incorrect statement. The algorithm for computing strictness analysis always terminates, because we are not providing a perfectly accurate abstract representation of termination behaviour (otherwise we would violate the Halting Problem), we merely provide an estimate. The estimate that we use is computable, and so we are always able to terminate, even on non-terminating programs. If we were not, our strictness analysis would be useless.
+
+            \item
+                This statement is also true due to the nature of how we define strictness.
+
+                A strict function's argument is only guaranteed to be evaluated if the function returns. For example, $\lambda x: loop()$ is strict in $x$. This is just due to how we define strictness. We can define other concepts that capture whether or not a parameter is evaluated, but they are not useful for what we want to do here.
+
+        \end{enumerate}
+
+    \item
+        We give the following abstract interpretations:
+
+        \begin{enumerate}[label=(\roman*)]
+
+            \item
+                \begin{tabular}{cc}
+                    x&output\\
+                    \hline
+                    0&$1\in$\\
+                    $\infty$&$1\in$\\
+                    $0\in$&$1\in$\\
+                    $1\in$&$1\in$\\
+                \end{tabular}
+
+            \item
+                \begin{tabular}{cc}
+                    x&output\\
+                    \hline
+                    0&$\infty$\\
+                    $\infty$&$\infty$\\
+                    $0\in$&$0\in$\\
+                    $1\in$&$1\in$\\
+                \end{tabular}
+
+            \item
+                Here $x$ might be an $int$ or an $int list$, so we give it the most specific abstract interpretation (noting that if passed an $int$, we can just give it abstract interpretation $1\in$)
+
+                \begin{tabular}{ccc}
+                    x&y&output\\
+                    \hline
+                    0&0&0\\
+                    0&$\infty$&$\infty$\\
+                    0&$0\in$&$0\in$\\
+                    0&$1\in$&$1\in$\\
+                    $\infty$&0&$\infty$\\
+                    $\infty$&$\infty$&$\infty$\\
+                    $\infty$&$0\in$&$0\in$\\
+                    $\infty$&$1\in$&$1\in$\\
+                    $0\in$&0&$0\in$\\
+                    $0\in$&$\infty$&$0\in$\\
+                    $0\in$&$0\in$&$0\in$\\
+                    $0\in$&$1\in$&$1\in$\\
+                    $1\in$&0&$1\in$\\
+                    $1\in$&$\infty$&$1\in$\\
+                    $1\in$&$0\in$&$1\in$\\
+                    $1\in$&$1\in$&$1\in$\\
+                    
+                \end{tabular}
+
+            \item
+                \begin{tabular}{cc}
+                    input&output\\
+                    \hline
+                    0&0\\
+                    $\infty$&1\\
+                    $0\in$&1\\
+                    $1\in$&1
+                \end{tabular}
+
+            \item
+                \begin{tabular}{cc}
+                    input&output\\
+                    \hline
+                    0&0\\
+                    $\infty$&$\infty$\\
+                    $0\in$&$1\in$\\
+                    $1\in$$1\in$&
+                \end{tabular}
+
+            \item
+                \begin{tabular}{ccc}
+                input1&input2&output\\
+                    \hline
+                    0&0&0\\
+                    0&$\infty$&$0$\\
+                    0&$0\in$&$0$\\
+                    0&$1\in$&$0$\\
+                    $\infty$&0&$$\infty$\\
+                    $\infty$&$\infty$&$\infty$\\
+                    $\infty$&$0\in$&$\infty$\\
+                    $\infty$&$1\in$&$\infty$\\
+                    $0\in$&0&$\infty$\\
+                    $0\in$&$\infty$&$\infty$\\
+                    $0\in$&$0\in$&$0\in$\\
+                    $0\in$&$1\in$&$0\in$\\
+                    $1\in$&0&$\infty$\\
+                    $1\in$&$\infty$&$\infty$\\
+                    $1\in$&$0\in$&$0\in$\\
+                    $1\in$&$1\in$&$1\in$\\
+                \end{tabular}
+
+            \item
+                \begin{tabular}{cc}
+                    input&output\\
+                    \hline
+                    0&0\\
+                    $\infty$&0\\
+                    $0\in$&$0\in$\\
+                    $1\in$&$1\in$\\
+                    
+                \end{tabular}
+                    
+
+
+            
+        \end{enumerate}
+
+
+        
+\end{enumerate}
+\end{document}
