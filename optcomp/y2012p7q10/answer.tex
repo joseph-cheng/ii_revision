@@ -1,0 +1,101 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+        
+  \item
+
+    The three dataflow anomalies are $UR$, $DD$, and $DU$, corresponding to use-before-defined, write-write, and dead code.
+
+    Use-before-defined is an anomaly because a variable is used before it is defined, so its value will not be defined and behaviour will be unexpected, e.g.:
+
+\begin{verbatim}
+void foo() {
+  int x;
+  print x;
+}
+\end{verbatim}
+
+Write-write is an anomaly because the first write is useless, we should only need to write a variable once before it is referenced, e.g.:
+
+\begin{verbatim}
+void foo() {
+  int x = 1;
+  int x = 2;
+  print x;
+}
+\end{verbatim}
+
+Dead code is an anomaly because the effects of the write are not observable:
+
+\begin{verbatim}
+void foo() {
+  int x = 1;
+  return;
+}
+\end{verbatim}
+
+After annotation, we consider pairs by considering two adjacent annotations of a particular variable, where `adjacent' means along any possible path in a dataflow graph, some of which may not be possible in an actual execution of the program.
+
+\item
+\begin{verbatim}
+void foo() {
+  int x = 0, y, z = 1;
+
+  if (x == 0) {
+    y = 5;
+    z = 2; // DD
+  }
+  print y; // UR
+
+  x = bar(); // DU
+  if (baz()) {
+    print z;
+    print x;
+  }
+}
+\end{verbatim}
+
+The UR only exists because of the aforementioned approximation, $x$ is always 0 on entry, so the if is always entered, and therefore we always define $y$ before the print, so it is not programmer error.
+
+The DD is not programmer error because the \texttt{z} might be defined at the start of the program for stylistic reasons in the code.
+
+The DU is not programmer error because we might only want to print the variables under some condition, and not otherwise.
+
+\item
+  A must-anomaly is a data-flow anomaly that occurs on all paths to a particular program point, whereas a may-anomaly is a data-flow anomaly that occurs on at least one, but not all, paths to a particular program point.
+
+  The previous definition corresponds to may-anomalies.
+
+  The program in part (b) contains no must-anomalies.
+
+\item
+  We use the following dataflow equations:
+
+  \[
+    may-ur(n) = \left(\bigcup_{s \in succ(n)} may-ur(s)\right) \setminus kill(n) \cup gen(n)
+  \]
+
+  \[
+    must-ur(n) = \left(\bigcap_{s \in succ(n)} must-ur(s)\right) \setminus kill(n) \cup gen(n)
+  \]
+
+  Where the $kill$ and $gen$ sets for a node $n$ are the sets of variables the node kills (defines) and generates (references) respectively.
+
+  These can be used to generate the given compiler messages as follows:
+
+  If, for some scope with entrance and exit at $m$ and $n$ respectively, we have that $x \in may-ur(m)$ and $x \not \in may-ur(n)$, then we can issue ``variable $x$ may be read before being set''.
+
+  Likewise, if $x \in must-ur(m)$ and $x \not \in must-ur(n)$, then we can issue `variable $x$ is definitely read before being set''
+
+  To solve these data-flow equations, sets should be initialised to $\{\}$ for $may-ur$ and $U$ for $must-ur$ (except for the exit points, which should be set to $\{\}$.
+
+\item
+  If we have indirect assignments to address-taken variables, then whenever we write to a dereferenced pointer, we could be writing to any address-taken variables, so the above analyses must be modified  to kill all address-taken variables for $may-ur$, and no address-taken variables in $must-ur$. Similarly, we must generate all address-taken variables when we assign from a dereferenced pointer in $may-ur$, and generate no address-taken variables when we assign from a dereferenced pointer in $must-ur$.
+
+\item
+  The claim here is that if the loop iterates forever, then we never read $x$, so the wording does not correlate with the execution of the program. We could change the reported error message, and wording, to instead say that the usage of variable $x$ on line ... is done without any definition of $x$. This allows us to avoid making claims on the execution behaviour of the program, which we cannot necessarily know.
+
+
+\end{enumerate}
+\end{document}
