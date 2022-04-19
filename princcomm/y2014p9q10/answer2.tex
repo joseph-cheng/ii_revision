@@ -1,0 +1,22 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A best-effort service is a service that makes no guarantees of the performance of the system. For an end user, there is no guarantee that any packet will be able to reach its destination, or any bound on how long that might take if it does meet its destination. Furthermore, there are no guarantees on bandwidth allocated for a particular flow.
+
+    In the Internet, routers tend to be work-conserving, which means that they try to keep the resource (e.g. link) busy when it can be. This is different to something like a time multiplexer where if a source does not transmit in its time slot, but there are other hosts that want to transmit, the link will not be busy. The use of a work-conserving scheduler leads to these ideas of statistical multiplexing. Instead of relying on a defined mechanism to ensure that multiple sources can transmit along a single link, we rely on statistical properties of the traffic (e.g. that they have a particular average rate, and are independent, which is not always necessarily true). This means that we get only best-effort service, since the statistical properties do not always hold instantaneously, for example if all sources transmit at their peak at a particular time, we will have to drop some packets.
+
+    In order to actually obtain good performance on the Internet, a lot of work is then left to the end-users. The intermediate routers will attempt to route traffic to distribute the load evenly, but the choice of sending rate is left to the end users. To do this, we essentially user a distributed algorithm, most often TCP, such that flows will reliably adjust their rates, and hopefully over time we see that the rates should converge on some optimal solution. 
+
+    We also hope that the solution is fair, and we tend to have two different definitions of fairness: proportional fairness and max-min fairness. A solution (allocation of rates) is max-min fair if no other solution exists that increases any participant's allocation without requiring the decrease of an allocation with an equal or smaller allocation. Proportional fairness requires that any other solution exists where the sum of relative gains of the other solution is non-positive, where the relative gain obtained by switching from rate $x_s$ to $x_s'$ is given by $\frac{x_s' - x_s}{x_s}$.
+
+    We might consider that max-min fairness results in allocations that seem fairer to each end user, whereas proportional fairness is a more holistic definition of fairness.
+
+  \item
+    By designing communications systems as a set of layered services, we get a lot of modularity. This modularity comes from being able to switch out implementations for each of the layers, without having to change any other layers. For example, we can run IP over any transmission medium, since so much information of the transmission medium is hidden from IP. We see it running over Ethernet, wireless mediums, and (humourously) carrier pigeon. This modularity allows us to easily fit a communications system to a particular application by just picking out the correct layers, with the knowledge that they will be able to interoperate.
+
+    However, designing communications systems in layers potentially comes at the expense of performance. Since layering requires information hiding, it is almost certain that some layers might be able to extract better performance by having full knowledge of the rest of the implementation of the communications system. For example, with reference to the 7 layer OSI model, the transport layer at layer 4 cannot distinguish between any kinds of packet loss, even if layer 2 is able to make some distinctions. For example if layer 2 is running over a wireless medium, it might know that a packet loss comes from a collision, and not from congestion in the network, and if the transport `layer' knew this information, it would be able to avoid unnecessarily triggering a congestion control mechanism.
+        
+\end{enumerate}
+\end{document}

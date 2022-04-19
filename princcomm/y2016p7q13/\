@@ -1,0 +1,13 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Fibbing can induce specific paths in a topology by introducing virtual nodes into the topology that appear to have a very good route to a particular destination, forcing traffic to go along a particular link.
+
+    The diagram below shows what a fibbing controller might do to force a particular path:
+
+    \includegraphics[scale=0.3]{fibbing2}
+        
+\end{enumerate}
+\end{document}
