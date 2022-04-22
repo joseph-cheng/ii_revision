@@ -1,0 +1,52 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        To encrypt in ECB mode, we simply read off the table:
+
+        \texttt{VNEAZM}
+
+      \item
+        To encrypt in CBC mode with IV $c_0 = K$, we simply add together the last ciphertext block with the plaintext block, then read off the table:
+
+        For example, $K \oplus T = D$, which encrypts to $C$
+
+        So overall, we get:
+
+        \texttt{KCVCNKX}
+
+      \item
+        To encrypt in OFB, we first generate our stream of $R$s, which we get by repeatedly applying $E_K$ to our IV:
+
+        \texttt{KUFWLDC}
+
+        Then, we simply add this to our plaintext (prepending our IV):
+
+        \texttt{KNWEARU}
+
+        
+    \end{enumerate}
+
+  \item
+    If we use XOR to encrypt, we use the inverse of XOR to decrypt (which happens to also be XOR). Since we use modular addition to encrypt, we use the inverse to decrypt, which is modular subtraction.
+
+    To decrypt, we apply the inverse operation of encryption, so we apply $D_K$ and then subtract the previous ciphertext block.
+
+    \texttt{GALOIS}
+
+  \item
+    In CBC, each block is computed by $E_K(C_{i-1} \oplus M_i)$, so assuming the $C_{i-1}$ are distributed uniformly randomly, $C_{i-1} \oplus M_i$ will be distributed uniformly randomly also. Therefore, by the birthday problem, we see the same input value in $\sqrt{26} \approx 6$ inputs.
+
+    If each of the $M_i$ are the same, this means that we have two identical $C$ blocks, and we form a cycle in the $C$ blocks. Therefore, if we send $M_0 = AAAAAA$ and $M_1 = ABCDEF$ for example, then we have a 50\% chance to see two of the same output blocks in $C$, call them $c_i$ and $c_j$.
+
+    Since $E_K$ is a permutation, if we encrypted $M_0$, then we know that $c_{i-1}$ must equal $c_{j-1}$, since the $M_i$ are all the same, and if we encrypted $M_1$ then they will differ. Therefore, we win 100\% of the time if we observe two output values that are the same.
+
+    If we do not observe two output values that are the same, then we guess based on a coin flip, so we win with probability 0.5. Since each case occurs with probability around 0.5 (by the birthday problem), we win overall with a probability of greater than $0.5 + 0.25 = 0.75$.
+    
+        
+\end{enumerate}
+\end{document}

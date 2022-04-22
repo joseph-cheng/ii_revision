@@ -1,0 +1,70 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        
+    In GF($2^8$), subtraction is simply XOR, so we calculate the difference as follows:
+
+    \texttt{0101 1001}
+
+  \item
+    To calculate such a product, we perform normal binary multiplication, and then reduce modulo \texttt{1 0001 0011}
+
+\begin{verbatim}
+     0100 1011 x
+     0000 1001
+--------------
+     0100 1011 +
+ 010 0101 1000
+ 010 0001 0011
+\end{verbatim}
+
+We then perform polynomial division to reduce \texttt{010 1010 0011} modulo \texttt{1 0001 0011}:
+
+\begin{verbatim}
+
+--------------
+|010 0001 0011
+ -10 0010 0110
+  00 0011 0101
+            
+\end{verbatim}
+
+This fits in our 8-bits, so our final value is \texttt{0011 0101}
+
+    \end{enumerate}
+\item
+  There are two main advantages of $GF(2^{128})$ over $\mathbb{Z}_{2^{128}}$.
+
+  \begin{itemize}
+    \item
+      Firstly, implementing arithmetic in $GF(2^{128})$ is much simpler. We do not require carry bits for addition/subtraction, so we can parallelise the whole process, as opposed to in $\mathbb{Z}_{2^{128}}$ where we require carries to propagate through, making parallelising hard, and implementation logic harder.
+
+    \item
+      Secondly, since $2^{128}$ is not prime, $(\mathbb{Z}_{2^{128}}, +, \cdot)$ is not a field, because we do not get multiplicative inverses for every element in $\mathbb{Z}^*_{2^{128}}$, which means that we cannot do division, whereas $GF(2^{128})$ is a field so we can do division. Division ends up being useful for certain applications (not sure where though?).
+
+  \end{itemize}
+
+\item
+  For CBC, our encryption equation is $C_i = E_K(C_{i-1} \oplus M_i)$, so the corresponding decryption equation is $M_i = D_K(C_i) \oplus C_{i-1}$
+
+  In CBC, we can calculate each $D_K$ in parallel, since we know each of the $C_i$ values at the start.
+
+  For OFB, our encryption equation is $C_i = M_i \oplus R_i$, where $R_i$ are generated as $R_0 = C_0$ and $R_{i+1} = E_K(R_{i})$, so our decryption equation is $M_i = C_i \oplus R_i$
+
+  In OFB, we cannot calculate the $E_K$ in parallel, since we require the previous $R$ to calculate the next $R$.
+
+  For CTR, our encryption equation is $C_i = M_i \oplus E_K(T_i)$, where $T_i = O+i$ for some private offset $O$, so our decryption equation is $M_i = C_i \oplus E_K(T_i)$
+
+  In CTR, we can parallelise the $E_K$ calls, since we learn $O$ from $C_0$, and then we know each $i$ that we need also.
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

@@ -1,0 +1,59 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    We give the three properties below:
+
+    \begin{itemize}
+      \item
+        \textbf{Pre-image resistance}
+
+        This requires that given an output value of a $h$, say $y$, no PPT adversary exists that can find an $x$ such that $h_s(x) = y$ with non-negligible probability.
+
+      \item
+        \textbf{Second pre-image resistance}
+
+        This requires that given an input value of $h$, say $x$, no PPT adversary exists that can find an $x'$ such that $h_s(x) = h_s(x')$ with non-negligible probability.
+
+      \item
+        \textbf{Collision resistance}
+
+        This requires that no PPT adversary exists that can find a pair $x,x'$ such that $h_s(x) = h_s(x')$ with non-negligible probability.
+    \end{itemize}
+
+  \item
+    We can implement a one-time signature scheme by generating 256 uniformly randomly generated 128-bit strings, call them $R_{i,j}$, where $i$ is either 0 or 1, and $1 \leq j \leq 128$. This is our secret key. We then distribute our public key as the hash of each $R_{i,j}$
+
+    Then, we can generate a hash of our message $h(M)$ and use each hash bit to choose an $i$ in $R_{i,j}$.
+
+    More formally, suppose $h(M) = b_1b_2\ldots b_n$
+
+    Then our signature becomes $(R_{b_1,1}, R_{b_2,2}, \ldots,  R_{b_n,n})$
+
+    To verify this signature, the recipient can apply $h$ to each string in the signature to create $(h(R_{b_1,1}), \ldots, h(R_{b_n, n}))$, and they can also calculate $h(M)$ and use the public key to verify whether this matches the expected $h(R_{b_i, i})$.
+
+    Intuitively, an adversary should not be able to forge a signature because they cannot know what any of the $R_{i,j}$ are (assuming one-time usage).
+
+  \item
+    We require that $K$ is a permutation, i.e. a bijection. If it is not, then there are at least two elements in the range of $K$ that correspond to different elements in the domain, at which point we can lose information.
+
+  \item
+    Not relevant
+
+  \item
+    Since each character can be one of any 32 values, by using the correct messages, we can divide down the set of possible inputs in $\{0,\ldots,999\}$ for any output of $K$ by 32. This means that we requires $\log_{32}(1000) < 2$, so 2 blocks, to recover $K$.
+
+    For example, in the first block, we could arrange the content to have the first 32 characters be $a_0$, the next 32 by $a_1$, and the last 8 be $a_{31}$ (since we do not have exactly 1024 characters in a message, but this is fine).
+
+    Upon receiving the permutation of this block, we then know that, for example, $K(0)$ can be one of 32 values (determined by the locations of the $a_0$s), and the same for all other input values (except for $K(992)$ to $K(999)$, of which we know 8 possible values).
+
+    Then, our second block we form by just repeating $a_0$ to $a_31$ in sequence until the end of our message.
+
+    Upon receiving the permutation of this block, we can, for example, look at the locations of the $a_0$s. Only one of these locations will be one of the possible values for $K(0)$ that we deduced from the previous block, so we can then deduce the value for $K(0)$. Then, only one of these locations will be one of the possible values for $K(32)$ that we deduced from the previous block, so we can deduce the value $K(32)$, etc. We can then repeat this for each $a_i$ and each block of 32, which lets us recover the entirety of $K$.
+
+
+
+        
+\end{enumerate}
+\end{document}

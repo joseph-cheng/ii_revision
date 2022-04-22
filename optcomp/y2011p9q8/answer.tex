@@ -1,0 +1,71 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    In a compiler, instruction scheduling is the process of choosing a good order of final machine code instructions in order to retain program semantics, and improve code performance. For example, if an architecture has a standard 5-stage MIPS pipeline and no feed-forward paths, then putting independent instructions in-between those with data dependencies will prevent a stall and improve performance.
+
+    Some architectures might be too simple, for example an unpipelined processor with no caching will not benefit from a good instruction order. Similarly, architectures that have out-of-order execution  essentially perform dynamic instruction scheduling, and so static instruction scheduling in the compiler is unlikely to be very useful.
+
+  \item
+    We choose a scalar architecture with a standard 5-stage MIPS pipeline, in-order execution, feed-forward paths between execute and decode, and a 1 instruction load delay slot.
+
+    We provide the following algorithm, that supposes we already have some instruction scheduling emitted from our three-address code that we wish to optimise:
+
+    \begin{itemize}
+      \item
+        Calculate the data dependencies between each instruction, and use them to create a DAG, where there is an edge from one instruction $a$ to another $b$ if there is a dependency between them, and $a$ occurs before $b$ in the original scheduling.
+
+      \item
+        Initialize a set of the potential instructions we could emit, as those with no predecessors.
+
+      \item
+        Choose an instruction from this set that satisfies the following properties:
+
+        \begin{itemize}
+          \item
+            It does not conflict (e.g. reading from a register that was loaded into in the previous one) with the previously emitted instruction.
+
+          \item
+            It is most likely to generate a conflict (i.e. prioritise loads).
+
+          \item
+            It is the furthest distance from a terminating node (one with no successors) over the longest path
+        \end{itemize}
+
+        The first heuristic stops errors caused by load delay slots, the second attempts to do loads as early as possible so instructions can be interleaved between, and the last attempts to keep as many parallel threads of execution available so that we can interleave their execution.
+
+        If such an instruction exists, emit it, remove it from the DAG and the list of potential instructions, and if any of its successors now have no predecessors, add them to the list. If no such instruction exists, emit a NOP.
+    \end{itemize}
+
+    This has time complexity $O(n^2)$, where $n$ is the number of instructions in the basic block.
+
+    When emitting the first instruction in a basic block, we have to be careful to satisfy the timing constraints of the last instruction in the previous block (e.g. if it was a load), or else we might cause errors. For example, we could always append a NOP to the end of a block to fix this.
+
+  \item
+    In this case, instructions in a bundle do not care about instructions in a previous bundle, only their own.
+
+    So, we might modify the algorithm to select two instructions in each iteration:
+
+    The first instruction should be chosen based only on the second two requirements of the heuristic (since `previously emitted instruction' does not mean anything), and the second instruction should be chosen normally, treating the `previously emitted instruction' as the other instruction we chose for the bundle.
+
+    We must modify our algorithm to be able to schedule these in parallel. The modification to the algorithm is only in generation of the DAG, since a naive algorithm might treat all accesses to memory as the same location for safety. Instead, we could treat accesses to memory as accessing different locations (and thus not creating a dependency) if they both use the same register for the base address, and use offsets that are at least a word apart.
+
+    Points-to analysis might help the instruction scheduler to schedule more load/store pairs in parallel. This is because without points-to analysis, we cannot schedule a store and load with different base address registers in parallel, since they could point to the same location. Points-to analysis lets us determine when these addresses might be different, and thus when it would be safe to schedule these pairs in parallel.
+
+  \item
+    We describe Andersen's analysis.
+
+    Andersen's analysis gives us a set of locations that a register might point to at any given time.It is a flow-insensitive algorithm.
+
+    The basis of the algorithm is computing a number of constraints from our program, and finding the least solution of these constraints.
+
+    Each call to allocate new memory generates a new location, and our constraints generate a graph, of which locations may point to others. For example, the instruction \texttt{x = \&y} generates the constraint $pt(x) \supseteq \{y\}$ and the instruction \texttt{x = y} generates the constraint $pt(x) \supseteq pt(y)$, and each of these $pt$ sets is effectively a set of edges.
+
+    Because our algorithm is flow-insensitive, we overestimate points-to since we make claims about the possible values of a location at any point in the program (or likely function), not at a particular time.
+
+
+        
+\end{enumerate}
+\end{document}
