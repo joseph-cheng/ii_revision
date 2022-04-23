@@ -1,0 +1,33 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Specialising a processor design for a specific application domain can help to reduce power consumption because we can remove a lot of functionality that keeps a processor general purpose, and add in new functionality that is tailored to the specific to the domain.
+
+    For example, if we create a specialised video codec processor, then we know we only need logic for computing video encoding/decoding, and might be able to get away with removing some unnecessary functional units (perhaps like floating point arithmetic).
+    
+    Furthermore, with the example of video encoding/decoding, our instruction set is vastly reduced, since we basically just need an encode and decode instruction. This means that our decoding logic can be vastly simplified, and the amount of power we use for moving instructions around can be reduced since the size of the instructions can be smaller.
+
+    For a specific application domain, it is also likely that we know data use patterns very intimately, so we can tune something like the memory hierarchy to best fit the particular data use pattern of our core.
+
+    We might also find that there are only certain kinds of parallelism in our application. For example, it might be hard to find ILP, but there might be abundant levels of data-level parallelism, so we could duplicate many simple cores, or use a vector architecture, to exploit this data-level parallelism, whilst avoiding implementing things like O3 execution.
+
+  \item
+    This is the case because superscalar uniprocessor designs generally spend a smaller portion of their power budget on actually doing useful work, and most of it on techniques to exploit ILP, like O3 execution, handling hazards, etc. Furthermore, superscalar uniprocessors tend to scale quite poorly, as wires get longer (and consume more power), more state needs to be duplicated, etc., which leads to power consumption getting much higher as superscalar uniprocessors get better performance.
+
+    On the other hand, chip-multiprocessors can have simpler cores, i.e. cores that spend a larger portion of their power budget on doing useful work by avoiding a lot of the techniques used by superscalar uniprocessors, and by duplicating them we end up with a processor that is still able to achieve high performance, but with a smaller power budget.
+
+    Of course, this relies on data-level or thread-level parallelism existing in the application, but most applications tend to have this somewhere, which means that the power savings made through using a CMP are not outweighed by the overhead of things like coherence.
+
+  \item
+    A vector processor offers a particularly energy efficient solution to execute some types of program because the compiler/programmer effectively finds a lot of the parallelism, so that the processor does not have to. In particular, vector processors are a good solution for programs with high levels of data-level parallelism.
+
+    For these applications, we make savings in lots of places: each instruction specifies a large amount of work, so we reduce the amount of instructions we have to fetch, and the amount of instructions we have to decode, and can thus spend a larger portion of the power budget actually executing the instruction.
+
+    We also have a simple data path, since instructions tend to be independent, and at most we will have vector chaining/tailgating (which is relatively simple). This reduces the amount of logic we need (and thus power we use).
+
+
+        
+\end{enumerate}
+\end{document}

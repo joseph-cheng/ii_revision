@@ -1,0 +1,33 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    This type of behaviour might be caused by the two processors using the same cacheline to store their private counter.
+
+    If this is the case, then the cache coherence protocol will require that when the counter is written to, it is in some private cache line. When the other core requests to update their counter, they must then acquire the cacheline from the other core through the cache coherence protocol, even though their counter will not have been updated! Since the execution of the two threads will be effectively interleaved, we get large amounts of cache coherence overhead that is so significant that any gains from parallelism are lost.
+
+    When we run the two thread sequentially, we only get one cache coherence request (when we finish one thread and move to the other), so the quantity of the cache coherence traffic is significantly reduced.
+
+  \item
+    Update protocols allow readers to have access to a cache line whilst we have a writer, by the writer sending messages to each of the readers to update their cache line upon a write. Compared to an invalidate protocol, this means that we avoid a lot of the costly flushing to memory that we might require if we have simultaneous readers and a writer, since core-to-core communication is likely faster than communication by proxy through the memory hierarchy.
+
+    However, update protocols have issues in that they may end up sending unnecessary update messages. If a core reads a shared line only rarely, then if the writer is consistently updating it (perhaps repeatedly incrementing a counter like in (a)), then all of the changes to the counter must be sent, even if they are never observed by the reader. In an invalidate protocol, the reader only `requests' the data when it needs it.
+
+  \item
+    Sequential consistency is rarely supported by modern CMP designs because it is unnecessarily restrictive.
+
+    We can have weaker consistency models (like total store order) that still preserve program correctness, but allow for more optimisations.
+
+    For example, sequential consistency prevents loads overtaking stores to different locations, or loads overtaking each other, which is useful for optimising cache performance. We might also want to merge writes together in a write buffer, but sequential consistency also forbids this.
+
+  \item
+    In directory-based coherence protocols, we want to prevent sending unnecessary coherence messages to cores who do not care about a particular line. Therefore, a directory simply stores a list of the cores that are sharing a particular line, as a bit vector.
+
+    So, we might implement this by adding some extra bits at the end of every line in our shared cache that give the list of sharers, or we might store an independent directory that contains a list of cache lines and their sharers.
+
+    We might also provide additional information to support more states, for example whether the line is exclusively held by one core or not.
+        
+\end{enumerate}
+\end{document}

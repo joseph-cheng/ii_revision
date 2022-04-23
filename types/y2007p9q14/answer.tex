@@ -1,0 +1,126 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+  The rules are given below:
+
+  \begin{align*}
+    \textsc{var}&\frac{}{\Theta;\Gamma \vdash x : T}(\Gamma(x) = T) \\
+    \textsc{fn}&\frac{\Theta;\Gamma, x : T \vdash e : T' \hspace{10pt} \Theta \vdash T type}{\Theta;\Gamma \vdash \lambda x:T. e : T \rightarrow T'}\\
+    \textsc{app}&\frac{\Theta;\Gamma \vdash e_1 : T \rightarrow T' \hspace{10pt} \Theta;\Gamma \vdash e_2 : T}{\Theta;\Gamma \vdash e_1 e_2 : T'}\\
+    \textsc{$\forall$ fn}&\frac{\Theta,\alpha;\Gamma \vdash e : T}{\Theta;\Gamma \vdash \Lambda \alpha. e : \forall \alpha. T}\\
+    \textsc{$\forall$ app}&\frac{\Theta;\Gamma \vdash e : \forall \alpha T \hspace{10pt}\Theta \vdash T' type}{\Theta;\Gamma \vdash e T' : [T' / \alpha]T}\\
+  \end{align*}
+
+\item
+
+  A PLC expression $M$ is in beta-normal form if there is no term that it beta-reduces to. I.e. it is not of the form $(\lambda x. e_1) e_2$ or $(\Lambda \alpha. e) T$, and contains no sub-expressions of that form either.
+
+\item
+  \begin{enumerate}[label=(\roman*)]
+    \item
+      We proceed by induction on the structure of $L$ and $N$ to prove that all $L$ and $N$ forms are beta-normal.
+
+      We proceed by cases:
+
+      \begin{itemize}
+        \item
+          $L' = \lambda x : \tau(L)$
+
+          In this case, we assume that $L$ is in beta-normal form for our induction hypothesis.
+
+          Since $L$ is beta-normal, it contains no beta-redexes, and thus clearly $\lambda x:\tau(L)$ contains no beta-redexes.
+
+        \item
+          $L' = \Lambda \alpha(L)$
+
+          Similar to previous case.
+
+        \item
+          $L' = N$
+
+          In this case, we assume that $N$ is in beta-normal form for our induction hypothesis, therefore so must $L'$.
+
+        \item
+          $N' = x$
+
+          Since $x$ is just a variable, it is not a redex, and thus is in beta-normal form.
+
+        \item
+          $N' = N L$
+
+          In this case, we assume that $N$ and $L$ are in beta-normal form for our induction hypothesis.
+
+          Since $N$ and $L$ are beta-normal, in order for $N'$ to not be beta-normal, we would require that $N$ is of the form $\lambda x : \tau(L')$, but this is impossible since the structure of $N'$ requires that it starts with a variable, so $N'$ is beta-normal.
+
+        \item
+          $N' = N \tau$
+
+          Similar to previous case.
+      \end{itemize}
+
+      Therefore, by induction, all $L$ and $N$ forms are beta-normal.
+
+    \item
+
+      Suppose $\{\} \vdash N : \tau$. By the assumption in the question, $N$ must have no free variables, i.e. they are closed.
+
+      We proceed by induction on the structure of $N$, proving that $N$ terms are not closed.
+
+      By cases:
+
+      \begin{itemize}
+        \item
+          $N' = x$
+
+          Clearly, this is not a closed expression.
+
+        \item
+          $N' = N L$.
+
+          We assume that $N$ is open by our induction hypothesis.
+
+          Clearly, $N L$ will then also be open, regardless of $L$.
+
+        \item
+          $N' = N \tau$
+
+          Similar to previous case.
+      \end{itemize}
+
+      Therefore, $\{\} \vdash N : \tau$ cannot be true, or else we get a contradiction.
+
+    \item
+      Suppose there is some term $L$ such that $\{\} \vdash L : \forall \alpha(\alpha)$
+
+      If this is the case, it must be of the form $\Lambda \alpha (L')$ (or else we would not get this result).
+
+      So, we must have some term $L'$ such that $\{\} \vdash L' : \alpha$
+
+      We proceed by cases on the structure of $L'$:
+
+      \begin{itemize}
+        \item
+          $L' = \lambda x : \tau (L'')$
+
+          In this case, $L'$ would be of the type $\tau \rightarrow ?$, which is not $\alpha$.
+
+        \item
+          $L' = \Lambda \alpha (L'')$
+
+          In this case, $L'$ would be of the type $\forall \alpha(?)$, which is not $\alpha$.
+
+        \item
+          $L' = N$
+
+          In this case, $L'$ would be a neutral form, and by (ii) it is not provable that $\{\} \vdash L' : \alpha$.
+      \end{itemize}
+
+      Therefore, no such $L'$ term exists, so no such $L$ term can exist.
+      
+  \end{enumerate}
+
+        
+\end{enumerate}
+\end{document}
