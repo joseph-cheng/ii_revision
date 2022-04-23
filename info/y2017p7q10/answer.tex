@@ -1,0 +1,56 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    We give the following syndromes:
+
+    $s_1 = 1 \oplus 0 \oplus 0 \oplus 0 = 1$
+
+    $s_2 = 1 \oplus 0 \oplus 0 \oplus 0 = 1$
+
+    $s_4 = 1 \oplus 0 \oplus 0 \oplus 0 = 1$
+
+    This tells us that the bit that got corrupted is bit \texttt{111}, or bit 7.
+
+    So, we get the following corrected block:
+
+    \texttt{1101001}
+
+  \item
+    If we have such a SNR function, then we need to consider the information capacity given by each frequency, and then sum these.
+
+    Therefore, we derive the following formula:
+
+    \[
+      \int_{\omega_1}^{\omega_2} \log_2(1 + SNR(\omega)) \mathrm{d}\omega
+    \] 
+
+    We can somewhat verify that this is sensible since it produces the same result as the Shannon-Hartley theorem for constant $SNR(\omega)$.
+
+    In our case, we substitute $SNR(\omega) = 2^{\omega} - 1$:
+
+    $\int_{\omega_1}^{\omega_2} \log_2 2^\omega \mathrm{d}\omega$
+
+    $= \int_{\omega_1}^{\omega_2} \omega \mathrm{d}\omega$
+
+    $= \left[ \frac{1}{2}\omega^2 \right]^{\omega_2}_{\omega_1}$
+
+    $= \frac{1}{2}(\omega_2^2 - \omega_1^2)$
+
+  \item
+
+    The Lempel-Ziv lossless compression algorithm is designed to be a lossless compression algorithm that is good for any information source, i.e. with no probability modelling done beforehand. Lempel-Ziv uses a dictionary method of compression, but building the dictionary dynamically. This dictionary compression is intended to exploit the property that most sources tend to have a probability distribution for blocks of symbols that is more concentrated than that of the symbols themselves.
+
+    So, we take some input string, and parse it by reading a substring up until we see a substring we have not seen before. For example, the string \texttt{1011} would generate tokens \texttt{1}, \texttt{0}, and \texttt{11}. When we see a new $n$-bit substring, we know we must have seen an $n-1$ bit prefix already, so we emit a code for the $n-1$ bit prefix (given by our dictionary) and the new bit we found, and then add our new substring to the dictionary. If our dictionary becomes full (since we choose the size of our dictionary at the start of the algorithm), then we just emit already generated codes.
+
+    In practice, we may use a dynamic dictionary size.
+
+    Adaptive variants of LZ encoding assess the quality of the dictionary they are building by measuring the compression rate. If it is not compressing data well, then we may abandon the dictionary and attempt to reconstruct it.
+
+
+
+        
+\end{enumerate}
+\end{document}
