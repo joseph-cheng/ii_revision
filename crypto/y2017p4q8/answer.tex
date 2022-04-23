@@ -1,0 +1,93 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        \begin{enumerate}[label=(\Alph*)]
+
+          \item
+
+            To decrypt with ECB, we simply read up on the table:
+
+            \texttt{0ddba11}
+
+          \item
+            To decrypt with CBC, we decrypt each block using the table, and then XOR with the previous ciphertext block to get the plaintext block:
+
+            \texttt{cafe}
+
+          \item
+            To decrypt with OFB, we first construct out $R$ chain, by repeatedly applying $E_K$
+
+            \texttt{R = e50cb}
+
+            Then, we simply XOR this with our ciphertext:
+
+            \texttt{feed}
+
+            
+        \end{enumerate}
+
+      \item
+        To calculate the CBC-MAC, we encrypt with CBC (with IV 0), and take the final block as our MAC:
+
+        Encrypting, we get:
+
+        \texttt{3e2b}, so our final MAC is \texttt{b}.
+
+      \item
+
+        We know that the characters \texttt{fc} correspond to \texttt{e1} in our message.
+
+        So, we know that $f = R_5 \oplus e$
+
+        And, that $c = R_6 \oplus 1$
+
+        Therefore, we know that $f \oplus f = R_5 \oplus e \oplus f$, or that $0 = R_5 \oplus 1$
+
+        Similarly, we know that $c \oplus 1 = R_6 \oplus 1 \oplus 1$, or that $d = R_6 \oplus 0$
+
+        Therefore, we should replace \texttt{fc} with \texttt{0d}.
+
+        Finally, we know from the check digit is some value $n$ such that $n = m_1 \oplus m_2 \oplus m_3 \oplus m_4 \oplus e \oplus 1$
+
+        So, we know that $n \oplus e = m_1 \oplus m_@ \oplus m_3 \oplus m_4 \oplus 1 \oplus 0$, forming a valid check digit for our false message.
+
+        Furthermore, we know that $R_7 \oplus n = 2$, so $R_7 \oplus n \oplus e = c$
+
+        Therefore, our encrypted check digit should be \texttt{c}.
+
+        So, we get the final message:
+
+        \texttt{a59de0dc}
+    \end{enumerate}
+
+  \item
+    Suppose we had only 8192 instances of the sub-block \texttt{0000}. After encryption, we reduce the possible values of the permutation, since each location of the sub-block \texttt{0000} can only map to one of 8192 other places. Essentially, we can divide the possible destinations for each location by $2^4 = 16$ for each block, so we require $\lceil \log_{16} (\frac{32768 \cdot 8}{4} ) \rceil = 4$ blocks.
+
+    We could construct blocks as follows:
+
+    First, number each of the sub-block positions. There are $2^16$ sub-block positions, so this is a 4-digit hexadecimal number.
+
+    For the first block, give each sub-block the value of the most significant digit in the sub-block position number.
+
+    For the second block, give each sub-block the value of the next most significant digit in the sub-block position number.
+
+    For the third block, give each sub-block the value of the next most significant digit in the sub-block position number.
+
+    For the fourth block, give each sub-block the value of the next most significant digit in the sub-block position number.
+
+    At this point, for example, if we wanted to find the destination of the first sub-block, we look at all the occurrences of \texttt{0}s in the resulting sub-blocks and take their intersection, which should leave us with 1 block.
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
