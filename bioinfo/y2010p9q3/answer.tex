@@ -1,0 +1,50 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Not relevant.
+
+  \item
+    Sankoff's parsimony method is a technique to find the most parsimonious labelling of the internal nodes of an unrooted tree.
+
+    The algorithm is a dynamic programming algorithm, and works character-by-character. It is a dynamic programming algorithm. At a particular node in a tree, we calculate a $k$-length array (where $k$ is the number of different characters we can have), representing the parsimony score for that node if it is assigned a particular character. To calculate one entry in this array, we must find the minimum cost from looking at the parsimony arrays of the node's two children, which takes $O(k)$ time. We must fill in a $k$-length array, so filling in the array takes $O(k^2)$ time. We must do this once per internal node, and if we have $n$ leaves, we get $n-1$ internal nodes, so doing this for one character position takes $O(nk^2)$ time. Finally, for the whole algorithm, we have to do this one per character position, which takes $O(mnk^2)$ is $m$ is the number of character positions (length of each sequence).
+
+  \item
+    Not relevant
+
+  \item
+    The Doob-Gillespie algorithm is an algorithm used to simulate reactions.
+    
+    There are a few assumptions:
+
+    \begin{itemize}
+      \item
+        We assume that the molecules are well-mixed, i.e. are uniformly distributed throughout the mixture, such that probability of reaction is proportional to the number of each molecule (and propensity).
+
+      \item
+        We assume that reactions occur only serially, i.e. not in parallel.
+    \end{itemize}
+
+    Using these two assumptions, we can develop the algorithm:
+
+    Create a set of possible reactions.
+
+    Calculate propensity values for each reaction, which are proportional to the probabilities that they occur.
+
+    Sum together the propensities to create $a_0$. The higher this number is, the sooner the next reaction will occur.
+
+    Choose the time the next reaction will occur $\tau$ by sampling an exponential random variable with parameter $a_0$.
+
+    By weighting each propensity function by $a_0$, use them as probabilities in a discrete probability distribution, and sample a reaction.
+
+    Update the time by $\tau$, and calculate the new molecule numbers according to the reaction chosen and $\tau$.
+
+    Repeat.
+
+
+
+
+    
+\end{enumerate}
+\end{document}

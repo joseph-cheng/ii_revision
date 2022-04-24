@@ -1,0 +1,41 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A branch target buffer poorly predicts return addresses because the branch target of a return address depends entirely on the caller of the function, and not on any logic within the callee (notwithstanding malicious code). This means that unless the same function is repeatedly called by the same caller, the branch target buffer is unlikely to store a good prediction for return instructions.
+
+    We might solve this by creating a stack in hardware that stores the return addresses. Since this memory is small, we can access it quickly (unlike a traditional call stack), and so quickly, and very accurately, predict the address of return instructions. However, we keep in mind that this is just a prediction: if the stack overflows, we do not need to worry, since we can always rely on the actual call stack to store the correct return address, although stack overflows will negatively affect performance of predictions.
+
+  \item
+    For wide-issue superscalar processors, there are numerous issue with high instruction fetch rates.
+
+    First, we run into the issue that we may be fetching over multiple cache lines. This means that our instruction cache must be able to cope with fetching multiple cache lines at once. This of course occurs if we fetch over a branch, but also in the case that we are not fetching addresses aligned with our cachelines, in which case we will also be fetching multiple cache lines.
+
+    Secondly, we require that branch predictions must be very accurate. An incorrect prediction could result in significantly more incorrect instructions being fetched (and potentially executed) compared to a scalar processor, which is significantly more work wasted, and more work to clean up.
+
+    Thirdly, we may have to predict multiple branches simultaneously, since the block of instructions we fetch may be over two branches, which means that our branch predictor must be augmented to be able to deal with either multiple access, or must be a very fast predictor.
+
+  \item
+    Embedded processors often only have a very small amount of memory and power available to them. By allowing for both 16-bit and 32-bit instructions, we allow an improvement in code density, and thus we can larger (in the semantic sense) programs for an embedded processor.
+
+    We might also reduce power consumption with smaller instructions, since we might use less decode logic due to the fact that there are simply less bits in 16-bit instructions.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        When a reorder buffer is used, we now have two locations where an instructions operands might exist: the reorder buffer, or the register file.
+
+        This means that when we fetch the operands for an instruction, we have to either search the reorder buffer for the latest instruction which writes to the operand register, or maintain a table which stores the current location of each register, and use that to find the location.
+
+      \item
+        When a unified register file is used, we make sure to create a copy of the register map table (that we use for the commit stage) every time we encounter a branch. Because this map table essentially stores the state of the registers at any given point, we can simply restore the mapping if we realise we have mispredicted a branch.
+
+        We may also have to flush incorrectly fetched instructions as we normally do to prevent them from changing the actual register values.
+        
+    \end{enumerate}
+
+
+        
+\end{enumerate}
+\end{document}

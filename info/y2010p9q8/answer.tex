@@ -1,0 +1,48 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Suppose we have an unlimited size alphabet $A$. Then, we number the alphabet with a bijection with the natural numbers $\{1,2,3,...\}$ called $B$.
+
+    Then, we assign probabilities to $A$ as follows: $P(a) = 2^{-B(a)}$
+
+    Note that this is always non-zero, as required.
+
+    Furthermore, we have that $\sum_{a \in A} P(a) = \sum_{i=1}^\infty 2^{-i} = 1$, as a known limit, so the probabilities sum to 1 as required.
+
+    The entropy of this source is $-\sum_{a \in A}P(a) \log_2 P(a) = \sum_{i=1}^\infty 2^{-i}\log_2(2^i) = 2$ bits, as a known limit given in the question.
+
+    Therefore, we know by the Source Coding Theorem that a code exists for this source with average codeword length no more than 2 bits.
+
+    For character $a$, with index $n = B(a)$, we provide the codeword of $n-1$ leading 0s, followed by a 1, which generates a uniquely decodable prefix code.
+
+    The average codeword length even at unlimited size is given by $\sum_{i=1}^\infty i2^{-i} = 2$.
+
+  \item
+    Not relevant
+
+  \item
+
+    To define the bit rate for this channel, we must consider the information rate given by each frequency in the frequency range. This is given by $\delta \omega \log_2(1 + SNR(\omega))$ for a given $\omega$ and small change $\delta \omega$.
+
+    Therefore, the bit rate for this channel is given by the following sum/integral:
+
+    \[
+      \int_{\omega_1}^{\omega_2} \log_2(1 + SNR(\omega)) \mathrm{d}\omega
+    \] 
+
+  \item
+    Not relevant.
+
+
+
+
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

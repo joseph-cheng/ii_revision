@@ -1,0 +1,25 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        On a naive decompilation, the issue we run into is that every time we execute an arithmetic construction, we generate code that sets all of the condition codes, as well as creating variables to store the condition codes if they do not already exist. It is likely that the code does not even use any/all of the condition codes for a given arithmetic instruction so we effectively end up generating a lot of code that is not useful, and makes the program harder to understand.
+
+      \item
+        If the pseudo-condition registers are not used, then it is likely that LVA will detect them as not being live when they are set, or else they are likely going to be used. Therefore, by performing LVA and then dead code elimination (at some kind of source level), we should be able to remove most of the unused code that sets the condition codes.
+
+    \end{enumerate}
+
+  \item
+    Here, we could use points-to analysis to try and figure out what addresses a particular variable might point to at the loads and stores, and then see if any of these are misaligned. If they are, then we insert a check before the load/store. However, unless it is possible to know the return values of an allocator like \texttt{malloc}, this might not see much success.
+
+    Alternatively, we may also use something like abstract interpretation, where we abstractly interpret every integer/address as being different numbers of bytes away from the word size, e.g. if the word-size is 4 bytes, then every value would be interpreted as either aligned, 1 byte ahead, 2 bytes ahead, or 3 bytes ahead. We can then abstractly interpret arithmetic operators to deal with these abstract values (e.g. adding two numbers that are both 2 bytes ahead of the word size results in a number that is aligned). This gets around issues of not knowing return values of \texttt{malloc}, since we just assume they are all aligned.
+
+    When we interpret a value as being unaligned when used as an address for a load/store, we insert a check beforehand.
+
+        
+\end{enumerate}
+\end{document}

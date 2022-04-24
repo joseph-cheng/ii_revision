@@ -1,0 +1,43 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        We calculate the entropies as the weighted sum of surprisals:
+
+        $H(X) = -1 \cdot 8 \cdot \frac{1}{8} \cdot\log_2 \frac{1}{8} = 3$ bits
+
+        $H(Y) = -\sum_{i=1}^\infty (2^{-i} \log_2 2^{-i}) = \sum_{i=1}^\infty i2^{-i} = 2$ bits, as a known limit.
+
+        Therefore, $X$ has greater uncertainty.
+
+      \item
+        Since the variables are independent, their joint entropy $H(X,Y)$ is the sum of the entropies: $3 + 2 = 5$ bits.
+
+        Again, through independence, their mutual information $I(X;Y)$ must be zero.
+
+    \end{enumerate}
+
+
+      \item
+        The maximum possible entropy $H$ of an alphabet consisting of $N$ different letters is $\log_2 N$. This occurs when all elements are equiprobable, in which case the probability of its most likely and least likely letter are both $\frac{1}{N}$.
+
+        For alphabets with non equiprobable letters, fixed length codes are inefficient because we expect that the most probable letters will be transmitted more frequently than others, and so it makes sense to give these letters shorter codes than the least probable letters. More formally, we want to minimise the average codeword length. By making more probably codewords shorter, we can make the average codeword length lower (to a point). We know that we must be able to construct a code down to the entropy by the Source Coding Theorem, and fixed length codes do not achieve that.
+
+        In relation to Morse code, we know that Morse code wants to encode the English alphabet, and  Morse code assigns short codes to the most probable letters. For example, the letter \texttt{e} is the most common letter in the English language and is assigned a code of \texttt{.}, which should take 2 time units to transmit, compared to less probable letters that are assigned longer sequences.
+
+      \item
+        Not relevant.
+
+      \item
+        Not relevant.
+
+      \item
+        Not relevant.
+
+        
+\end{enumerate}
+\end{document}
