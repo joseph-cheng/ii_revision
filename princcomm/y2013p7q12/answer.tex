@@ -1,0 +1,14 @@
+\input{../../template.tex}
+\usepackage{parskip}
+
+\begin{document}
+There are numerous issues with this scheme: risk of congestion collapse, and lack of fast recovery.
+
+First, this scheme almost certainly ensures congestion collapse of the Internet. If congestion arises in the Internet (which is effectively a certainty), then many users will experience a timeout, and transmit the unacknowledged packets again. This will cause more congestion in the network, and since no increase in timeout timer (like exponential back-off) is described, then every user will just continuously send many packets into the network, causing more congestion, and there will be no time for the network to recover, effectively causing congestion collapse of the Internet. This is also in some part caused by the fixed size window, since end-user never modify their sending rates to try and fix the congestion.
+
+Secondly, we only retransmit on a timeout. This is not ideal, since we may end up waiting large amounts of time if packets repeatedly go missing, and this will harshly impact the performance of a flow. A better scheme would use something like fast retransmit, where we can retransmit packets based on some other metric, like in TCP if we receive enough dupACKs then we retransmit the missing packet, instead of waiting for a timeout. Using only a timeout may also create oscillations in traffic behaviour. For example, if a link goes down in the Internet, then many connections may lose a packet at the same time, and thus timeouts may trigger at similar times, creating oscillations with large bursts of traffic.
+
+Exam solutions talk about control theory here, which is not examinable for this version of the course.
+
+
+\end{document}

@@ -1,0 +1,53 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The mutual information $I(X;Y)$ is defined as follows:
+
+        $\sum_{x \in X} \sum_{y \in Y} p(x,y) \log_2(\frac{p(x,y)}{p(x)p(y)})$
+      \item
+
+        In the case that $X$ and $Y$ are independent, mutual information goes to 0 because no information is learned about the other upon observing a value. In the sum, this is because $p(x,y) = p(x)p(y)$ so the sum goes to 0.
+
+      \item
+        If $X$ and $Y$ are perfectly correlated with each other, this means that $p(x) = p(y)$, and thus that $p(x,y) = p(x)$
+
+        Therefore, the mutual information is:
+
+        $\sum_{x \in X}p(x) \log_2(\frac{p(x)}{p(x)^2})$
+
+        Which is the same as $-\sum_{x \in X}p(x)\log_2 p(x) = H(X)$.
+
+      \item
+        This is equivalent to (iii), so $H(X)$.
+
+
+
+
+
+
+        
+    \end{enumerate}
+
+  \item
+    The information gained from observing event $i$ is $\log_2 p_i$, so the sum of information gained from observing each of the events separately and in any order is $\sum_{i=1}^N \log_2 p_i$
+
+    The information gained from observing all independent events is given by $\log_2 (\sum_{i=1}^N p_i) = \sum_{i=1}^N \log_2 p_i$, so we are done.
+
+  \item
+    Not relevant.
+
+
+  \item
+    Not relevant.
+
+  \item
+    Not relevant.
+\end{enumerate}
+    
+\end{document}
+

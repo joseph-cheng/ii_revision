@@ -1,0 +1,37 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    In hardware, we can implement a victim cache (or an exclusive L2 acting like a victim cache), such that when blocks are evicted, they are written to the victim cache instead of back to memory. If there is high contention for a particular cache block, then the victim cache should reduce conflict misses.
+
+    We can also change our software in order to reduce the amount of conflict misses that we see. For example, if we know the sizes of the cache of the underlying microarchitecture, then we can try and ensure that memory that we use frequently in tandem is not likely to alias. For example, for an 8KiB L1 cache, having two parallel arrays of size 8KiB is likely to result in many conflict misses, since the \texttt{i}th elements of each array will have the same cache index. By merging these arrays into an array of structs, we reduce these conflict misses.
+
+
+
+  \item
+    Such a prefetcher might be implemented by attempting to look for patterns in load instructions. We can construct a small table, indexed by the PC (of a load instruction). Each table could contain a list of addresses that the load instruction loaded from. Then, we just need to find a common stride between them. For example, we could subtract sequentially loaded addresses from each other, and if there are a certain number of loads with a common stride, say with a stride of $N$, then we add $N$ to the last address and prefetch it (and potentially prefetch even further).
+
+  \item
+    To do this, we first need to transition the block into the $M$ state by issuing a BusRdX transaction (but we do not want to issue a PrWr, because we need the old value of the cache line).
+
+    Then, no other cores can have the line in a non-invalid state. If we see a BusRd or BusRdX for this line, we do not serve it just yet.
+
+    Then, we can save the value of the test-and-set address, and then set it to 1. Only then do we now serve any pending BusRd or BusRdX transactions.
+
+  \item
+    Fundamentally, we may be limited by the amount of parallelisable work in our workload. Amdahl's law shows that we are limited in performance by the amount of necessarily serial work in our workload. This means that we may be unable to exploit these chip multiprocessors effectively because some of our workload will simply not be fit for the parallel architecture.
+
+    We may also be limited by the power consumption of all of the cores. Having such a huge amount of small transistors active will consume very large amounts of power, and so we may be unable to power on all parts of each core on a CMP at a particular time.
+
+    We may also be limited by our interconnect. If we choose a poorly scaling interconnect, like a bus, then power consumption will massively increase, and the overhead of bus arbitration and locking will bottleneck the performance of the CMP.
+
+    Furthermore, cache coherence protocols have overhead associated with them. If we were to use a snoopy protocol, then we suffer from very poor scaling due to the broadcast of messages, which makes it more difficult for performance to improve.
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

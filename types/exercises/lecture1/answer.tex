@@ -1,0 +1,148 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}
+  \item
+
+    We give the following operational semantics rules:
+
+    \begin{align*}
+      \textsc{LeqCongL}&\frac{e_1 \leadsto e_1'}{e_1 \leq e_2 \leadsto e_1' \leq e_2}\\
+      \textsc{LeqCongR}&\frac{e_2 \leadsto e_2'}{n \leq e_2 \leadsto n \leq e_2'}\\
+      \textsc{Leq}&\frac{}{n_1 \leq n_2 \leadsto b}(b = \text{true if }n_1 \leq n_2, \text{ false otherwise})\\
+      \textsc{PlusCongL}&\frac{e_1 \leadsto e_1'}{e_1 + e_2 \leadsto e_1' + e_2}\\
+      \textsc{PlusCongR}&\frac{e_2 \leadsto e_2'}{n + e_2 \leadsto n + e_2'}\\
+      \textsc{Plus}&\frac{}{n_1 + n_2 \leadsto n}(n = n_1 + n_2)\\
+    \end{align*}
+
+  \item
+    Below, we extend the proof of progress to cover $e \wedge e'$
+
+    By assumption, $e \wedge e'$ is typeable under the empty context, so we have:
+
+    \[
+     \frac{\{\} \vdash e : \text{bool} \hspace{15pt} \{\} \vash e' : \text{bool}}{\{\} \vdash e \wedge e' : \text{bool}}\\
+    \]
+
+    By structural induction, we therefore have that progress applies to $e$ and $e'$.
+
+    Therefore, we know that $e$ is either a value, or there exists $e_1$ such that $e \leadsto e_1$
+
+    We proceed by cases:
+
+    \begin{itemize}
+      \item
+        If $e$ is a value, then since it is a bool, it is either true or false.
+
+        Cases again:
+
+        \begin{itemize}
+          \item
+            $e = true$
+
+            If this is the case, we use the \textsc{AndTrue} rule to derive $e \wedge e' \leadsto e'$
+
+          \item
+            $e = false$
+
+            If this is the case, we use the \textsc{AndFalse} rule to derive $e \wedge e' \leadsto false$
+
+        \end{itemize}
+
+      \item
+        If there exists an $e_1$ such that $e \leadsto e_1$, we use the \textsc{AndCong} rule to derive $e \wedge e' \leadsto e_1 \wedge e'$.
+    \end{itemize}
+
+    Therefore, by structural induction, we have progress for the $e \wedge e'$ case.
+
+  \item
+    Below, we extend the proof of preservation to cover $e \wedge e'$.
+
+    By assumption, $e \wedge e'$ is typeable under the empty context, and $e \wedge e' \leadsto e''$.
+
+    We proceed by structural induction over $\leadsto$.
+
+    We actually cover 3 cases: \textsc{AndCong}, \textsc{AndTrue}, and \textsc{AndFalse}:
+
+    \begin{itemize}
+      \item
+        Case: \textsc{AndCong}
+
+        If this is the case, we have the following:
+
+        \[
+          \frac{e \leadsto e_1}{e \wedge e' \leadsto e_1 \wedge e'}
+        .\] 
+
+        And:
+
+        \[
+          \frac{\{\} \vdash e : \text{bool} \hspace{15pt} \{\} \vdash e' : \text{bool}}{\{\} \vdash e \wedge e' : \text{bool}} 
+        .\] 
+
+        We get 3 subderivations:
+
+        $e \leadsto e_1$
+
+        $\{\} \vdash e : \text{bool}$
+
+        $\{\} \vdash e' : \text{bool}$
+
+        By induction on the subderivation $e \wedge e_1$ and $\{\} \vdash e : \text{bool}$, we know that $\{\} \vdash e_1 : \text{bool}$.
+
+        Therefore, we can apply the \textsc{And} typing rule to get:
+
+        \[
+          \frac{\{\} \vdash e_1 : \text{bool} \hspace{15pt} \{\} \vdash e' : \text{bool}}{\{\} \vdash e_1 \wedge e' : \text{bool}}
+        .\] 
+
+        So, we have type preservation in this case.
+
+      \item
+        Case: \textsc{AndTrue}
+
+        In this case, we have the following:
+
+        \[
+          \frac{}{true \wedge e' \leadsto e'}
+        .\] 
+
+        And:
+
+      \[
+        \frac{\{\} \vdash \text{true} : \text{bool} \hspace{15pt} \{\} \vdash e' : \text{bool}}{\{\} \vdash \text{true} \wedge e' : \text{bool}}$
+      .\]
+
+      We get subderivation $\{\} \vdash e' : bool$
+
+      Therefore, we have type preservation in this case.
+
+    \item
+      Case: \textsc{AndFalse}
+
+      In this case, we have the following:
+      
+        \[
+          \frac{}{\text{false}  \wedge e' \leadsto \text{false} }
+        .\] 
+
+        And:
+
+      \[
+        \frac{\{\} \vdash \text{false} : \text{bool} \hspace{15pt} \{\} \vdash e' : \text{bool}}{\{\} \vdash \text{false} \wedge e' : \text{bool}}$
+      .\]
+
+      Therefore, since $\{\} \vdash \text{false} : \text{bool}$ by definition, we get type preservation.
+    \end{itemize}
+
+    Therefore, since type preservation holds in all cases, we are done.
+
+
+
+
+
+
+\end{enumerate}
+
+    
+\end{document}
