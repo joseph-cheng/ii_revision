@@ -1,0 +1,343 @@
+\input{../../../template.tex}
+
+\begin{document}
+
+To prove type safety, we prove the following properties: progress and preservation.
+
+In order to do these proofs, we use weakening, exchange, and substitution.
+
+We only prove it for the $\rightarrow I$ rule.
+
+  \begin{enumerate}
+    \item
+      We begin with weakening.
+
+      We proceed by structural induction.
+
+      We start with the $\rightarrow I$ rule:
+
+      \[
+        \frac{\Gamma,\Gamma', x : X \vdash e : Y}{\Gamma,\Gamma' \vdash \lambda x : X. e : X \rightarrow Y}
+      .\] 
+
+      We are required to prove that for any $z : T$, $\Gamma, z:T \Gamma' \vdash \lambda x : X. e : X \rightarrow Y$
+
+      We assume that weakening holds for the subderivation  $\Gamma, \Gamma', x : X \vdash e : Y$
+
+      By letting $\Gamma'' = \Gamma', x : X$, we can use weakening to give us $\Gamma, z : T, \Gamma'' \vdash e : Y$, or $\Gamma, z : T, \Gamma', x : X \vdash e : Y$
+
+      Therefore, we can use the $\rightarrow I$ rule to give:
+
+      \[
+        \frac{\Gamma, z : T, \Gamma', x : X \vdash e : Y}{\Gamma, z : T, \Gamma' \vdash \lambda x: X. e : X \rightarrow Y}
+      .\] 
+
+      We now consider the $\rightarrow E$ case.
+
+      We have:
+
+      \[
+        \frac{\Gamma,\Gamma' \vdash e : X \rightarrow Y \hspace{15pt} \Gamma, \Gamma' \vdash e' : X}{\Gamma, \Gamma' \vdash e e' : Y}
+      .\] 
+
+      We assume we have weakening on our subderivations, so we can simply apply the $\rightarrow E$ rule again:
+
+      \[
+        \frac{\Gamma, x : T, \Gamma' \vdash e : X \rightarrow Y \hspace{15pt} \Gamma, x : T, \Gamma' \vdash e' : X}{\Gamma, x : T, \Gamma' \vdash e e' : Y}
+      .\] 
+
+      We now consider the $1I$ case.
+
+      We have:
+
+      \[
+        \frac{}{\Gamma,\Gamma' \vdash \langle \rangle : 1}
+      .\] 
+
+      Using the same rule, we get:
+
+      \[
+        \frac{}{\Gamma, x : T, \Gamma' \vdash \langle \rangle : 1}
+      .\] 
+
+      So we are done.
+
+    \item
+      We now prove exchange.
+
+      Again, we use structural induction.
+
+      We begin with the $\rightarrow I$ case.
+
+      So, we have:
+
+      \[
+        \frac{\Gamma, y : T, y': T', \Gamma', x : X \vdash e : Y}{\Gamma, x : T, x' : T', \Gamma' \vdash \lambda x : X. e : X \rightarrow Y}
+      .\] 
+
+      We are required to prove that $\Gamma, x : T, x' : T', \Gamma' \vdash \lambda x : X. e : X \rightarrow Y$
+
+      We assume we have exchange on the subderivation $\Gamma, y : T, y' : T', \Gamma', x : X \vdash e : Y$
+
+      Therefore, by letting $\Gamma'' = \Gamma', x : X$, through exchange we get $\Gamma, y' : T, y : T, \Gamma'' \vdash e : Y$, or $\Gamma, y' : T', y : T, \Gamma', x : X \vdash e : Y$
+
+      Therefore, we use the $\rightarrow I$ rule to get:
+
+      \[
+        \frac{\Gamma, y': T', y : T, \Gamma', x : X \vdash e : Y}{\Gamma, y' : T', y : T, \Gamma ' \vdash \lambda x : X. e : X \rightarrow Y}
+      .\] 
+
+      We now consider the $\rightarrow E$ case:
+
+      So, we have:
+
+      \[
+        \frac{\Gamma, y : T, y' : T', \Gamma' \vdash e : X \rightarrow Y \hspace{15pt} \Gamma, y : T, y' : T', \Gamma' \vdash e' : X}{\Gamma, y : T, y' : T', \Gamma' \vdash e e' Y}
+      .\] 
+
+      We assume we have exchange on the subderivations, so we immediately get, using the $\rightarrow E$ rule,:
+
+      \[
+        \frac{\Gamma, y' : T', y : T, \Gamma' \vdash e : X \rightarrow Y \hspace{15pt} \Gamma, y' : T', y : T, \Gamma' \vdash e' : X}{\Gamma, y' : T', y : T, \Gamma' \vdash e e' : Y}
+      .\] 
+
+      We now consider the $1I$ case:
+
+      We have:
+
+      \[
+        \frac{}{\Gamma, y : T ,y' : T',  \Gamma' \vdash \{\} : 1}
+      .\] 
+
+      We use the $1I$ rule immediately to get:
+
+      \[
+        \frac{}{\Gamma, y': T', y : T, \Gamma' \vdash \{\} : 1}
+      .\] 
+
+      So, we are done.
+
+    \item
+      We now prove substitution.
+
+      Again, we use structural induction.
+
+      We first consider the $\rightarrow I$ case:
+
+      So, we have:
+
+      \[
+        \frac{\Gamma, y : T, x : X \vdash e : Y}{\Gamma, y : T \vdash \lambda x : X. e : X \rightarrow Y}
+      .\] 
+
+      Our subderivation gives us $\Gamma, y : T, x : X \vdash e : Y$, and by exchange we know this is equivalent to $\Gamma, x : X, y : T \vdash e : Y$. We assume we have substitution on both.
+
+      Therefore, if we have a term $e'$ such that $\Gamma, \vdash e' : T$, then by weakening we know that $\Gamma, x : X \vdash e' : T$, and so we can apply substitution to give us $\Gamma, x : X \vdash [e' / y]e : Y$
+
+      Therefore, we apply the $\rightarrow I$ rule to get:
+
+      \[
+        \frac{\Gamma, x : X \vdash [e' / y]e : Y}{\Gamma \vdash \lambda x : X. [e' / y]e : X \rightarrow Y}
+      .\] 
+
+
+      From the definition of substitution, we know that $[e' / y](\lambda x: X . e) = \lambda x : X . [e' / y]e$, so therefore we have $\Gamma \vdash [e' / y](\lambda x : X . e) : X \rightarrow Y$, as required.
+
+      We now consider the $\rightarrow E$ case:
+
+      So, we have:
+
+      \[
+        \frac{\Gamma, y : T \vdash e : X \rightarrow Y \hspace{15pt} \Gamma, y : T \vdash e' : X}{\Gamma, y : T \vdash e e' : X \rightarrow Y}
+      .\] 
+
+      We assume we have $e''$ such that $\Gamma \vdash e'' : T$. We assume we have substitution on our subderivations, i.e. that $\Gamma \vdash [e'' / y]e : X \rightarrow Y$ and $\Gamma \vdash [e'' / y]e' : X$.
+
+      Therefore, using the $\rightarrow E$ rule again, we get:
+
+      \[
+        \frac{\Gamma \vdash [e'' / y]e : X \rightarrow Y \hspace{15pt} \Gamma \vdash [e'' / y]e' : X}{\Gamma \vdash [e'' / y]e [e'' / y]e' : X \rightarrow Y}
+      .\] 
+
+      By definition of substitution, we know $[e'' / y]e [e'' / y]e' = [e'' / y](e e')$, so we therefore get $\Gamma \vdash [e'' / y](e e') : X \rightarrow Y$ as required.
+
+      We now consider the $1I$ case:
+
+      So, we have:
+
+      \[
+        \frac{}{\Gamma, y : T \vdash \langle\rangle : 1}
+      .\] 
+
+      Assume we have some $e'$ such that $\Gamma \vdash e' : T$
+
+      From the definition of substitution, and the $1I$ rule, we get:
+
+      \[
+        \frac{}{\Gamma \vdash [e' / y]\langle\rangle : 1}
+      .\] 
+
+      So we are done.
+
+    \item
+      We now prove progress.
+
+      We prove progress with structural induction over typing derivations, as before.
+
+      We begin with the $\rightarrow I$ case.
+
+      So, we have:
+
+      \[
+        \frac{x : X \vdash e : Y}{\{\} \vdash \lambda x : X. e : X \rightarrow Y}
+      .\] 
+
+      By definition, $\lambda x : X .e$ is a value, so we are done.
+
+      We now proceed with the $\rightarrow E$ case.
+
+      So, we have:
+
+      \[
+        \frac{\{\} \vdash e : X \rightarrow Y \hspace{15pt} \{\} \vdash e' : X}{\{\} \vdash e e' : Y}
+      .\] 
+
+      We assume we have progress on the subderivations.
+
+      We proceed by cases:
+
+      \begin{itemize}
+        \item
+          Case $e$ is not a value.
+
+          In this case, we have some $e_1$ such that $e \leadsto e_1$
+
+          Then, we simply use the congruence rule:
+
+          \[
+            \frac{e \leadsto e_1}{e e' \leadsto e_1 e'}
+          .\] 
+
+          So we have progress.
+
+        \item
+          Case $e$ is a value $v_1$.
+
+          We again proceed by cases:
+
+          \begin{itemize}
+            \item
+              Case $e'$ is not a value.
+
+              In this case, we have some $e_2$ such that $e \leadsto e_2$
+
+              Then, we simply use the congruence rule:
+
+              \[
+                \frac{e' \leadsto e_2}{v_1 e' \leadsto v_1 e_2}
+              .\] 
+
+              So we have progress.
+
+            \item
+              Case $e'$ is a value $v_2$
+
+              Since $v_1$ is well typed, it must be of the form $(\lambda x: X . e'')$.
+
+              Therefore, we use the congruence rule:
+
+              \[
+                \frac{}{(\lambda x : X. e'') v_2 \leadsto [v_2 / x]e''}
+              .\] 
+
+              So we have progress.
+          \end{itemize}
+      \end{itemize}
+
+      Therefore we have progress in this case.
+
+      For the $1I$ rule, $\langle\rangle$ is immediately a value so we have progress.
+
+    \item
+      We now prove type preservation.
+
+      We proceed by structural induction over reduction this time.
+
+      We only have to deal with functions, since unit never reduces.
+
+      \begin{itemize}
+        \item
+          We start with the left congruence rule:
+
+          \[
+            \frac{e_1 \leadsto e_1'}{e_1 e_2 \leadsto e_1' e_2}
+          .\] 
+
+          And we assume $e_1 e_2$ is well-typed, and by deconstructing the typing relation we must have:
+
+          \[
+            \frac{\{\} \vdash e_1 : X \rightarrow Y \hspace{15pt} \{\} \vdash e_2 : X}{\{\} \vdash e_1 e_2 : Y}
+          \] 
+
+          We assume we have preservation on our subderivation $e_1 \leadsto e_1'$, and since we know that $\{\} \vdash e_1 : X \rightarrow Y$, we use preservation to get $\{\} \vdash e_1' : X \rightarrow Y$
+
+          Therefore, we use the $\rightarrow E$ rule to get:
+
+          \[
+            \frac{\{\} \vdash e_1' : X \rightarrow Y \hspace{15pt} \{\} \vdash e_2 : X}{\{\} \vdash e_1' e_2 : Y}
+          .\] 
+
+          And so we have preservation in this case.
+
+        \item
+          We now consider the right congruence rule:
+
+          \[
+            \frac{e_2 \leadsto e_2'}{v_1 e_2 \leadsto v_1 e_2'}
+          .\] 
+
+          And we assume $v_1 e_2$ is well-typed, and so we get:
+
+          \[
+            \frac{\{\} \vdash v_1 : X \rightarrow Y \hspace{15pt} \{\} \vdash e_2 : X}{\{\} \vdash v_1 e_2 : Y}
+          .\] 
+
+          We assume we have preservation on our subderivation $e_2 \leadsto e_2'$, and since we know $\{\} \vdash e_2 : X$, we use preservation to get $\{\} \vdash e_2' : X$
+
+          Therefore, we use the $\rightarrow E$ rule to get:
+
+          \[
+            \frac{\{\} \vdash v_1 : X \rightarrow Y \hspace{15pt} \{\} \vdash e_2' : X}{\{\} \vdash v_1 e_2' : Y}
+          .\] 
+
+          And so we have preservation in this case.
+
+        \item
+          We now consider the actual reduction rule:
+
+          \[
+            \frac{}{(\lambda x : X . e) v \leadsto [v / x]e}
+          .\] 
+
+          We also assume $(\lambda x : X . e) v$ is well typed, and so that:
+
+          \[
+            \frac{\{\} \vdash (\lambda x : X . e) :X \rightarrow Y \hspace{15pt} \{\} \vdash v : X}{\{\} \vdash (\lambda x : X . e) v : Y}
+          .\] 
+
+          Again, we deconstruct the typing relation for functions and realise that $\{\} \vdash (\lambda x : X . e ) :X \rightarrow Y$ must come from the typing derivation:
+
+          \[
+            \frac{x : X \vdash e : Y}{\{\} \vdash (\lambda x : X . e) : X \rightarrow Y}
+          .\] 
+
+          Finally, since we have $x : X \vdash e : Y$, and $\{\} \vdash v : X$, we can use substitution to get $\{\} \vdash [v / x]e : Y$
+
+          So, we have typing preservation in this case.
+      \end{itemize}
+
+      So, we have typing preservation.
+
+
+  \end{enumerate}
+\end{document}
