@@ -1,0 +1,22 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+      \item
+
+        Not relevant?
+
+      \item
+        At the heart of the scheme, BGP is a vectoring protocol with a number of different attributes in each vector, and the decision process gives us the order in which these are used.
+
+        The most important attribute is the local preference parameter, which is only used in internal BGP, i.e. not between ASes. This is used within an AS to indicate the preferred exit node or exit path from an AS. For example, if we have two links to a provider, we can use local preference to make one of them the primary link, using the other as a backup link.
+
+        Then, BGP looks at the AS Path attribute, which stores a list of the previous ASes along this route. BGP chooses the path with the shortest AS Path, attempting to get the best route.
+
+        If the AS Path lengths are the same, we look at the multi-exit discriminator attribute (assuming the routes come from the same AS, skip otherwise). If there are two routes from the same AS, then the MED is an attribute that allows ASes to specify which exit point they would prefer to use. If an AS prefers one egress node over another, they will give it a lower MED than a less preferable egress node. This can be thought of as the cost to get to that egress node internally within the AS.
+
+        If the MEDs are the same, we prefer eBGP paths over iBGP paths.
+
+        Finally, we prefer the router with the lowest ID as a tiebreaker.
+    \end{enumerate}
+\end{document}
