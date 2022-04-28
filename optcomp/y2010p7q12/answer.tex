@@ -1,0 +1,45 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Here, the analysis we want to perform needs to tell us whether or not a particular definition is used. Obviously, we cannot calculate this exactly, so we need to estimate. In order for our subsequent transformation to be safe, we should overestimate such that we correctly identify all definitions that are used, but not all definitions that are not used. If we do this the other way around, then we may end up evaluating an expression twice.
+
+    It is trivial and safe to just evaluate each definition eagerly, so we instead propose an optimisation that evaluates the expression if it is the first use of the variable, and does not evaluate it otherwise. To do this, we augment our code by transformation to SSA form, and then adding in an extra boolean variable that tracks whether a particular variable is used, initialized to false. After every use of the variable, we add a definition that sets it to true.
+
+    Then, at every use of a variable, we see if there is any definition of this boolean that sets it to true that reaches the use, and if none do, then we evaluate the variable, and if any do, then we do not evaluate the variable.
+
+    Then, we remove all uses and definitions of these variables after the transformation.
+
+  \item
+    Here, it is trivial to just evaluate the expression whenever it is used, and never otherwise. The optimisation here becomes to try and avoid extra computations when we need to.
+
+    For this, we can treat each use of a variable as a computation of its corresponding definition expression (perhaps with use of SSA to avoid ambiguity). Then, we can use available expression analysis to try and re-use calculations of an expression in subsequent uses of a variable.
+
+    This is still safe, since we never evaluate a variable when we don't use it, and we potentially avoid some recomputations.
+
+  \item
+    Here, parts (a) and (b) help us determine where we can remove some of this extra logic.
+
+    For example, in (a), we describe an analysis that tells us when the first use of a variable is. In these cases, we can remove the extra executable logic.
+
+    We can also do an extra analysis that tells us when a variable must have been used before. To do this, we can use reaching definitions analysis in the same way we did in (a), but replace the $\bigcup$ with a $\bigcap$, which ensures that a particular definition \textit{must} reach a particular program point. In these cases, we can also remove the extra executable logic.
+
+    There will be some cases in which we are not sure whether a variable is used before. Some of these will simply be due to what path the particular execution of the program goes down (e.g. in the example program with the \texttt{if} statement and subsequent use of \texttt{x}), but others will be cases where the answer is simply not decidable:
+
+\begin{verbatim}
+int x = SomeExpression;
+int y = SomeOtherExpression;
+
+if ((y + 1) * (y + 1) == 0) {
+  print x;
+}
+if (y * y + 2 * y + 1 != 0) {
+  print x + 1;
+}
+print x - 1;
+\end{verbatim}
+
+Here,  \texttt{x} is always evaluated at the final \texttt{print}, but we cannot decide this in general.
+\end{enumerate}
+\end{document}
