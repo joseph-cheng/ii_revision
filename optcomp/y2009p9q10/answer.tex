@@ -1,0 +1,55 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    We provide the following data-flow equation:
+
+    \[
+      mustuse(n) = \left(\bigcap_{s \in succ(n)} mustuse(s)\right) \setminus kill(n) \cup gen(n)
+    \]
+
+    We also node that $mustuse(n)$ is defined as $\{\}$ in the case that $succ(n) = \{\}$.
+
+    In this case, $kill(n)$ is the set of variables defined by $n$, and $gen(n)$ is the set of variables referenced by $n$.
+
+    Essentially, a variable must be used at $n$ if it is either used in every possible path from $n$, and is not redefined at $n$, or if it is referenced at $n$.
+
+  \item
+    We use the following dataflow equation:
+
+    \[
+      mustuseoneof(n) = gen_n(kill_n(\left(\bigcup_{s \in succ(n)} mustuseoneof(s)\right)))
+    .\] 
+
+    Where $kill_n(S)$ is defined as $\{s \setminus kill(n) | s \in S\}$ and $gen_n(S) = \{s \cup gen(n) | s \in S\}$
+
+    We again note that $mustuseoneof(n) = \{\{\}\}$ if $succ(n) = \{\}$.
+
+  \item
+    $museuseoneof(n_0)$ tells us which sets of variables must be read (or evaluated, given we are in a lazy functional language) by a particular procedure. The set $\{s_1, \ldots, s_n\}$ tells us that we must either evaluate everything in $s_1$, or everything in $s_2$, or $\ldots$ , or everything in $s_n$.
+
+    This means that a set of sets of variables corresponds to the Boolean function $f(S) = \bigvee_{s \in S} (\bigwedge_{x \in s} x)$
+
+    This Boolean function is our strictness function for $f$. It is not injective, however, since we can have something like $\{\{x,y\}, \{x\}\}$ and $\{x\}$, which are different, but generate the same strictness function $(x \wedge y) \vee x = x$, since we do not compare functions syntactically, but by the values they produce.
+
+    $\{\}$ is different from $\{\{\}\}$ because $\{\{\}\}$ tells us that the only possibility is that no variables are read, where as $\{\}$ tells us that there are no possibilities, there are no paths.
+
+    The correspondence is not perfect because if we have a function $f$ that does nothing but loop forever, but never reads any variables, we consider this strict in its arguments, but we would not say that it uses any of its arguments in $mustuseoneof$.
+
+
+  \item
+    To deal with function calls, we can perform a variable renaming of the $mustuseoneof$ set of each function. For example, if we have \texttt{z = h(y+1, x-1)}, then we take the $mustuseoneof$ set from $h$, and swap the $x$ and $y$ variables to obtain the set for that expression.
+
+    In the given example, I would expect the $mustuseoneof$ set to be $\{\{x,y\}\}$.
+
+    We could achieve this by iterating computation of the set from $\{\}$ (mirroring the false used in strictness analysis) to find a fixed point.
+
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

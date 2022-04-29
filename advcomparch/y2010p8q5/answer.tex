@@ -1,0 +1,26 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    This does not directly improve overall performance because clock frequency is not a measure of overall performance, we actually care about $\frac{\text{frequency}}{\text{CPI}}$. Even though increasing the pipeline depth will increase clock frequency, it is also likely to increase CPI, since by increasing the pipeline depth we are also likely to introduce new hazards into our pipeline, and thus increase the number of stalls we experience. We also suffer more from things like branch mispredictions, or anything that requires a flush of the pipeline.
+
+  \item
+    It might be advantageous to design such a processor because some instructions take multiple cycles to execute. For example, floating point arithmetic often takes longer than one cycle, and stalling the entire processor for many cycles to execute a single FP arithmetic instruction is incredibly wasteful. It would make more sense to have multiple execution pipelines such that other instructions are able to execute in parallel, as long as we do not have dependencies between the instructions.
+
+  \item
+    In a superscalar processor, dynamic scheduling provides many benefits. For example, lots of ILP might not be available to the compiler/programmer, but will be available to the CPU, since it is seeing the dynamic stream of instructions that are executed, as opposed to a static list of instructions. This allows ILP to be extracted across loop iterations easily (without needing loop unrolling or software pipelining).
+
+    Dynamic scheduling also allows for a better separation of architecture and microarchitecture, since we could for example have many physical registers that are hidden from the architecture, but can be utilised by a dynamic instruction scheduler, whilst keeping the ISA portable. Furthermore, the ISA becomes even more portable because we do not need to compile a binary for a particular pipeline for best efficiency, we can instead rely on the CPU's dynamic scheduler.
+
+  \item
+    Even though fabrication technologies have scaled, we are unable to utilise all of the transistors effectively.
+
+    Superscalar processors are, by nature, quite large, and as these processors scale, we often require more and more state to be reached in a single cycle. For example, the DFN requires data from any other FU, and this might be very difficult to do once the processor grows large enough, since wires do not scale as transistors scale. We also require fetching a large number of instructions from the instruction window, which could be difficult to do in one cycle if the window is large enough, which we expect to happen as the processors scale up. This all leads to extra complications, for example having to wait for extra cycles for data in the DFN or instruction window to be fetched.
+
+    We also struggle to exploit more ILP as we scale our processors, and we get diminishing returns in attempting to build structures that extract more ILP. These structures require more and more transistors, thus burning more of the transistor budget for small amounts of ILP.
+
+    We are also very limited by power consumption, due to the fact that static power consumption of transistors means that we cannot have all of them active at a given time, and thus we are unable to use all of the transistors on a chip active at a particular time, regardless of how small they are, which means we are limited in what hardware we can have in use at a particular time.
+        
+    \end{enumerate}
+\end{document}

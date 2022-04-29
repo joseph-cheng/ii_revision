@@ -1,0 +1,58 @@
+\input{../../template.tex}
+
+\begin{document}
+
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        This is just $256 \cdot \frac{1}{256} \cdot \log_2 {\frac{1}{256}} = 8$ bits.
+
+      \item
+        Since all humans are mammals, this has 0 entropy (all humans are in the same group).
+
+      \item
+        We just apply the entropy formula:
+
+        $\frac{1}{4}\log_2 \frac{1}{4} + \frac{1}{4}\log_2 \frac{1}{4} + \frac{1}{2}\log_2 \frac{1}{2} = \frac{3}{2}$ bits.
+
+      \item
+        By definition, half the population is below the median, and half are above, so this has entropy $\frac{1}{2}\log_2 \frac{1}{2} + \frac{1}{2}\log_2 \frac{1}{2} = 1$ bit.
+
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\alph*)]
+      \item
+        the Kullback-Leibler distance of two discrete probability distributions $p(x)$ and $q(x)$ is defined as follows:
+
+        $D_{KL}(p(x), q(x)) = \sum_{x \in \text{dom}(p)} p(x) \log_2 \frac{p(x)}{q(x)}$
+
+      \item
+        The KL will be 0 when the code is most effective (i.e. when $p(x) = q(x)$). As the two probability distributions get further apart, the KL increases, implying a worse effectiveness. Precisely, the KL tells us the number of additional bits we need on average if we are actually using $p(x)$.
+
+      \item
+        The KL violates the symmetry axiom of distance metrics.
+
+      \item
+        If there are values where $q(x)$ is 0, and $p(x)$ is \textit{not} zero, then the KL becomes undefined, or goes to infinity. If $p(x)$ and $q(x)$ are both zero, then this does not imply it goes to infinity.
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The Nyquist theorem tells us that we need to sample at twice the highest frequency, or 2 KHz. For one second of recording, this results in 2000 elements.
+
+      \item
+        Not relevant.
+
+    \end{enumerate}
+  \item
+    Not relevant
+    
+\end{enumerate}
+    
+\end{document}
