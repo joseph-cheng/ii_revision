@@ -1,0 +1,67 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Not relevant
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        To show that $g$ is a permutation, we are required to show that it is both injective and surjective.
+
+        First, we show it is injective. Suppose $g(x) = g(y)$. We are required to show $x=y$.
+
+        If $g(x) = g(x')$, then splitting $x$ and $x'$ into $x_1||x_2||x_3$ and $x'_1||x'_2||x'_3$ respectively, we get:
+
+        $Y_2 = f(x_1) \oplus x_2 \oplus f(x_3) = f(x'_1) \oplus x'_2 \oplus f(x'_3)$
+
+        $Y_1 = x_1 \oplus f(Y_2) = x'_1 \oplus f(Y_2)$
+
+        $Y_3 = x_3 \oplus f(Y_2) = x'_3 \oplus f(Y_2)$
+
+        The last two equations tell us that $x_1 = x'_1$ and $x_3 = x'_3$
+
+        With this in mind, we know that $f(x_1) = f(x'_1)$ and $f(x_3) = f(x'_3)$ since $f$ is a function, and thus the first equation tells us that $x_2 = x'_2$.
+
+        Then, we prove it is surjective:
+
+        By letting $Y \in \{0,1\}^{192}$, we find an $X$ such that $g(X) = Y$.
+
+        First, split $Y = Y_1||Y_2||Y_3$.
+
+        Then, choose $X_1 = Y_1 \oplus f(Y_2)$ and $X_3 = Y_3 \oplus f(Y_2)$.
+
+        Finally, choose $X_2 = Y_2 \oplus f(X_1) \oplus f(X_3)$. This $X = X_1||X_2||X_3$ clearly satisfies the requirements.
+        
+        Therefore, $g$ is a permutation.
+
+      \item
+        An attacker can choose the following two inputs, $X$ and $X'$:
+
+        Choose $X = X_1||X_2||X_3 = 0^{64}||0^{64}||0^{64}$
+
+        Choose $X' = X'_1||X'_2||X'_3 = 0^{64}||0^{63}1||0^{64}$
+
+        Since $X_1 = X'_1$ and $X_3 = X'_3$, we get $f(X_1) = f(X'_1)$ and $f(X_3) = f(X'_3)$.
+
+        Therefore, $g(X)_2$ and $g(X')_2$ should only differ in the final bit, since they take $X_2$ and $X'_2$ untransformed. If $g$ is a random permutation, this happens with probability $\frac{1}{2^{64}}$, which is very rare, if $g$ is constructed as described, we guess correctly every time.
+
+      \item
+
+        We propose the following attack:
+
+        Choose $X = X_1||X_2||X_3 = 0^{64}||0^{64}||0^{63}1$
+
+        Choose $X' = X'_1||X'_2||X'_3 = 0^{63}1||0^{64}||0^{64}$
+
+        Since $X_1 = X'_3$, $X_3 = X'_1$, and $X_2 = X'_2$, we get that $Y_2 = f(X_1) \oplus X_2 \oplus f(X_3) = f(X'_3) \oplus X'_2 \oplus f(X'_1) = Y'_2$.
+
+        Therefore, we get that $Z_1 = X_1 \oplus f(Y_2) = X'_3 \oplus f(Y'_2) = Z_3$.
+
+        If we are working with a random permutation, this happens with probability $\frac{1}{2^{64}}$ as before, and if we use $g'$ we guess correctly every time.
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

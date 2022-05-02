@@ -1,0 +1,31 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A shared L2 cache is usually banked because of the parallelism benefits. If we turn a cache into multiple independent banks, each of them can serve a request at the same time, meaning that multiple cores are able to access the L2 cache at the same time (assuming they do not conflict for the same bank). This increase in parallelism provides a performance benefit by reducing average cache access time.
+
+  \item
+    With private L2 caches, average access time is reduced (since the cache is closer), and the cache might be shared more fairly, since each core has some guaranteed L2 capacity. However, we may end up wasting space since we may hold multiple copies of the same data in each L2 cache, whereas we would only ever hold one copy in a shared L2 cache (not counting L1 caches).
+
+    This means that, if for example, there is a large working set, or the device we are building a processor for has a very limited transistor budget, then a CMP with a shared L2 cache might be more beneficial because we are able to use more cache with the same number of transistors.
+
+    Furthermore, even though the fairness we get from private L2 caches is nice, we might also find that we do not end up utilising the L2 cache space very well, since some cores might not use all of their L2 cache space, and others might demand more (assuming that an application is not using all of the cores), in which case a shared L2 cache might be more suitable.
+
+  \item
+    Since we are in the M state, we need to give our cache line to the requesting core. SInce we are in a write-back protocol, we need to flush data to memory. So, we issue a flush on the bus, which sends the data back to memory, and also giving the requesting core the block it requested. Then, we transition into the S state, and the requesting core also transitions to the S state.
+
+  \item
+    By adopting an inclusion policy, we can ensure that lines that exist in the L1 cache also exist in the L2 cache. With an inclusive policy, we only need to look at the L2 cache tags when searching for a particular address, since we know that this will also be (essentially) looking at each line in the L1 caches, through inclusivity, and we get all the information we need. With a policy that is not inclusive, then we have to search the L1 caches also in case a line exists in there.
+
+  \item
+
+    With a snoopy cache coherence protocol, multiple buses allows multiple cores to send coherence requests at the same time. With only one bus, we are essentially bottlenecked by the bus. By being able to support parallel coherence requests, we can minimise average time for coherence requests to be resolved (like flushing dirty data, invalidating lines in other cores).
+
+    It is important to note, however, that we do still need to impose a total ordering of requests for the same address (to ensure correctness of the protocol).
+
+
+
+        
+\end{enumerate}
+\end{document}

@@ -1,0 +1,53 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The Kraft-McMillan inequality tells us that it must be the case that $\sum_{i=1}^N \frac{1}{n_i} \leq 1$
+
+      \item
+        We provide the following code:
+
+\begin{verbatim}
+A: 0
+B: 10
+C: 110
+D: 1110
+E: 1111
+\end{verbatim}
+
+\item
+  We know that this uses the shortest possible code length per symbol because the average codeword length is given as follows:
+
+  $\frac{1}{2} \cdot 1 + \frac{1}{4} \cdot 2 + \frac{1}{8} \cdot 3 + \frac{1}{16} \cdot 4 + \frac{1}{16} \cdot 4 =  1.875$ bits.
+
+  Then, the entropy of this source is given by $\frac{1}{2} \log \frac{1}{2} + \frac{1}{4} \log \frac{1}{4} + \frac{1}{8}\log\frac{1}{8} + \frac{1}{16} \log \frac{1}{16} + \frac{1}{16} \log \frac{1}{16} = 1.875$ bits.
+
+  The Source Coding Theorem tells us that we cannot compress a source lower than its entropy, so this code must be optimal.
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Autocorrelation is defined as follows:
+
+        $F(\tau) = \int_{-\infty}^\infty f(t)f(t + \tau) \mathrm{d}t$
+
+
+        Autocorrelation can remove noise from a signal by amplifying patterns in the underlying signal, and diminishing the lack of patterns in the noise.
+
+        This works if our signal is periodic (and with a period short enough for at least two periods to occur in the recorded signal), and the noise is not periodic (e.g. Gaussian white noise). The more periods that occur in the signal, the better the autocorrelation will perform. The reason this works is because when $\tau$ is close to the period length, peaks and troughs will line up (even if they are very buried in noise), and the noise will average out over time, and so the underlying signal will be revealed by the autocorrelation.
+
+        Sinusoid signals with completely non-periodic noise can be recovered perfectly.
+
+      \item
+        The autocorrelation would be more effective on additive noise, since the idea behind using autocorrelation is that the noise will average to zero over time, which occurs with additive noise, but with multiplicative noise the noise will not necessarily average to zero over time, so it would not work.
+        If the noise and signal occupy different frequency bands, we could obtain a clean signal by simply filtering out the frequency band that carries the noise.
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

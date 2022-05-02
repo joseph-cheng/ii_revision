@@ -1,0 +1,58 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    For context, we describe the Needleman-Wunsch algorithm for pairwise sequence alignment. Most sequence alignment algorithms are some variation of this algorithm. We assume we align two sequences $x$ and $y$ of length $n$ and $m$ respectively (with $n > m$).
+
+    We begin by setting up an $n+1 \times m+1$ grid.
+
+    We have gap penalty $\delta$, and match score function $s$.
+
+    We then fill $F(0,j)$ to be $-j \cdot \delta$, and $F(i,0)$ to be $-i \cdot \delta$.
+
+    Then, we iterate, computing each $F(i,j)$ as:
+
+    $\max \begin{cases}F(i-1,j) - d \\F(i, j-1) - d\\F(i-1, j-1) + s(x_i, y_j)\end{cases}$
+
+    In pairwise sequence alignment of sequences of length $m,n$, the time complexity is almost always $O(mn)$, since the problem involves filling an $m\times n$ grid (at least conceptually), where filling in each grid element takes constant time. However, we might introduce a concave gap penalty function, which makes the function for finding the score of a cell non-constant, and actually becomes $O(n^2 m)$ (assuming $n>m$.
+
+    The space complexity is naively $O(nm)$, because we have to fill up an $m\times n$ grid, but we can actually improve this to just $O(n)$. We can do this because computing the alignment score of a given column only requires 2 columns worth of memory, so we can recycle these two columns. To backtrack and actually obtain a sequence alignment, we recursively solve our problem by finding the node in the middle column that the best path travels through, and then recursively solving the alignments in the two sub-rectangles we generate. Because we halve the space we operate on each time, this converges to still be in constant space.
+
+    We can also improve the time complexity to be faster than $O(mn)$, by turning our $m \times n$ grid into many $\log m \times \log n$ grids. By turning the grid into blocks. We then solve the smaller alignment problems in each block, but we do this by building a lookup table of size $4^{\log m} \times 4^{\log n}$. This takes $O(n+m)$ time to compute, and then looking up each block now takes $O(\log (n+m))$ time. Computing an alignment than takes $O(\frac{n}{\log n} \cdot \frac{m}{\log m} \cdot \log (n+m))$ time, which is better than $O(nm)$.
+
+  \item
+    One way to score a multiple sequence alignment is to sum the scores of each of the induced pairwise alignments.
+
+    For example, consider the following multiple alignment:
+
+\begin{verbatim}
+-TAT-
+-TA-A
+CTA--
+\end{verbatim}
+
+This induces pairwise alignments:
+
+\begin{verbatim}
+TAT-
+TA-A
+
+-TAT
+CTA-
+
+-TAA
+CTA-
+\end{verbatim}
+
+Assuming we have match score of $0$ and gap penalty of $-1$, the score for this multiple alignment would be $-2 + -2 + -2 = -6$.
+
+\item
+  Not relevant.
+
+
+
+
+        
+\end{enumerate}
+\end{document}

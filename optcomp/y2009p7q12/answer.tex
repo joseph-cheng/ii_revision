@@ -1,0 +1,129 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    A variable can be considered either semantically live or syntactically live, at a particular program point.
+
+    A variable is semantically live at a particular program point if changing that variable at that program point does not affect the IO behaviour of any possible execution of the program.
+
+    A variable is syntactically live at a particular program point if changing that variable at that program point would not affect the IO behaviour of the execution of the program down any syntactic path. 
+
+    There may be some syntactic paths that do not correspond to a possible execution of the program, so we have that if a variable is syntactically live, it is semantically live, but we do not have the converse.
+
+    Semantic liveness is uncomputable in general for a compiler, but syntactic liveness is computable, and reasonably easy.
+
+  \item
+    Live variable analysis can first be used to generate clash graphs.
+
+    LVA gives us a set of simultaneously live variables at every program point. If two variables are simultaneously live, then they cannot be allocated to the same register. So, we use the results of LVA to generate a clash graph, where each node is a variable, and two nodes are neighbours if they are simultaneously live at any point.
+
+    Then, register allocation just becomes generating a colouring of this graph (where no two nodes have the same colour).
+
+    Finding an optimal colouring is NP-complete in general, so we must use a heuristic algorithm:
+
+    Choose a node with the least degree (fewest clashes). If there are at least as many colours as edges, push it to a stack, from which we will colour nodes later, and remove it from the clash graph.
+
+    If there are not enough colours, choose another node. If no node is found, we must spill a node to memory, so choose a node (perhaps heuristically), and remove it from the clash graph.
+
+    Once the clash graph is empty, progressively colour each node by popping them from the stack.
+
+    This algorithm avoids early decisions by iterating over the entire clash graph before making a colouring, and choosing a somewhat good order of colouring.
+
+  \item
+    To colour $K_n$, we need $n$ colours. Any fewer and we have a clash, by the pigeonhole principle.
+
+    To colour $C_n$, if $n=1$ we need 1 colour, if $n$ is odd we colour in 3 colours, and if $n$ is even we colour in 2 colours.
+
+    To colour $S$, we also just need $2$ colours, by colouring the two nodes on the diagonal one colour, and the other two another colour.
+
+  \item
+
+    We assume we have an arbitrary amount of colours, i.e. we never spill.
+
+    The algorithm arbitrarily picks a node to begin with. We can choose this wlog. This gets removed from the clash graph and we are left with a line.
+
+    The algorithm then must choose nodes from either end of the line to push on to the stack. Regardless of the order, we end up colouring optimally. This is because we always colour in alternating colours, and the ends of the line are always chosen to be the same colour, so if $n$ is even, the only time we colour with 2 coloured neighbours is when the 2 neighbours are the same colour (so we colour in 2), and if $n$ is odd these 2 neighbours are different colours (so we colour in 3).
+
+  \item
+\begin{verbatim}
+int a;
+int b;
+int c;
+int d;
+int e;
+a = rand();
+b = rand();
+c = rand();
+d = rand();
+e = rand();
+print a;
+print b;
+print c;
+print d;
+print e;
+\end{verbatim}
+
+At the print statements, all the variables are live, so this is $K_5$.
+
+\begin{verbatim}
+int a;
+int b;
+int c;
+int d;
+a = rand();
+b = rand();
+print a+b;
+a = rand();
+d = rand();
+print a+d;
+b = rand();
+c = rand();
+print b+c;
+c = rand()
+d = rand()
+print c+d;
+\end{verbatim}
+
+At each print, we make the two variables live, and then they get removed from liveness in the preceding definitions, so this is $C_4$.
+
+\begin{verbatim}
+int a,b,c,d;
+a = rand();
+b = rand();
+c = rand();
+print a+b+c;
+b = rand();
+c = rand();
+d = rand();
+print b+c+d
+\end{verbatim}
+
+Here, we form triangles that share an edge, making $S$.
+
+\item
+
+  For $K_5$, we give the same program as in (e).
+
+  For $C_4$, this is impossible.
+
+  For $S$, we give:
+
+\begin{verbatim}
+int a,b,c,d;
+a = rand();
+b = rand();
+c = rand();
+print a+b+c;
+d = rand();
+print b+c+d
+\end{verbatim}
+
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

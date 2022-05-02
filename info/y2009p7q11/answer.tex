@@ -1,0 +1,55 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The joint uncertainty $H(X,Y)$ is given by $-\sum_{x \in \{x\}} \sum_{y \in \{y\}} p(x,y) \log_2 p(x,y)$
+
+      \item
+        This is given by $-\sum_{x \in \{x\}} p(x,y=b_j) \log_2 \frac{p(x,y=b_j)}{p(x)}$
+
+      \item
+        This is given by $-\sum_{x \in \{x\}} \sum_{y \in \{y\}} p(x,y) \log_2 \frac{p(x,y)}{p(y)}$
+
+      \item
+        Mutual information can be defined as $H(X) - H(X|Y)$
+
+      \item
+        This is simply $H(X,Y)$.
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        The mutual information is given as $H(Y) - H(Y|X)$
+
+        So if $Y$ is the output, and $X$ is the input, we get $H(Y) = 1$ (since bits get corrupted uniformly randomly and $X$ is equiprobable)
+
+        Then, $H(Y|X) = -\sum_{x \in \{0,1\}} \sum_{y \in \{0,1\}} p(x,y) \log_2 \frac{p(x,y)}{p(x)}$
+
+        This is equal to $-((1-p)\log_2 (1-p) + p\log_2 p)$
+
+        Therefore, the mutual information of this channel is $1 + (1-p) \log_2 (1-p) + p\log_2 p$
+
+      \item
+        The channel capacity in this case happens when the input distribution is equiprobable, so the capacity is just $1 + (1-p) \log_2 (1-p) + p\log_2 p $ again.
+
+      \item
+        The maximum possible entropy is at the channel capacity, so $1 + (1-p) \log_2 (1-p) + p\log_2 p$
+
+      \item
+        The Noisy Channel Coding Theorem.
+
+        
+    \end{enumerate}
+
+  \item
+    Not relevant.
+        
+    \end{enumerate}
+\end{document}
