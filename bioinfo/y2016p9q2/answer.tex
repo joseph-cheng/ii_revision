@@ -1,0 +1,42 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item Not relevant
+
+  \item
+    In Clustal, we use a progressive alignment to generate a multiple alignment. If we do not use a guide tree, then we may pick any arbitrary order to proceed with the multiple alignment.
+
+    Suppose we have sequences \texttt{CCGT}, \texttt{TAAT}, and \texttt{TAAG}
+
+    If we do these in a bad order, we might obtain the following multi-alignment:
+
+\begin{verbatim}
+---TAAT---
+CCG---T---
+------TAAG
+\end{verbatim}
+
+However, by doing them in a better order (e.g. by joining the similar sequences first), we might get:
+
+\begin{verbatim}
+---TAAT
+---TAAG
+CCGT---
+\end{verbatim}
+
+A guide tree allows us to try and get a better order, so fewer errors are propagated down the multiple alignment.
+
+\item
+  Not relevant.
+
+\item
+  A compression algorithm is often used in genome assembly because the sheer quantity of data needed to store is huge, and so the memory requirements of these algorithms become huge, so a compression algorithm is used to lessen these requirements.
+
+  For example, the Burrows-Wheeler Transform (BWT) is a reversible transform that tries to amplify similarities in the text, e.g. by placing the same character next to each other often. The BWT makes a string amenable to further compression with something like RLE, or adaptive types of compression, like adaptive arithmetic coding. Importantly, the BWT is also reversible.
+
+  As an example, we might transform the string \texttt{ACAGACAT\$} into \texttt{T\$GCCAAAA}. Clearly, the latter is much more amenable to RLE.
+
+        
+\end{enumerate}
+\end{document}
