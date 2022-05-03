@@ -1,0 +1,50 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Not relevant
+
+    \item
+      Not relevant
+
+    \item
+      \begin{enumerate}[label=(\roman*)]
+        \item
+        The most efficient sequence of questions would be:
+
+        Is the symbol A?
+
+        Is the symbol B?
+
+        Is the symbol C?
+
+        Is the symbol D?
+        
+        Is the symbol E?
+        
+        Is the symbol F?
+
+        Is the symbol G?
+
+      \item
+
+        We know that this is maximally informative because at each question, which requires 1 bit of information, we half the remaining entropy (which removes 1 bit).
+
+      \item
+        On average, we need the following number of questions:
+
+        $\frac{1}{2} \cdot 1 + \frac{1}{4} \cdot 2 + \frac{1}{8} \cdot 3 + \frac{1}{16} \cdot 4 + \frac{1}{32} \cdot 5 + \frac{1}{64} \cdot 6 + \frac{1}{128}\cdot 7 + \frac{1}{128} \cdot 7 = \frac{127}{64}$
+
+      \item
+        The entropy of the symbol set is given below, using the definition of entropy:
+
+        $-(\frac{1}{2}\log_2\frac{1}{2} + \frac{1}{4}\log_2 \frac{1}{4} + \frac{1}{8} \log_2 \frac{1}{8} + \frac{1}{16}\log_2 \frac{1}{16} + \frac{1}{32}\log_2 \frac{1}{32} + \frac{1}{64} \log_2 \frac{1}{64} + \frac{1}{128} \log_2 \frac{1}{128} + \frac{1}{128} \log_2 \frac{1}{128}) = -\frac{127}{64}$
+
+
+
+      \end{enumerate}
+
+        
+    \end{enumerate}
+\end{document}

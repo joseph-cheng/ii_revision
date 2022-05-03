@@ -1,0 +1,51 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Since $Y$ takes a different value for each value of $X$, $H(Y) = H(X)$, so 8 bits
+
+      \item
+        Since $Y$ is completely determined by the value of $X$, $H(Y|X) = 0$ bits.
+
+      \item
+        0 bits, since $H(X|Y) = H(Y|X) + H(Y) - H(X) = 0 + 8 - 8 = 0$.
+
+      \item
+        $H(X,Y) = 8$ bits, since $X$ and $Y$ are perfectly correlated.
+
+      \item
+        In this case, we know that $H(Y) < H(X)$, since we have lost entropy by encoding some values of $X$ as the same.
+
+      \item
+        We know that $H(X|Y) > 0$, since $Y$ no  longer tells us all the information we need to know $X$.
+
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Nyquist's theorem tells us that we must sample at most double the highest frequency observed in a signal, so we need to sample at $2W$ Hz. This corresponds to $2TW$ samples in a duration of time $T$
+
+      \item
+        Since we know the bandwidth is limited at $W$ Hz, the signal cannot do anything unexpected between samples, or else it would violate the bandwidth restriction. Therefore, the signal is completely determined by the samples.
+
+    \end{enumerate}
+
+  \item
+    Not relevant.
+
+  \item
+    Not relevant.
+
+  \item
+    Not relevant.
+        
+    \end{enumerate}
+\end{document}

@@ -1,0 +1,70 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+  The two goals of instruction scheduling are to minimise the number of stalls that occur when executing the program (or more generally, to lessen the time it takes to execute the program) whilst preserving correctness through e.g. preserving data dependencies.
+
+\item
+  The constraints on reordering instructions come from the data dependencies, we cannot reorder instructions when any data dependency exists between them, be it RAW, WAR, or WAW.
+
+  For example, instructions 3 and 4 can be rearranged, because there is no data dependency between them (they simply read the same registers), but instructions 4 and 5 cannot be rearranged because there is a data dependency between them (instruction 5 writes to register 4, which instruction 4 also writes to).
+
+  We can also consider data dependencies when accessing memory in the same way. In general, we cannot determine the locations of all memory accesses at compile time, so a naive way of treating memory accesses is that they all access the same location, but in this question we assume we have done some kind of alias analysis to decide that all of the memory accesses are to different locations, which means they might be able to be reordered.
+
+\item
+  We describe the following instruction scheduling algorithm:
+
+  \begin{itemize}
+    \item
+      Build a DAG from the instructions we are scheduling, such that each instruction is a node, and there is an edge from $n_1$ to $n_2$ if there is a data dependency between $n_1$ and $n_2$ and $n_1$ comes before $n_2$ in the original instruction order.
+
+    \item
+      Add each instruction with no predecessors to a set of instructions that can be scheduled.
+
+    \item
+      Choose an instruction from the set to emit. We use the following heuristic to choose an instruction:
+
+      \begin{itemize}
+        \item
+          Choose an instruction that does not conflict with the previously emitted instruction
+
+        \item
+          Choose an instruction furthest from an instruction that can be scheduled last, over the longest path.
+
+        \item
+          Choose an instruction that is most likely to conflict if first of a pair (e.g. loads over adds)
+      \end{itemize}
+
+      If we cannot satisfy the first condition, that is fine but not ideal (since we have interlocks), but we will always be able to satisfy the latter two.
+
+    \item
+      Remove the emitted instruction from the DAG and the set, and if any successors of that node now have no predecessors, add them to the set.
+  \end{itemize}
+
+  After applying this to the given program, we get the following:
+
+\begin{verbatim}
+1: load $1, 0($5)
+2: load $2, 8($5)
+4: add $4, $1, $2
+3: sub $3, $1, $2
+8: load $1, 16($5)
+5: add $4, $4, #8
+7: and $2, $4, #4095
+6: store $4, 0($3)
+9: store $2, 0($1)
+\end{verbatim}
+
+This has only one stall between the second and third instructions, compared to the two stalls we get in the original scheduling, between instructions 2 and 3, and instructions 8 and 9
+
+\item
+  Register allocations acts antagonistically with instruction scheduling. Register allocation wants to use the fewest number of registers possible, but this increases the number of false dependencies in our three-address code, so it is harder to find ILP when attempting to find a good schedule for our program.
+
+\item
+  No, no more registers are required to schedule this basic block without any stalls. If we changed instruction 8 to \texttt{load \$5, 16(\$5)} and 9 to \texttt{store \$2, 0(\$1)}, then we can schedule instruction 8 in between instruction 2 and 4, removing the stall, and not introducing any new stalls. We could not do this in (c) because there was a false dependency between instructions 3 and 4, and instruction 8.
+
+
+        
+\end{enumerate}
+\end{document}
