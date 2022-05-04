@@ -1,0 +1,55 @@
+\input{../../template.tex}
+\usepackage{stmaryrd}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    We define the effect system as follows, where we change typing judgments from $\Gamma \vdash e : T$ to $\Gamma \vdash e : T, F$, where $F$ is a set of effects. We also alter function types to be $T \xrightarrow{F} T'$, to represent the effects that occur upon application of the function (latent effects). We assume the only other type is integers, and this is what channels read/write.
+
+    \begin{align*}
+      \frac{}{\Gamma \vdash x : T, \{\}}(\Gamma(x) = T)\\
+      \frac{\Gamma, x : T \vdash e : T', F}{\Gamma \vdash \lambda x. e : T \xrightarrow{F}T', \{\}}\\
+      \frac{\Gamma \vdash e_1 : T \xrightarrow{F} T', F' \hspace{15pt} \Gamma \vdash e_2 : T, F''}{\Gamma \vdash e_1 e_2 : T', F \cup F' \cup F''}\\
+      \frac{\Gamma \vdash e_1 : T, F \hspace{15pt} \Gamma \vdash e_2 : T', F'}{\Gamma \vdash e_1;e_2 : T', F \cup F'}\\
+      \frac{\Gamma, x : int \vdash e : T, F}{\Gamma \vdash \xi?x.e : T, F \cup \{R_\xi\}}\\
+      \frac{\Gamma \vdash e_1 : int, F \hspace{15pt} \Gamma \vdash e_2 : T, F'}{\Gamma \vdash \xi!e_1.e_2 : T, F \cup F' \cup \{W_\xi\}}\\
+      \frac{\Gamma \vdash e_1 : int, F \hspace{15pt} \Gamma \vdash e_2 : T, F' \hspace{15pt} \Gamma \vdash e_3 : T, F''}{\Gamma \vdash \texttt{if }e_1\texttt{ then }e_2\texttt{ else }e_3 : T, F \cup F' \cup F''}
+    \end{align*}
+
+    The two principle occurrences of effects in the system are immediate effects, which occur in the effect judgement, and latent affects (as described earlier) which occur in the typing judgement.
+
+  \item
+    If we consider $\llbracket e \rrbracket = (v,f)$, where $v$ is the value that $e$ evaluates to, and $f$ is the set of effects that occur during execution of $e$, then safety can be stated as follows:
+
+    If $\{\} \vdash e : T, F$, then $v \in \llbracket t\rrbracket \wedge f \subseteq F$, where $(v,f) = \llbracket e \rrbracket$, i.e. that any well-typed expression $e$ evaluates to a value of its typing judgment, and the actual effects are a subset of the predicted effects.
+
+  \item
+    This effect system is any-path like (although the typing system is not). If $e_1, e_2, e_3$ have effects $F, F', F''$, then it is clear to see that the analysis of the conditional will yield effects $F \cup F' \cup F''$ immediately.
+
+    Then, analysis of $(e_1;e_2)$ gives effects $F \cup F'$, so analysis of $(e_1;e_2);e_3 = e_1;e_2;e_3$ has effects $F \cup F' \cup F''$.
+
+  \item
+
+    We provide the following two new typing/effect rules:
+
+    \[
+      \frac{\Gamma \vdash e : T, F}{\Gamma \vdash \texttt{letchan }\xi\texttt{ in }e : T', F \setminus \{R_\xi, W_\xi\}}(\text{$T' = T$ but with latent effects referencing $\xi$ removed})
+    .\] 
+
+    \[
+      \frac{\Gamma \vdash e_1 : int, F \hspace{15pt} \Gamma \vdash e_2 : int, F'}{\Gamma \vdash \texttt{parsum}(e_1, e_2) : int, F \cup F'}
+    .\] 
+
+  \item
+    Here, a set of lists/arrays would be suitable. Each list would contain a possible sequence of effects, and then $F$ would be a set of all the lists, so what possible sequences of effects we can have.
+
+    It should be noted that this might end up generating lots of lists of effects for things like the \texttt{cond} construct, since we need to generate a separate list for each branch.
+
+    In the example, $F$ might look like $\{[R_{\xi_1}, R_{\xi_2}, W_{\zeta}], [R_{\xi_2}, W_\zeta]\}$
+
+
+
+
+        
+\end{enumerate}
+\end{document}

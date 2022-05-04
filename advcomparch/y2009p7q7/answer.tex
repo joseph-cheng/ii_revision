@@ -1,0 +1,44 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+  In the given code, we have a true data dependency between instructions 1 and 3, instructions 2 and 3, and instructions 3 and 4.
+
+  We have output dependencies between instructions 1 and 3, and instructions 2 and 4.
+
+  Finally, we have an antidependence between instructions 3 and 4
+
+\item
+  A hardware register renaming mechanism would rename each output register to a different physical register, and then maintain a mapping between logical registers and physical registers.
+
+  We provide an example, assuming physical registers P1 to P4 are free beforehand:
+
+\begin{verbatim}
+LI P1, 25
+LI P2, 8
+ADD P3, P1, P2
+LD P4, 0(P3)
+\end{verbatim}
+
+  We see that this has removed name dependencies, since instructions 1 and 3, and 2 and 4, no longer write to the same register, and instruction 4 no longer writes to a register that instruction 3 reads from.
+
+\item
+  The removal of name dependencies within a superscalar processor is beneficial because it allows for further ILP to be extracted. Without removing name dependencies, it might be unsafe to execute two instructions in parallel that have a name dependency between them, because for example we could end up writing the wrong value to the register if there is a WAW hazard. Furthermore, if we have O3 execution, then removing name dependencies allows us to extract even more ILP since instructions that have name dependencies between them can now overtake one another, whereas we would not be able to previously.
+
+\item
+  Register renaming hardware might be used for rollback. For example, if we need to handle precise exceptions, then we can maintain two separate register map tables, one generated for instructions after they are committed, and one for when they are issued. When a precise exception occurs, we can rollback by just copying the committed instruction register map table over to the issue register map table. This concept also works for rolling back from mispredicted branches, we just need to take a snapshot of the table whenever a branch instruction occurs, and rollback to this snapshot if we mispredict.
+
+  Register renaming also allows for separation between the ISA and the microarchitecture. If we do not have register renaming, then the number of physical registers we can have is limited by the registers available in the ISA, which might often stay the same for a very long time, stagnating hardware design, whereas with register renaming we can have more physical registers than registers available in the ISA.
+
+\item
+  The out-of-order execution of memory instructions must be constrained further because we can have memory-carried dependencies. Store operations cannot be undone, so it is important that if we have loads and stores that access the same memory address that we do not re-order them, since we cannot perform the same register renaming trick we did to remove name dependencies earlier.
+
+  For example, if we have a load from address $p$, followed by a store to address $p$, it is vital that they execute in this order, even though this is only a name dependency, or else the load will get the wrong result.
+
+  Furthermore, we cannot speculatively execute store instructions, since we cannot rollback from them, whereas we can for writing to registers.
+
+
+
+\end{enumerate}
+\end{document}
