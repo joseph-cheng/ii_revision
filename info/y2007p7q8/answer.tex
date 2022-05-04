@@ -1,0 +1,65 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        A distribution is given below:
+
+\begin{verbatim}
+A: 1/2
+B: 1/8
+C: 1/8
+D: 1/16
+E: 1/16
+F: 1/16
+G: 1/16
+\end{verbatim}
+
+\item
+  Each question had an uncertainty of 1 bit, since this sequence is optimal.
+
+\item
+  The entropy of this alphabet is 2.25 bits, through the definition of entropy.
+
+\item
+\begin{verbatim}
+A: 0
+B: 111
+C: 110
+D: 1011
+E: 1010
+F: 1001
+G: 1000
+\end{verbatim}
+
+
+\item
+  The average coding rate $R$ is given by $\frac{1}{2} + 2 \cdot \frac{3}{8} + 4 \cdot \frac{4}{16} = 2.25$ bits.
+
+\item
+  A more efficient code could not be developed because of the Source Coding Theorem, which tells us that we cannot losslessly compress a signal below its entropy. Since the average coding rate is equal to the entropy of the source, no more efficient code can exist.
+        
+    \end{enumerate}
+
+  \item
+
+    The information capacity over any tiny bandwidth is given by $\delta \omega \log_2(1 + SNR(\omega))$, where the frequency is $\omega$.
+
+    To find the capacity, we need to sum up the information capacity given by each tiny bandwidth, which gives us the following integral:
+
+    \[
+      \int_{\omega_1}^{\omega_2} \log_2(1 + SNR(\omega)) \mathrm{d}\omega
+    .\] 
+
+  \item
+    Not relevant.
+
+  \item
+    Not relevant.
+
+        
+\end{enumerate}
+\end{document}
