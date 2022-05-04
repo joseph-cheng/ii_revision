@@ -1,0 +1,242 @@
+\input{../../../template.tex}
+\usepackage{etoolbox}
+
+\AtBeginEnvironment{align}{\setcounter{equation}{0}}
+
+
+\begin{document}
+\begin{enumerate}
+
+  \item
+    We extend the Halt logic relation to support products with the following definition:
+
+    $e \in Halt_{X \times Y}$ holds just when:
+
+    $e$ halts.
+
+    $fst e \in Halt_X$
+
+    $snd e \in Halt_Y$
+
+    We first extend the closure lemma, that is that if $e \leadsto e'$, then $e' \in Halt_{X \times Y}$ iff $e \in Halt_{X \times Y}$
+
+
+    \begin{itemize}
+      \item
+        We do the $\Rightarrow$ direction first:
+
+        \begin{align}
+          &e \leadsto e' & \text{Assumption}\\
+          &e' \in Halt_{X \times Y} & \text{Assumption}\\
+          &e' \leadsto^* v & \text{def. of $Halt_{X \times Y}$}\\
+          &fst e' \in Halt_X &\text{def. of $Halt_{X \times Y}$}\\
+          &snd e' \in Halt_Y &\text{def. of $Halt_{X \times Y}$}\\
+          &e \leadsto^* v & \text{transitive closure on (1), (3)}\\
+          &fst e \leadsto fst e' & \text{congruence rule on (1)}\\
+          &snd e \leadsto snd e' & \text{congruence rule on (1)}\\
+          &fst e \in Halt_X &\text{induction on (4), (7)}\\
+          &snd e \in Halt_Y &\text{induction on (5), (8)}\\
+          &e \in Halt_{X \times Y} &\text{def. of $Halt_{X \times Y}$}
+        \end{align}
+
+      \item
+        We now do the $\Leftarrow$ direction:
+
+        \begin{align}
+          &e \leadsto e' &\text{assumption}\\
+          &e \in Halt_{X \times Y} &\text{assumption}\\
+          &e \leadsto^* v &\text{def. of $Halt_{X \times Y}$}\\
+          &fst e \in Halt_X &\text{def. of $Halt_{X \times Y}$}\\
+          &snd e \in Halt_Y &\text{def. of $Halt_{X \times Y}$}\\
+          &e\text{ is not a value} &\text{from (1)}\\
+          &e \leadsto e'' \wedge e'' \leadsto^* v &\text{from (3) and (6)}\\
+          &e'' = e' & \text{determinacy on (1) and (7)}\\
+          &e' \leadsto^* v &\text{from (8) and (7)}\\
+          &fst e \leadsto fst e' &\text{congruence rule on (1)}\\
+          &snd e \leadsto snd e' &\text{congruence rule on (1)}\\
+          &fst e' \in Halt_X &\text{induction on (10), (4)}\\
+          &snd e' \in Halt_Y &\text{induction on (11), (5)}\\
+          &e' \in Halt_{X \times Y}&\text{def. of $Halt_{X \times Y}$ on (12),(13), (9)}
+        \end{align}
+    \end{itemize}
+
+    Now we extend the fundamental lemma, that is that if $\overrightarrow{x_i : X_i} \vdash e : Z$, and $\{\} \vdash v_i : X_i$ with $v_i \in Halt_{X_i}$, then we have that $[\overrightarrow{v_i / x_i}]e \in Halt_Z$
+
+    We proceed by structural induction over the typing relation. In our case, we have three typing rules:
+
+    $\frac{\Gamma \vdash e_1 : X \hspace{15pt} \Gamma \vdash e_2 : Y}{\Gamma \vdash \langle e_1, e_2 \rangle : X \times Y}$
+
+    $\frac{\Gamma \vdash e : X \times Y}{\Gamma \vdash fst e : X}$
+
+    $\frac{\Gamma \vdash e : X \times Y}{\Gamma \vdash snd e : Y}$
+
+    \begin{itemize}
+      \item
+        We begin with the first typing rule:
+
+        \[
+          \frac{\overrightarrow{x_i : X_i} \vdash e_1 : X \hspace{15pt} \overrightarrow{x_i : X_i} \vdash e_2 : Y}{\overrightarrow{x_i : X_i} \vdash \langle e_1, e_2 \rangle : X \times Y}
+        .\] 
+
+        We get the two subderiations:
+
+        $\overrightarrow{x_i : X_i} \vdash e_1 : X$
+
+        and
+
+        $\overrightarrow{x_i : X_i} \vdash e_2 : Y$
+
+        By induction, we therefore have that $[\overrightarrow{v_i / x_i}]e_1 \in Halt_X$ and $[\overrightarrow{v_i / x_i}]e_2 \in Halt_Y$, by induction.
+
+        By definition of substitution, we have that $[\overrightarrow{v_i / x_i}]\langle e_1, e_2 \rangle = \langle [\overrightarrow{v_i / x_i}]e_1, [\overrightarrow{v_i / x_i}]e_2 \rangle$
+
+        Since $[\overrightarrow{v_i / x_i}]e_1 \in Halt_X$, we know that $[\overrightarrow{v_i / x_i}]e_1 \leadsto^* v$, and we get an analogous result for $e_2$ to $v'$, so by applying congruence rules we know that $\langle[\overrightarrow{v_i / x_i}]e_1, [\overrightarrow{v_i / x_i}]e_1 \rangle \leadsto^* \langle v, v'\rangle$ (and thus so does $[\overrightarrow{v_i / x_i}]\langle e_1, e_2 \rangle$.
+
+        Furthermore, we know that $fst ([\overrightarrow{v_i / x_i}]\langle e_1, e_2 \rangle) = [\overrightarrow{v_i / x_i}]e_1 \in Halt_X$, and a similar result for $snd$. 
+
+        Therefore, we have that $[\overrightarrow{v_i / x_i} \langle e_1, e_2 \rangle \in Halt_{X \times Y}$
+
+      \item
+
+        We proceed with the second typing rule:
+        \[
+          \frac{\overrightarrow{x_i : X_i} \vdash e : X \times Y}{\overrightarrow{x_i : X_i} \vdash fst e : X}
+        .\] 
+
+        We get the subderivation $\overrightarrow{x_i : X_i} \vdash e : X \times Y$
+
+        And by induction, we get that $[\overrightarrow{v_i / x_i}]e \in Halt_{X \times Y}$
+
+        By definition, we have that $fst ([\overrightarrow{v_i / x_i}]e) \in Halt_X$ then
+
+        Then, by definition of substitution, we have that $[\overrightarrow{v_i / x_i}](fst e) = fst ([\overrightarrow{v_i / x_i}] e) \in Halt_X$, as required.
+
+      \item
+        Analogous to previous case.
+    \end{itemize}
+
+    Therefore, the logical relation is extended for product types.
+
+  \item
+    We now extend the logic relation for sum types.
+
+    We define $Halt_{X + Y}$ as follows:
+
+    $e \in Halt_{X + Y}$ holds just when:
+
+    $e$ halts
+
+    For all $e_1, e_2$ such that $e_1, e_2 \in Halt_Z$, $\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$
+
+    We first prove the closure lemma, that is that if $e \leadsto e_1$, then $e_1 \in Halt_{X + Y}$ iff $e \in Halt_{X + Y}$
+
+
+    \begin{itemize}
+      \item
+    We first prove the $\Rightarrow$ direction:
+
+        We assume that $e \leadsto e'$ and $e' \in Halt_{X + Y}$
+
+        By definition, this means that $e' \leadsto^* v$ and that for all $e_1, e_2 \in Halt_Z$, $\text{case}(e', L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$.
+
+        By transitive closure, we have that $e \leadsto^* v$
+
+        Now, let $e_1, e_2$ be arbitrary in $Halt_Z$
+
+        By congruence rule, we have that $\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \leadsto \text{case}(e', L x \rightarrow e_1, R y \rightarrow e_2)$
+
+        By induction, we therefore have that $\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$.
+
+        Therefore, we have that $e \in Halt_{X + Y}$
+
+      \item
+        Now we prove the $\Leftarrow$ direction:
+
+        We assume that $e \leadsto e'$ and $e \in Halt_{X + Y}$
+
+        By definition, this means that $e \leadsto^* v$ and that for all $e_1, e_2 \in Halt_Z$, $\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$
+
+        Since $e \leadsto e'$, $e$ is not a value, which means that since $e \leadsto^* v$, we have that $e \leadsto e'' \wedge e'' \leadsto^* v$. By determinacy, $e' = e''$, so $e' \leadsto^* v$.
+
+        Now let $e_1, e_2$ be arbitrary in $Halt_Z$.
+
+        By congruence rule we have that $\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \leadsto \text{case}(e', L x \rightarrow e_1, R y \rightarrow e_2)$
+
+        By induction, we therefore have that $\text{case}(e', L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$.
+
+        Therefore, $e' \in Halt_{X + Y}$.
+    \end{itemize}
+
+    Therefore we have the closure lemma for sum types.
+
+    Now we proceed by extending the fundamental lemma for sum types, that is that if $\overrightarrow{x_i : X_i} \vdash e : Z$, and we have $v_i$ such that $\{\} \vdash v_i : X_i$ and $v_i \in Halt_{X_i}$, then we have that $[\overrightarrow{v_i / x_i}]e \in Halt_Z$
+
+    Again, we prove by structural induction over the typing relation. In our case, we have the $+I_1, +I_2$, and $+E$ rules:
+
+    \begin{itemize}
+      \item
+        We begin with the $+I_1$ rule:
+
+        \[
+          \frac{\overrightarrow{x_i : X_i} \vdash e : X}{\overrightarrow{x_i : X_i} \vdash L e : X + Y}
+        .\] 
+
+        We get subderivation $\overrightarrow{x_i : X_i} \vdash e : X$.
+
+        By induction, we therefore get that $[\overrightarrow{v_i / x_i}] e \in Halt_X$
+
+        This means that $[\overrightarrow{v_i / x_i}] e \leadsto^* v$, and thus by definition of substitution we get that $[\overrightarrow{v_i / x_i}]L e \leadsto^* L v$ (which is a value).
+
+        Now, assume that $e_1, e_2 \in Halt_Z$
+
+        By congruence rule, we therefore get that $\text{case}([\overrightarrow{v_i / x_i}]L e, L x \rightarrow e_1, R y \rightarrow e_2) \leadsto^* \text{case}(L v, L x \rightarrow e_1, R y \rightarrow e_2) \leadsto e_1 \in Halt_Z$
+
+        Furthermore, by definition of substitution, we know that $[\overrightarrow{v_i / x_i}](\text{case}(L e, L x \rightarrow e_1, R y \rightarrow e_2)) = \text{case}([\overrightarrow{v_i / x_i}] L e, L x \rightarrow e_1, R y \rightarrow e_2)$.
+
+        Therefore, by closure of $Halt_Z$, we have that $[\overrightarrow{v_i / x_i}](\text{case}(L e, L x \rightarrow e_1, R y \rightarrow e_2)) \in Halt_Z$
+
+        Therefore, $L e \in Halt_{X + Y}$, as required.
+
+      \item
+        Analogous to $+I_2$ rule.
+
+      \item
+        Now we prove for the $+E$ rule:
+
+        \[
+          \frac{\overrightarrow{x_i : X_i} \vdash e : X + Y \hspace{15pt} \overrightarrow{x_i : X_i}, x : X \vdash e_1 : Z \hspace{15pt} \overrightarrow{x_i : X_i}, y : Y \vdash e_2 : Z}{\overrightarrow{x_i : X_i} \vdash \text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) : Z}
+        .\] 
+
+        We get the following subderivations:
+
+        $\overrightarrow{x_i : X_i} \vdash e : X + Y$
+
+        $\overrightarrow{x_i : X_i}, x : X \vdash e_1 : Z$
+
+        $\overrightarrow{x_i : X_i}, y : Y \vdash e_2 : Z$
+
+
+        By induction, we have that $[\overrightarrow{v_i / x_i}] e \in Halt_{X + Y}$, $[\overrightarrow{v_i / x_i}, v_x / x]e_1 \in Halt_Z$, and that $[\overrightarrow{v_i / x_i}, v_y / y]e_2 \in Halt_Z$
+
+        By definition of $Halt_{X + Y}$, we know that $[\overrightarrow{v_i / x_i}] e \leadsto^* v$
+
+        We now proceed by cases, on the canonical form of $v$:
+
+        \begin{itemize}
+          \item
+            Case $v = L v_X$:
+
+            In this case, we know that $\text{case}(L v_x, L x \rightarrow [\overrightarrow{v_i / x_i}]e_1, R y \rightarrow [\overrightarrow{v_i / x_i}] e_2) \leadsto [\overrightarrow{v_i / x_i}, v_x / x] e_1 \in Halt_Z$, by reduction on the case.
+
+            Furthermore, since $[\overrightarrow{v_i / x_i}]\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) = \text{case}([\overrightarrow{v_i / x_i}]e, L x \leadsto [\overrightarrow{v_i / x_i}]e_1, R y \leadsto [\overrightarrow{v_i / x_i}]e_2)$, we get by closure of $Halt_Z$ that $[\overrightarrow{v_i / x_i}]\text{case}(e, L x \rightarrow e_1, R y \rightarrow e_2) \in Halt_Z$
+
+            
+          \item
+            Case $v = R v_y$ analogous to previous case.
+
+        \end{itemize}
+    \end{itemize}
+
+    Therefore, we have extended the fundamental lemma for sum types, and thus the logical relation.
+    \end{enumerate}
+\end{document}
