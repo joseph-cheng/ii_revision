@@ -1,0 +1,38 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    It is important to concentrate on improving the common case when designing a microprocessor because improve the common case will likely result in the best overall performance, compared to improving edge cases.
+
+    For example, suppose the common case is done 90\% of the time, and the edge case is done 10\% of the time. Optimising the common case by 10\% results in an overall performance increase of $\frac{1}{\frac{0.9}{1.1} + 0.1}$ which is around a 9\% increase. Optimising the rare case by 50\% results in an overall performance increase of $\frac{1}{0.9 + \frac{0.11}{1.5}}$, which is only around a 3\% increase.
+
+    We can see here that even though we improve the common case by less than we improve the edge case, we get a much better overall performance increase by optimising the common case.
+
+  \item
+    In a VLIW processor, it is the job of the compiler to find ILP in a program and produce bundles of independent instructions that the processor can just execute with no worry that there will be any dependencies between the instructions.
+
+    On the other hand, in a dynamically-scheduled superscalar processor, it becomes the job of the processor to find and extract ILP in an instruction stream to find independent instructions that can be issued at the same time, and ensuring that hazards are dealt with.
+
+    In the VLIW processor case, this means that the processor can be simple (whereas the compiler might have to be complex), whereas in a dynamically-scheduled superscalar processor, we get that the processor has to be complex, with a relatively simple compiler.
+
+  \item
+    Variable-length instructions are primarily used to improve code density. If the compiler cannot find enough independent instructions to fill a bundle, then with fixed-length instructions we would have to fill the remainder of the bundle with the data for NOP instructions. Fetching these into the processor and caching them is a waste of space since they provide no semantic information about the program being executed.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        In VLIW processors, memory reference speculation is an optimisation in the compiler that allows loads to be speculatively executed (placed in a bundle) before preceding stores. This is essentially a speculation that the two instructions will access different addresses, and thus that it is safe to perform the load before the store. This can help extract ILP further on, since the load might have completed earlier than expected.
+
+      \item
+        The hardware required to do this is extra instructions in our ISA, we need speculative load instructions, and an instruction to check whether or not a speculative load was correct. Finally, we need hardware to store a table of registers that are loaded into and the addresses that they loaded from.
+
+        When a speculative load instruction executes, we make a new entry in the table for the register we loaded into and the address we loaded from. Then, when any store instructions execute, they will search the table and delete any entries where the address of the store matches the address of the entry. Finally, when the check instruction executed for a particular register, we check if an entry for that register still exists in the table, and if it does not then we jump to some misprediction code that fixes the issue.
+
+        
+    \end{enumerate}
+    
+\end{enumerate}
+\end{document}

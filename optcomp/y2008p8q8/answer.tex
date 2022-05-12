@@ -1,0 +1,109 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        An expression is semantically available at a particular program point if it is evaluated on every possible execution path preceding that program point. This is uncomputable in general, so we use the notion of an expression being syntactically available at a program point, which means that it is evaluated on every path preceding that program point (including those that do not correspond to any real executions of the program).
+
+        Then, we have the following data-flow equations:
+
+        $in-avail(n) = \bigcap_{p \in pred(n)} out-avail(p)$
+
+        $out-avail(n) = in-avail(n) \setminus kill(n) \cup gen(n)$
+
+        Where $kill(n)$ is the set of expressions killed (have a variable assigned to), and $gen(n)$ is the set of expressions generated (calculated) by a particular node $n$.
+
+        We combine these into the following data-flow equation:
+
+        $avail(n) = \begin{cases}0 & pred(n) = \emptyset\\\bigcap_{p \in pred(n)} (avail(p) \setminus kill(p) \cup gen(p))&\text{otherwise}\end{cases}$
+
+        An algorithm to calculate this set might work as follows:
+
+\begin{verbatim}
+avail[0] = {}
+for i in 1..n:
+  avail[i] = U
+while (avail[] changes):
+  for i in 1..n
+    avail[i] = big_intersect(p in pred(i), avail[p] \ kill(p) U gen(p))
+\end{verbatim}
+
+To remove common-subexpressions, we find a node that has an available expression $e$, say $x = e$. We replace this node with $x=t$, where $t$ is a new variable. Then, we scan backwards on every path from $n$ to find the first occurrence of the calculation of $e$ on every path, say $y=e$, and replace them with $t=e;y=t$.
+
+A common-subexpression relates to calculations being wholly redundant, since we require expressions are calculated on every program path leading to them.
+
+\item
+  Example:
+
+\begin{verbatim}
+x = rand()
+y = rand()
+z = rand()
+if ((x + 1) * (x + 1) == 0) {
+  a = y + z
+}
+if (x*x + 2*x + 1 != 0) {
+  b = y + z
+}
+c = y + z
+\end{verbatim}
+
+Here, the computation of \texttt{c = y + z} is redundant, because one of the previous \texttt{if} statements will always be entered, but since a syntactic path exists in the program that enters neither, \texttt{y+z} will not be detected as available.
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        We use the same framework as before, designing the two dataflow equations:
+
+        $in-secure(n) = \bigcup_{p \in pred(n)} out-secure(p)$
+
+        $out-secure(n) = in-secure(n) \setminus kill(n) \cup gen(n)$. Here, the set $kill(n)$ is the set of variables that we assign to, and $gen(n)$ is the set of variables that we assign to that use a high-security variable (i.e. one in $in-secure(n)$).
+
+        Then, we construct the following combined equation:
+
+        $secure(n) = \cup_{p \in pred(n)} (secure(p) \setminus kill(p) \cup gen(p))$
+
+        This is a forwards analysis, since we use the predecessors of a node to calculate the value at a node.
+
+        It might be implemented as follows:
+
+\begin{verbatim}
+secure[0] = H
+for i in 1..n:
+  secure[i] = {}
+while secure[] changes:
+  for i in 1..n:
+    secure[i] = big_union(p in pred(n), secure[p] \ kill(p) U gen(p))
+\end{verbatim}
+
+Here, the entry node is initialised as $H$, since we know that at function entry, only variables in the set $H$ are high-security. We initialise every other node as the empty set, to ensure that we produce the smallest solution.
+
+\item
+  This dataflow analysis is not safe because it assumes that data-flow only occurs in assignments, which is not true.
+
+  Consider the following example:
+
+\begin{verbatim}
+fun f(int x):
+  int y;
+  if (x & 1) y |= 1
+  if (x & 2) y |= 2
+  if (x & 4) y |= 4
+  ...
+  return y
+\end{verbatim}
+
+If $x \in H$, then we still do not get that $y \in H$, because the data-flow is implicit.
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

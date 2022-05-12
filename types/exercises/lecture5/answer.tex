@@ -1,0 +1,115 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}
+  \item
+    We first prove the regularity lemma.
+
+    The type regularity lemma tells us that if $\Theta \vdash \Gamma \text{ctx}$ and $\Theta;\Gamma \vdash e : A$ then $\Theta \vdash A$ type, effectively that typechecking produces valid types.
+
+    We proceed by structural induction on our typing relation.
+
+    \begin{itemize}
+      \item
+        Case:
+
+        \[
+          \frac{x : A \in \Gamma}{\Theta;\Gamma \vdash x : A}
+        .\] 
+
+        Since $\Theta \vdash \Gamma$ ctx, by assumption, and $x : A \in \Gamma$, based on the derivation of $\Theta \vdash \Gamma$ ctx, we know that $\Theta \vdash A$ type, so we are done.
+
+      \item
+        Case:
+
+        \[
+          \frac{\Theta \vdash A type \hspace{15pt} \Theta;\Gamma, x : A \vdash e : B}{\Theta;\Gamma \vdash \lambda x :A. e : A \rightarrow B}
+        .\] 
+
+        We get two subderivations:
+
+        $\Theta \vdash A$ type
+
+        $\Theta;\Gamma,x : A \vdash e : B$
+
+        Since we assume $\Theta \vdash \Gamma$ ctx, and from the first subderivation, we get that $\Theta \vdash \Gamma, x : A$ ctx.
+
+        Therefore, by structural induction on our second subderivation, we get that $\Theta \vdash B $type.
+
+        Then, by definition, we can derive $\Theta \vdash A \rightarrow B$ type, since $\Theta \vdash A$ type and $\Theta \vdash B$ type.
+
+      \item
+        Case:
+
+        \[
+          \frac{\Theta;\Gamma \vdash e : A \rightarrow B \hspace{15pt} \Theta;\Gamma \vdash e'  :A}{\Theta;\Gamma \vdash e e' : B}
+        .\] 
+
+        We get subderivation $\Theta;\Gamma \vdash e : A \rightarrow B$.
+
+        By structural induction, we therefore have that $\Theta \vdash A \rightarrow B$ type.
+
+        The only way this could be derived is if we have that $\Theta \vdash A$ type and $\Theta \vdash B$ type, therefore we are done.
+
+      \item
+        Case:
+
+        \[
+          \frac{\Theta,\alpha;\Gamma \vdash e : B}{\Theta;\Gamma \vdash \Lambda \alpha.e : \forall \alpha. B}
+        .\] 
+
+        We get subderivation $\Theta,\alpha; \Gamma \vdash e : B$.
+
+        Since we assume $\Theta \vdash \Gamma$ ctx, by weakening we get that $\Theta, \alpha \vdash \Gamma$ ctx. Therefore, by structural induction we get that $\Theta, \alpha \vdash B$ type.
+
+        Therefore, we can derive that $\Theta \vdash \forall \alpha. B$ type.
+
+      \item
+        Case:
+
+        \[
+          \frac{\Theta;\Gamma \vdash e: \forall \alpha. B \hspace{15pt} \Theta \vdash A type}{\Theta;\Gamma \vdash e A : [A / \alpha]B}
+        .\] 
+
+        We get two subderivations:
+
+        $\theta;\Gamma \vdash e : \forall \alpha. B$
+
+        $\Theta \vdash A$ type.
+
+        By structural induction on the first subderivation we get $\Theta \vdash \forall \alpha. B$ type.
+
+        The only way this could be derived is if we have $\Theta,\alpha \vdash B$ type.
+
+        Therefore, by substitution (and the second subderivation), we have that $\Theta \vdash [A / \alpha]B type$, as required.
+    \end{itemize}
+
+  \item
+    Now we define a Church encoding for the unit type.
+
+    The unit type can only have one inhabitant, so we provide the type $\forall \alpha. \alpha \rightarrow \alpha$. The only inhabitant for this is the polymorphic identity function $\Lambda \alpha. \lambda x : \alpha. x$.
+
+  \item
+    Now we define a Church encoding for the empty type.
+
+    The empty type can have no inhabitants, so we provide the type $\forall \alpha. \alpha$.
+
+  \item
+    Now we define a Church encoding for binary trees, corresponding to the following ML datatype:
+
+    \texttt{type tree = Leaf | Node of tree * X * tree}
+
+    We can view this as similar to a list, but we have an extra branch.
+
+    This gives us the following encoding:
+
+    $\forall \alpha. \alpha \rightarrow (\alpha \rightarrow X \rightarrow \alpha \rightarrow \alpha) \rightarrow \alpha$.
+
+    Then, we encode:
+
+    $Leaf = \Lambda \alpha. \lambda n : \alpha. \lambda b : \alpha \rightarrow X \rightarrow \alpha \rightarrow \alpha. n$
+
+    $Node(t_1, e, t_2) = \Lambda \alpha. \lambda n : \alpha. \lambda b : \alpha \rightarrow X \rightarrow \alpha \rightarrow \alpha. b (t_1 \alpha n b) e (t_2 \alpha n b)$
+        
+\end{enumerate}
+\end{document}
