@@ -1,0 +1,92 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+  \begin{enumerate}[label=(\roman*)]
+
+    \item
+
+      The idea behind abstract interpretation is to take concrete values, and transform them into simpler, abstract values, as well as replacing operators that act on the concrete values with abstract operators. By abstracting details of the values away, we can make previously uncomputable properties computable. For example, if we wish to know whether a value was odd or even, then without abstract interpretation we could not do this because arithmetic is undecidable in general, but we could use abstract interpretation to interpret values as either odd or even, and redefine the usual arithmetic operators to use these values.
+
+    \item
+      Set-constraint based analyses are generally flow insensitive analyses that work by iterating over a program and generating a number of constraints from the program, e.g. constraints on what a set of values might be at each program point. Then, by solving these constraints, we get a least solution for what the set of values is at each program point. For example, the set of values might be what values could have reached a particular program point, which we can then use for CFA because we know where an indirect branch might take us.
+
+    \item
+      Rule-based analysis works by having a set of rules that allow us to make judgements about a particular program, or fragments of a program. For example, like how typing systems are often formalised using rules, we can build effect systems, that make judgements about what side effects might occur within a program, using very similar rules as we might use in a typing system.
+      
+  \end{enumerate}
+
+\item
+  We first provide an abstract interpretation for escape analysis.
+
+  We use ideas similar to strictness analysis, where we map expressions to values in $2 = \{0,1\}$, where 0 means definitely does not escape, and 1 means that it may escape. For given abstract interpretations of the parameters of a function, we can then evaluate the abstract interpretation of the body of a function using composition.
+
+  Since $e$ only contains integers, we know that $e^{\#} = 0$
+
+  Then, we construct $E^{\#}$ structurally over the in-built functions:
+
+  $[]^{\#} = 0$
+
+  $e::^{\#}E = E$
+
+  $tl^{\#} E = E$
+
+  $IF^{\#}(e, E_1, E_2) = E_1 \vee E_2$
+
+  Then, if we are asked if parameter $X_i$ definitely does not escape from $E$ or $e$, then we set $X_i$ to 1, and all other parameter values to 0, and see if the body of the function interprets to $0$, in which case we know it definitely does not escape (and it may escape otherwise).
+
+  \vspace{20pt}
+
+  Now we provide a set-constraint-based analysis.
+
+  We first split our expression body into program points as a concrete syntax tree.
+
+  Then, based on the expression at each program point, we generate a constraint, where $\alpha_i$ represents the set of values that might escape at program point $i$.
+
+  $X^i \rightarrow \alpha_i \supseteq \{X\}$
+
+  $(e^j::E^k)^i \rightarrow \alpha_i \supseteq \alpha_k$
+
+  $(tl E^j)^i \rightarrow \alpha_i \supseteq \alpha_j$
+
+  $(IF(e^j, E_1^k, E_2^l))^i \rightarrow \alpha_i \supseteq \alpha_k \cup \alpha_l$
+
+  Language constructs not mentioned do not generate a constraint (or equivalently generate $\alpha_i \supseteq \{\}$).
+
+  Then, we can solve these constraints using a constraint solver. To determine whether or not parameter $X_i$ definitely does not escape from the body of a function, we simply look at the $\alpha_j$ where $j$ is the program point for the body of the function, and see if $X_i \in \alpha_j$.
+
+  \vspace{20pt}
+
+  For completeness, we provide a rule-based analysis for escape analysis.
+
+  We provide the judgment $\vdash E : S$, which for expression $E$, gives a judgement $S$ as a set of cons cells that might escape from $E$.
+
+  We provide the following rules:
+
+  \begin{align*}
+    &\frac{}{\vdash X : \{X\}}\\
+    \\
+    &\frac{\vdash E : S}{\vdash e::E : S}\\
+    \\
+    &\frac{\vdash E : S}{\vdash tl E : S}\\
+    \\
+    &\frac{\vdash E_1 : S_1 \hspace{15pt} \vdash E_2 : S_2}{\vdash IF(e, E_1, E_2) : S_1 \cup S_2}
+  \end{align*}
+
+  Then, to determine if parameter $X_i$ definitely does not escape from the body of a function, we simply use our rule-system to determine the corresponding judgement for the body of the function $S$, and see if $X_i \in S$.
+    \end{enumerate}
+
+  \item
+    We give an answer for all 3, for completeness.
+
+    For the abstract interpretation, we would have to have an algorithm that finds a least fixed point of our expressions. So, given the abstract interpretation for an expression $E$: $\lambda (X_1, \ldots, X_n). E^{\#}$, call it $f^{\#}$ for function $f$. If $f^{\#}$ contains an instance of $f^{\#}$, then we begin with the assumption that $f^{\#}$ always returns 0, determine the value of $f^{\#}$ from our analysis, and then keep iterating this process while $f^{\#}$ changes, giving us a least solution.
+
+    For the constraint-based analysis, suppose we have:
+
+    $f(E_1^{i_1}, \ldots E_n^{i_n})^j$.
+
+  We determine $\alpha_j$ by generating a meta-constraint $\alpha_j \supseteq X_{j_k}$ for each $X_k \in \alpha_s$, where $s$ is the program point for the whole function body, which generates a number of constraints based on our computed value for $\alpha_s$. Our constraint solver should be able to handle these meta-constraints, so we make no change for solving our constraints, but we still get the least solution.
+
+\end{document}

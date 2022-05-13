@@ -1,0 +1,48 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    Generally, the time and energy required to access a cache is proportional to its size. This means that having a multi-level cache (where perhaps most of the accesses go to an L1, and the rest to an L2, and then memory), this means that the average cache access time decreases, and the average energy cost for each access decreases, compared to using a single larger cache where each access will cost a large amount of time and energy. This helps us to be able to spend the power budget elsewhere in the design of our processor, and reduce stalls in our pipeline.
+
+    Different levels of caches can also exploit different qualities, for example we could have an L1 cache to minimise latency, but an L2 cache to maximise capacity, allowing us to get the best of both worlds by using both designs.
+
+    An L1 and L2 data cache will vary in size. An L1 cache will be smaller than an L2 cache for reasons mentioned earlier: the time and energy cost to access a smaller cache is less than for a bigger cache.
+
+    Furthermore, L1 and L2 caches might vary in associativity. To ensure inexpensive lookups, an L1 cache might be direct-mapped or have a low associativity, but an L2 cache might be higher in associativity, such that we get fewer conflict misses and increase the usable capacity of the cache, making as few accesses as possible have to go to memory.
+
+  \item
+    If a cache memory hierarchy adopts a multi-level inclusion policy means that if a block exists in a cache higher up in the hierarchy (smaller cache), then it must exist in the layers below it in the hierarchy (the larger caches).
+
+    Numerous factors might affect whether we choose to use an inclusion or exclusion policy. For example, using an inclusion policy reduces the effective capacity of our cache, because we force duplication of data in the higher-level caches to the lower-level ones. Using an exclusion policy ensures that we use our capacity as best as we can.
+
+    However, using an inclusion policy can make certain checks easier, for example in a cache coherence protocol. If we want to see whether a line is present in a particular core's cache, then if we have an inclusion policy, then we only have to check the lowest-level cache, since any lines in higher up levels must also exist in the lowest-level cache. This simplifies the protocol, whereas if we have an exclusion policy we have to propagate these checks up the entire cache hierarchy.
+
+  \item
+
+    The average memory access time is:
+
+    L1 hit time + L1 miss rate $\times$ L1 miss penalty
+
+    Where L1 miss penalty is:
+
+    L2 hit time + L2 miss rate $\times$ L2 miss penalty
+
+
+    So we calculate the L1 miss penalty as $10 + 0.2 \times 200 = 50$ cycles
+
+    And thus the average memory access time as $2 + 0.02 \times 50 = 3$ cycles.
+
+    The change suggested will alter the memory access time to:
+
+    $1 + 0.03 \times 50 = 2.5$ cycles.
+
+    So, with this change, we do actually improve the average memory access time by 0.5 cycles.
+
+
+
+        
+    \end{enumerate}
+\end{document}
