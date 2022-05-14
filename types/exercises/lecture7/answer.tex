@@ -1,0 +1,58 @@
+\input{../../../template.tex}
+
+\begin{document}
+    \begin{enumerate}
+      \item
+        Here, we use Landin's knot to implement the Fibonacci function.
+
+\begin{verbatim}
+let knot f = 
+  let r = ref (fun n -> 0) in
+  let recur = fun n -> !r n;;
+  (r := f recur n);
+  recur;;
+
+let fibonacci_fp = fun f n ->
+  if n = 0 then 0 else
+  if n = 1 then 1 else
+  f (n-1) + f (n-2);;
+
+let fibonacci = fun n ->
+  (knot fibonacci_fp) n;;
+\end{verbatim}
+
+\item
+  \begin{enumerate}
+    \item
+
+      We give the following typing rule:
+
+      \[
+        \frac{\Sigma;\Gamma \vdash e : ref X}{\Sigma;\Gamma \vdash \text{free }e : 1}
+      .\] 
+
+      And operational semantics:
+
+      \[
+        \frac{\langle \sigma;e \rangle \leadsto \langle \sigma' e' \rangle}{\langle \sigma;\text{free }e \rangle \leadsto \langle \sigma';\text{free }e'\rangle}
+      .\] 
+
+      \[
+        \frac{l:v \in \sigma}{\langle \sigma; \text{free }l \rangle \leadsto \langle(\sigma \setminus l:v);\langle \rangle \rangle}
+      .\] 
+
+    \item
+      The issue here is that we break store monotonicity.
+
+      Consider:
+
+      $\langle l : \langle \rangle; \text{free } l\rangle : \langle l: 1 ; 1\rangle$
+
+      We also have:
+
+      $\langle l : \langle \rangle; \text{free } l\rangle \leadsto \langle \cdot ; \langle \rangle \rangle$
+
+      But $\langle \cdot ; \langle \rangle \rangle : \langle \cdot;1\rangle$, and $\cdot \not \geq l:1$, so preservation no longer holds.
+  \end{enumerate}
+    \end{enumerate}
+\end{document}

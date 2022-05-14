@@ -1,0 +1,128 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}
+  \item
+
+    We first prove the other direction of the closure property for the $\Theta \vdash \forall \alpha. B$ type case.
+
+    This means that we are required to prove that if $e \leadsto e'$ and $e \in \llbracket \Theta \vdash \forall \alpha. B \text{ type}\rrbracket \theta$, then $e' \in \llbracket \Theta \vdash \forall \alpha. B \text{ type}\rrbracket \theta$.
+
+    So, we begin by assuming that:
+
+    $e \leadsto e'$
+
+    $e \in \llbracket \Theta \vdash \forall \alpha. B \text{ type}\rrbracket \theta$.
+
+    By definition of the logical relation, we have that:
+
+    $e \text{ halts}$
+
+    $\forall A \in \text{type}, X \in \text{SemType}. (e A) \in \llbracket\Theta, \alpha \vdash B \text{ type}\rrbracket (\theta, X / \alpha)$
+
+    So, let $A$ and $X$ be arbitrary types and semantic types respectively.
+
+    By congruence rule, we know that $e A \leadsto e' A$
+
+    Then, by induction, since $e A \in \llbracket \Theta,\alpha \vdash B \text{ type}\rrbracket (\theta, X / \alpha)$, and $e A \leadsto e' A$, we get that $e' A \in \llbracket \Theta, \alpha \vdash B \text{ type}\rrbracket(\theta, X / \alpha)$
+
+    Furthermore, since $e$ halts, we know that $e \leadsto^* v$, and since $e \leadsto e'$ ($e$ is not a value), we know that $e \leadsto e'' \leadsto^* v$, and by determinacy we therefore get that $e'' = e'$ and thus $e' \leadsto^* v$.
+
+    Therefore, since $e'$ halts, and $\forall A \in \text{type}, X \in \text{SemType}, (e' A) \in \llbracket \Theta, \alpha \vdash B \text{ type}\rrbracket (\theta, X / \alpha)$, we get that $e' \in \llbracket \Theta \vdash \forall \alpha. B \text{ type}\rrbracket \theta$, as required.
+
+  \item
+    We now prove the other direction of the substitution property for the $\Theta \vdash \forall \alpha. B$ type case.
+
+    This means we are required to prove that, assuming $\Theta \vdash A$ type, and $\Theta, \alpha \vdash \forall \beta. B$ type, then if $e \in \llbracket \Theta \vdash [A / \alpha] \forall \beta. B \text{ type}\rrbracket \theta$, then $e \in \llbracket \Theta, \alpha \vdash \forall \beta. B \text{ type}\rrbracket(\theta, \llbracket \Theta  \vdash A \text{ type}\rrbracket \theta / \alpha)$
+
+    So, we assume that:
+
+    $\Theta \vdash A$ type
+
+    $\Theta, \alpha \vdash \forall \beta. B$ type
+
+    $e \in \llbracket \Theta \vdash [A / \alpha] \forall \beta. B \text{ type}\rrbracket \theta$.
+
+    By definition, this third assumption gives us that:
+
+    $e$ halts
+
+    $\forall C \in \text{type}, X \in \text{SemType}, (e C) \in \llbracket\Theta, \beta \vdash [A / \alpha]B \text{ type}\rrbracket (\theta, X / \beta)$.
+
+    To prove that $e \in \llbracket \Theta, \alpha \vdash \forall \beta. B \text{ type}\rrbracket(\theta, \llbracket \Theta \vdash A \text{ type}\rrbracket \theta / \alpha)$ we are required to show that $e$ halts, and that $\forall C \in \text{type}, X \in \text{SemType}. (e C) \in \llbracket \Theta, \alpha, \beta \vdash B \text{ type}\rrbracket (\theta, \llbracket \Theta \vdash A\text{ type}\rrbracket \theta / \alpha,X / \beta)$
+
+    We already have that $e$ halts.
+
+    Then, fix $C$ and $X$.
+
+    Then, $(e C) \in \llbracket \Theta, \beta \vdash [A / \alpha]B \text{ type}\rrbracket (\theta, X / \beta)$ by instantiation of our assumption.
+
+    By structural induction, we therefore get:
+
+    $(e C) \in \llbracket \Theta, \beta, \alpha \vdash B \text{ type}\rrbracket (\theta, X / \beta, \llbracket \Theta, \beta \vdash A \text{ type}\rrbracket (\theta, X / \beta) / \alpha)$
+
+    Then, by weakening and the fact that $\Theta \vdash A \text{ type}$, we get:
+
+    $(e C) \in \llbracket \Theta, \beta, \alpha \vdash B \text{ type}\rrbracket(\theta, X / \beta, \llbracket \Theta \vdash A \text{ type}\rrbracket \theta / \alpha)$
+
+    Then, by exchange, we get:
+
+    $(e C) \in \llbracket \Theta, \alpha, \beta \vdash B \text{ type}\rrbracket(\theta, \llbracket \Theta \vdash A \text{ type}\rrbracket\theta / \alpha, X / \beta)$ as required.
+
+    Therefore, we have that $e \in \llbracket \Theta, \alpha \vdash \forall \beta. B \text{ type}\rrbracket(\theta, \llbracket \Theta \vdash A \text{ type}\rrbracket\theta / \alpha)$.
+
+  \item
+
+    Finally, we prove the fundamental lemma for the $\forall I$ case.
+
+    This tells us that if:
+
+    $\alpha_1, \ldots, \alpha_k ; x_1 : A_1, \ldots, x_n : A_n \vdash \Lambda \alpha .e : \forall \alpha. A$
+
+    $\Theta \vdash \Gamma$ ctx, where $\Theta = \overrightarrow{\alpha_i}$ and $\Gamma = \overrightarrow{x_i : A_i}$.
+
+    $\theta$ interprets $\Theta$
+
+    For each $x_i : A_i \in \Gamma$, we have an $e_i \in \llbracket \Theta \vdash A_i \text{ type}\rrbracket \theta$.
+
+    Then:
+
+    $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}] \Lambda \alpha. e \in \llbracket \Theta \vdash \forall \alpha. A \text{ type}\rrbracket \theta$.
+
+    So, in the $\forall I$ case, we have the following derivation:
+
+    \[
+      \frac{\Theta, \alpha; \Gamma \vdash e : A}{\Theta;\Gamma \vdash \Lambda \alpha. e : \forall \alpha. A}
+    .\] 
+
+    So we have subderivation $\Theta, \alpha ;\Gamma \vdash e : A$
+
+    By assumption, we have $\Theta \vdash \Gamma \text{ ctx}$, so by weakening we also have that $\Theta ,\alpha \vdash \Gamma \text{ ctx}$.
+
+    Then, by induction, we have that:
+
+    $\forall C, X. [\overrightarrow{C_i / \alpha_i}, C / \alpha][\overrightarrow{e_i / x_i}]e \in \llbracket \overrightarrow{\alpha_i}, \alpha \vdash A \text{ type}\rrbracket (\overrightarrow{X_i / \alpha_i}, X / \alpha)$.
+
+    To show that $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}] \Lambda \alpha. e \in \llbracket \Theta \vdash \forall \alpha. A \text{ type}\rrbracket \theta$, we need to show that:
+
+    $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}] \Lambda \alpha .e$ halts and
+
+    $\forall C \in \text{type}, X \in \text{SemType}, [\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}](\Lambda \alpha .e) C \in \llbracket \Theta, \alpha \vdash A \text{ type}\rrbracket (\theta, X /\alpha)$
+
+    So let $C,X$ be arbitrary.
+
+    By the $\forall E$ rule, we know that $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}](\Lambda \alpha .e) C \leadsto [\overrightarrow{C_i / \alpha_i}, C / \alpha][\overrightarrow{e_i / x_i}]e$
+
+    From the result derived by induction, we know that $[\overrightarrow{C_i / \alpha_i}, C / \alpha][\overrightarrow{e_i / x_i}]e \in \llbracket \Theta, \alpha \vdash A \text{type}\rrbracket(\theta, X / \alpha)$
+
+    Thus, by closure, we know that $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}] \Lambda \alpha. e \in \llbracket \Theta, \alpha \vdash A \text{ type}\rrbracket(\theta, X / \alpha)$
+
+    Furthermore, $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}]\Lambda \alpha .e$ is a value so it halts.
+
+    Therefore, we have that $[\overrightarrow{C_i / \alpha_i}][\overrightarrow{e_i / x_i}] \Lambda \alpha.e \in \llbracket \Theta \vdash \forall \alpha. A \text{ type}\rrbracket \theta$ as required.
+
+
+
+        
+\end{enumerate}
+\end{document}

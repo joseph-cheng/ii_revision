@@ -1,0 +1,53 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        The differential entropy is defined as $-\int_{X} p(x) \log_2 p(x) \mathrm{d} x$
+
+      \item
+        The joint entropy is defined as $-\int_{X} \int_{Y} p(x,y) \log_2 p(x,y) \mathrm{d} y \mathrm{d} x$
+
+      \item
+
+
+        The conditional entropy is defined as $-\int_{X} \int_{Y} p(x,y) \log_2 \frac{p(x,y)}{p(y)} \mathrm{d}y \mathrm{d}x$
+
+      \item
+        The mutual information is defined as just $h(X|Y) - h(X)$, found by substituting the definitions above.
+
+      \item
+        The channel capacity of a continuous channel of $X$ as input and $Y$ as output would be $\max_{p(x)} i(X;Y)$, the max of the mutual information over all probability distributions of $p$.
+        
+    \end{enumerate}
+
+  \item
+    Not relevant.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Not relevant
+
+      \item
+        $H(S^n) = H(S_1, \ldots, S_n)$, since this is just joint entropy.
+
+        Since each of the occurrences are independent, we are at the limit where $H(X) = H(Y) = H(X,Y)$, so $H(S^n) = nH(S)$.
+
+      \item
+        The efficiency $\eta$ of this coding is given by $\frac{H}{R}$, since by the Source Coding Theorem we cannot compress higher than $H$.
+
+
+        
+    \end{enumerate}
+
+  \item
+    Not relevant.
+        
+    \end{enumerate}
+\end{document}

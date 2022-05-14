@@ -1,0 +1,35 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    The Baum-Welsh algorithm is no longer relevant.
+
+    The Viterbi algorithm is a decoding algorithm for an HMM. This means that it is given input of a transition probability matrix, an emission probability matrix, and a sequence of emissions, and calculates the most likely sequence of states that the HMM took.
+
+    The Viterbi algorithm is a dynamic programming algorithm. To calculate the probabilities that we are in state $k$ at time-step $i$, $P(k,i)$, we do: $\max_{s \in S}(P(s, i-1) \cdot P(s, k)) \cdot P(k, x_i))$, where $P(s,k)$ is the probability we transition from state $s$ to $k$, from our transition probability matrix, and $P(k, x_i)$ is the probability that we emit $x_i$ in state $k$, from our emission probability matrix. We also keep an auxiliary pointer matrix that keeps track of which is the most likely state that we came from.
+
+    It has time complexity $O(k^2n)$, where $k$ is the number of states we have, and $n$ is the length of our sequence, and has space complexity $O(kn)$.
+
+  \item
+    The method described in the solution notes is no longer relevant, we instead discuss CLUSTAL.
+
+    A multi-alignment is the process of aligning more than 2 sequences.
+
+    To calculate a multi-alignment using CLUSTAL, the idea is to use a progressive alignment. A progressive alignment works by progressively producing a multiple alignment by adding more and more sequences to a multiple alignment, but being unable to change the already existing multiple alignment. Since we cannot change the existing multiple alignment, it is important to do the progressive alignment in a good order, which means not propagating errors. By aligning sequences in an order such that we align similar sequences first, we propagate less errors through our multiple alignment so CLUSTAL uses an algorithm to build a phylogenetic tree from our sequences (like UPGMA or neighbour-joining), and uses this tree to guide the order of our progressive alignment.
+
+  \item
+    To fit a phylogenetic tree to a matrix, we require that the matrix is additive, which means that $M_{ij} + M{kl} \leq \max(M_{ik} + M_{jl}, M_{il} + M_{jk})$
+
+  \item
+    This is the multiple pattern matching problem, which involves finding all positions in a Genome string where a string from a Patterns collection appears as a substring.
+
+    We can do this efficiently by combining the BWT of a string with a suffix array.
+
+    The BWT is a technique used to improve compressibility of a string, and works by producing every cyclic rotation of a string, sorting them lexicographically, and taking the final column of the string as the transform. We can then easily reconstruct the string by sorting the BWT to get the first column, giving us every pair of adjacent characters.
+
+    Using this, we can easily find pattern matches in our string by looking at each row in the matrix, and seeing if the pattern exists, since each row effectively stores a suffix. This gives us the number of matches, but not the positions of the matches. To find the positions, we use an auxiliary data structure called a suffix array, which simply stores the starting position of each row (effectively, what number of cyclic rotation is the row), and then we can easily determine matches.
+
+    \end{enumerate}
+\end{document}
