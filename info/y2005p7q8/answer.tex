@@ -1,0 +1,46 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        This is the same as $H(X|Y)$.
+
+        $H(X|Y) = -\sum_X \sum_Y p(x,y) \log_2 \frac{p(x,y)}{p(y)}$
+
+        Expanding, we get:
+
+        $H(X|Y) = - p(0,0) \log_2 \frac{p(0,0)}{p(0)} - p(0, 1) \log_2 \frac{p(0,1)}{p(1)} - p(1,0) \log_2 \frac{p_y(1,0)}{p(0)} - p(1,1) \log_2 \frac{p(1,1)}{p(1)}$
+
+        We note that $p_Y(0) = p_X(0) \cdot (1- \epsilon) + p_X(1) \cdot \epsilon = 0.5$, so by symmetry $p_Y(1) = 0.5$ also.
+
+        Then, we get that $p(x,y) = \frac{\epsilon}{2}$ if $x \neq y$ and $p(x,y) = \frac{1-\epsilon}{2}$ if $x=y$.
+
+        Substituting values in, we get:
+
+        $H(X|Y) = -(1- \epsilon)\log_2 (1-\epsilon) - \epsilon \log_2 \epsilon$
+
+      \item
+        The mutual information of the channel is $H(X) - H(X|Y)$
+
+        $H(X) = 1$, trivially, so $I(X;Y) =1 + (1-\epsilon)\log_2 (1-\epsilon) + \epsilon \log_2 \epsilon$
+
+      \item
+        $H(X|Y)$ is maximised when $\epsilon = 0.5$.
+        
+    \end{enumerate}
+
+  \item
+    Not relevant
+
+  \item
+    Not relevant
+
+  \item
+    Not relevant
+        
+    \end{enumerate}
+\end{document}

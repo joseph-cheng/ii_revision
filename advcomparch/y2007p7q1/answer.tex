@@ -1,0 +1,28 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Branch prediction is so important in modern processors because the penalty for mispredicting a branch is so high. Modern processors often have very deep pipelines, meaning that we need to flush a lot of state if we mispredict a branch.
+
+  \item
+    Saturating, two-bit counters are used in branch prediction because they are very inexpensive in terms of state and computation, we only need 2 bits of state and the incrementing/decrementing is very simple. However, they still provide reasonable performance given their cheapness, by just taking the most significant bit as the prediction.
+
+  \item
+    A local branch predictor aims to exploit similarities in behaviour of a particular branch.
+
+    For example, we might use the branch address to index a table of sets of shift registers, representing the history of a particular branch, and use this history to index a table of $n$-bit saturating counters, which we use to provide a prediction.
+
+  \item
+    A global branch predictor operates by trying to exploit correlation between behaviour of all branches.
+
+    For example, we might maintain a single history buffer, updating whenever any branch is taken/not taken, and use this history to index a table of $n$-bit saturating counters.
+
+  \item
+    Local and global branch predictors can be used together in a tournament predictor, where we have an additional predictor that determines whether the result from the local or global predictor should be used.
+
+    This is useful because often local history works for most branches, but works very poorly for those that it does not work on (and global history likely works well). We can create such a predictor by keeping track of the accuracy of each result for a branch, and using the most historically accurate predictor.
+    
+\end{enumerate}
+\end{document}

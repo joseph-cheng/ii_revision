@@ -1,0 +1,60 @@
+\input{../../../template.tex}
+
+\begin{document}
+    \begin{enumerate}
+      \item
+        We state the weakening, exchange, and substitution lemmas for the monadic I/O language.
+
+        We separate the lemmas into pure and impure versions.
+
+        The pure weakening lemma is the same as that for the STLC: If $\Gamma, \Gamma' \vdash e : T$, then $\Gamma, x : X, \Gamma' \vdash e : T$
+
+        The pure exchange lemma: If $\Gamma, x : X , y : Y, \Gamma' \vdash e : T$, then $\Gamma, y : Y, x : X, \Gamma'\vdash e : T$
+
+        The pure substitution lemma: If $\Gamma \vdash e : X$, and $\Gamma, x : X \vdash e' : T$, then $\Gamma \vdash [e / x]e' : T$
+
+        The impure weakening, exchange, and substitution lemmas look identical, but with (most) $\Gamma \vdash e : T$ replaced with $\Gamma \vdash t \div T$:
+
+        Impure weakening: If $\Gamma, \Gamma' \vdash t \div T$, then $\Gamma, x : X, \Gamma' \vdash t \div T$
+
+        Impure exchange: If $\Gamma, x : X, y : Y, \Gamma' \vdash t \div T$, then $\Gamma, y : Y, x : X, \Gamma' \vdash t \div T$
+
+        Impure substitution: If $\Gamma \vdash e : X$ and $\Gamma, x : X \vdash t \div T$, then $\Gamma \vdash [e / x]t \div T$
+
+      \item
+        We now give machine configurations and configuration typing for the monadic I/O language:
+
+        Configurations are of the form $\langle \omega; t \rangle$, where $\omega$ is a list of output tokens.
+
+          Since we can only print integers, we type output lists as $\omega : n$, where $n$ is an integer representing the length of the list, and configurations as $\langle \omega;t \rangle : \langle n : T \rangle$
+
+        We get the rules:
+
+        \begin{align*}
+          &\frac{}{\cdot : 0}\\
+          \\
+          &\frac{\omega : n}{\omega,n' : n+1}\\
+          \\
+          &\frac{\omega : n \hspace{15pt} \Gamma \vdash t \div T}{\langle \omega; t\rangle : \langle n;T\rangle}\\
+        \end{align*}
+
+      \item
+        Finally, we state the type safety property for the monadic I/O language:
+
+        Type safety comes from both progress and preservation, so we state both the progress and preservation theorems for the monadic I/O language.
+
+        For progress, we have:
+
+        If $\langle \omega;t \rangle : \langle n ; T \rangle$, then $t = \text{return }v$, or $\langle \omega;t \rangle \leadsto \langle \omega'; t'\rangle$
+
+        For preservation, we have:
+
+        If $\langle \omega;t \rangle \leadsto \langle \omega'; t' \rangle$ and $\langle \omega;t \rangle : \langle n ; T \rangle$, then there exists $n' \geq n$ such that $\langle \omega' ;t' \rangle : \langle n' ; T \rangle$
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
