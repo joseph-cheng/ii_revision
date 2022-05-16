@@ -1,0 +1,47 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+        The entropy of the source is $H(X) = -0.5\log_2 0.5 - 0.5\log_2 0.5 = 1$ bit, from the definition of entropy.
+
+      \item
+        We get that $p(Y=0) = p(X=0) \cdot (1-\epsilon) + p(X=1) \cdot \epsilon = 0.5(1 - \epsilon) + 0.5(\epsilon) = 0.5$
+
+        So, analogously, we get $p(Y=1) = 0.5$, and thus the entropy $H(Y) = 1$ bit also.
+
+      \item
+        $p(x,y) = 0.5 \cdot (1-\epsilon)$ if  $x=y$ and $p(x,y) = 0.5 \cdot \epsilon$ if $x \neq y$.
+
+        The joint entropy $H(X,Y) = -\sum_{x \in \{0,1\}} \sum_{y \in \{0,1\}} p(x,y) \log_2 p(x,y) = -(1-\epsilon)\log_2 (1 - \epsilon) - \epsilon \log_2 \epsilon + 1$
+
+      \item
+        The mutual information for the channel is $I(X;Y) = H(X) + H(Y) - H(X,Y) = 1 + (1-\epsilon)\log_2 (1 - \epsilon) + \epsilon \log_2 \epsilon1$
+
+      \item
+        The mutual information is maximised when $\epsilon = 0$ or $\epsilon = 1$, so there are two values.
+
+        At these values, the mutual information is $1$
+
+        The given $H(X)$ also maximises the mutual information, so the capacity of these channels is 1 bit.
+
+      \item
+        The capacity of the channel is minimal if $\epsilon = 0.5$, in which case the capacity of the channel is 0, it is impossible to discern input bits from output bits.
+        
+    \end{enumerate}
+
+  \item
+    The condition is the Kraft-McMillan inequality.
+
+    We get that:
+
+    $\sum_{i=1}^N \frac{1}{n_i} \leq 1$
+
+  \item
+    Not relevant.
+        
+    \end{enumerate}
+\end{document}

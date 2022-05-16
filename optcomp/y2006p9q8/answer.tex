@@ -1,0 +1,58 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    We provide the following annotated type system:
+
+    We first extend the type syntax:
+
+    $\tau ::= int | \tau \xrightarrow{\varphi}\tau| *\tau\ in\ r$
+
+    Meaning that functions carry latent effects $\varphi$.
+
+    \begin{align*}
+      &\frac{\Gamma(x) = \tau}{\Gamma \vdash x : \tau, \{\}}\\
+      \\
+      &\frac{\Gamma, x : \tau \vdash e : \tau', \varphi}{\Gamma \vdash \lambda x. e : \tau \xrightarrow{\varphi} \tau', \{\}}\\
+      \\
+      &\frac{\Gamma \vdash e_1 : \tau \xrightarrow{\varphi} \tau', \varphi' \hspace{15pt} \Gamma \vdash e_2 : \tau, \varphi''}{\Gamma \vdash e_1 e_2 : \tau', \varphi \cup \varphi' \cup \varphi''}\\
+      \\
+      &\frac{\Gamma \vdash e_1 : int, \varphi \hspace{15pt} \Gamma \vdash e_2 : \tau, \varphi' \hspace{15pt} \Gamma \vdash e_3 : \tau, \varphi''}{\Gamma \vdash if\ e_1\ then\ e_2\ else\ e_3 : \tau, \varphi \cup \varphi' \cup \varphi''}\\
+      \\
+      &\frac{\Gamma \vdash e : \tau, \varphi}{\Gamma \vdash store\ e\ in\ r : *\tau\ in\ r, \varphi \cup \{r\}}\\
+      \\
+      &\frac{\Gamma \vdash e : *\tau\ in\ r, \varphi}{\Gamma \vdash load\ e\ from\ r : \tau, \varphi \cup \{r\}}
+    \end{align*}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        $load\ x\ from\ r$ has type $int$ and effects $\{r\}$, $store\ 42\ in\ s$ has type $*\ int\ in\ s$ and effects $\{r\}$, and $p$ has type $*int\ in\ s$ and effects $\{\}$
+
+        This clearly typechecks fine to $*int\ in\ s$ with effects $\{r, s\}$.
+
+      \item
+        Again, this typechecks the same, since we can deduce that $y$ must be an int, and therefore we get that this has type $int \xrightarrow{\{r,x\}}*int\ in\ r$ with effects $\{\}$ (we only have latent effects).
+
+      \item
+        This does not typecheck, since $\lambda y. store\ y\ in\ s$ has type $int \xrightarrow{\{s\}} *int\ in\ s$ (and effects $\{\})$, but $\lambda y. p$ has type $int \xrightarrow{\{\}} *int\ in\ s$ (and effects $\{\}$).
+
+        Since these two branches do not have the same type, the expression is not typeable in our scheme. The issue here is we have embedded effects into our types.
+
+        To solve this, we can introduce a subtyping rule:
+
+        \[
+          \frac{\Gamma \vdash e : \tau \xrightarrow{\varphi} \tau', \varphi''}{\Gamma \vdash e : \tau \xrightarrow{\varphi'} \tau', \varphi''}(\varphi \subseteq \varphi')
+        .\] 
+
+        This allows us to treat the latent effects of functions as larger than they actually are, so we can properly type this expression to type $int \xrightarrow{\{s\}}*int\ in\ s, \{r\}$.
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

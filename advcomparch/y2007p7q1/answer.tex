@@ -23,6 +23,18 @@
     Local and global branch predictors can be used together in a tournament predictor, where we have an additional predictor that determines whether the result from the local or global predictor should be used.
 
     This is useful because often local history works for most branches, but works very poorly for those that it does not work on (and global history likely works well). We can create such a predictor by keeping track of the accuracy of each result for a branch, and using the most historically accurate predictor.
+
+  \item
+
+    If the cycle of branches that repeats is \texttt{1111011111}, then this cannot be completely predicted with a branch history of four, since the history \texttt{1111} is followed by both a \texttt{1} and a \texttt{0}.
+
+  \item
+    The compiler can assist with branch prediction by providing hints as to whether the branch will be frequently taken or not taken. For example, the compiler might hint that loops will be taken, but that a particular rare branch might not be taken often. This information could be provided through profiling of running the program, or with static heuristics.
+
+  \item
+    Jumps are always taken, and either have a static address, or has an address computed at run-time. There is no need to predict those with static addresses, so we consider only those whose addresses are computed at run-time.
+
+    In the case of returns, we can store a small, separate stack in hardware that contains the predicted return addresses (when we call a function, we just push on to this stack, but we don't care about overflowing because it is only a prediction). Then, when a return instruction is fetched, we can pop the top of this stack and use it as the next instruction to fetch instructions from.
     
 \end{enumerate}
 \end{document}
