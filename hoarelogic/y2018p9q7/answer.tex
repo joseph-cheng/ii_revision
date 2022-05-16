@@ -1,0 +1,134 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    A partial correctness $\{P\} C \{Q\}$ is valid if every program state that satisfies precondition $P$, having $C$ executed in it, either does not terminate or terminates in a program state satisfying postcondition $Q$.
+
+  \item
+    We give the following command, that never terminates:
+
+\begin{verbatim}
+X := 1
+while (X > 0)
+  X := 1
+\end{verbatim}
+
+     This satisfies the given partial correctness triple because the command never terminates.
+
+   \item
+
+     We give the following rule:
+
+     \[
+       \frac{\{P\}C1\{Q\} \hspace{15pt} \{P\}C2\{Q\}}{\{P\}\texttt{either C1 C2}\{Q\}}
+     .\] 
+
+     This is sound because as long as both \texttt{C1} and \texttt{C2} result in the same end state from the same initial state, we know that executing either of them, even non-deterministically, will result in that end state. It is relatively complete because if we non-deterministically execute one of \texttt{C1} or \texttt{C2} and that satisfies post-condition $Q$, then it makes sense for execution of either of them to have to satisfy $Q$.
+
+     We provide an alternative rule that maintains soundness (by not having any such \texttt{C1} or \texttt{C2} that satisfy it and thus proves nothing), but does not maintain relative completeness:
+
+     \[
+       \frac{}{\{\bot\}\texttt{either C1 C2}\{Q\}}
+     .\] 
+
+   \item
+     This is a variation on the assignment rule:
+
+     \[
+     \frac{}{\{P[0 / V] \wedge P[1 / V]\}\texttt{flip V}\{Q\}}
+     .\] 
+
+     We then define \texttt{flip V} $\triangleq$ \texttt{either (V := 0) (V := 1)}
+
+   \item
+     We simply extend the idea for \texttt{flip}:
+
+     \[
+       \frac{}{\{\forall n. P[n / V]\}\texttt{havoc V}\{P\}}
+     .\] 
+
+   \item
+     This program works by iterating \texttt{Z} up from 0 until it meets either \texttt{X} or \texttt{Y}, so this will find min(X, Y) as long as \texttt{X} and \texttt{Y} are both non-negative. So, we have precondition:
+
+     $\{X \geq 0 \wedge Y \geq 0\}$
+
+     For a loop invariant, we propose $\{Z \leq X \wedge Z \leq Y\}$
+
+     We provide the following proof outline:
+
+\begin{verbatim}
+{X >= 0 /\ Y >= 0}
+{X >= 0 /\ Y >= 0 /\ 0 <= X /\ 0 <= Y}
+Z := 0
+{X >= 0 /\ Y >= 0 /\ Z <= X /\ Z <= Y}
+while (Z != X /\ Z != Y) do
+  {X >= 0 /\ Y >= 0 /\ Z <= X /\ Z <= Y /\ Z != X /\ Z != Y}
+  (since Z <= X and Z != X, we get Z < X, analogous for Y
+  {X >= 0 /\ Y >= 0 /\ Z < X /\ Z < Y}
+  {X >= 0 /\ Y >= 0 /\ Z + 1 <= X /\ Z + 1 <= Y}
+  Z := Z + 1
+  {X >= 0 /\ Y >= 0 /\ Z <= X /\ Z <= Y}
+end
+{X >= 0 /\ Y >= 0 /\ Z <= X /\ Z <= Y /\ ~(Z != X /\ Z != Y)}
+{X >= 0 /\ Y >= 0 /\ Z <= X /\ Z <= Y /\ (Z == X \/ Z == Y)}
+(If Z == X, then we get X <= Y, so Z = min(X,Y), analogous for Z == Y)
+{Z = min(X,Y)}
+\end{verbatim}
+
+\item
+  The invariant we propose is that $\{$\exists \beta$. list(X, \beta) \wedge N + length(\beta) = length(\alpha)\}$
+
+  We provide a proof outline below:
+
+\begin{verbatim}
+{N=0 /\ list(X, a)}
+(pick b = a)
+{Eb. list(X, b) /\ N + length(b) = length(a)}
+while (X != null) do
+  {Eb. list(X, b) /\ N + length(b) = length(a) /\ X != null}
+    {list(X, b) /\ N + length(b) = length(a) /\ X != null}
+    (since X != null and list(X,b))
+    {list(X, h::t) /\ N + length(h::t) = length(a)}
+    {Ey. X -> h * (X + 1) -> y * list(y, t) /\ N + length(h::t) = length(a)}
+      {X -> h * (X + 1) -> y * list(y, t) /\ N + length(h::t) = length(a)}
+      {X -> h * (X + 1) -> y * list(y, t) /\ N + 1 + length(t) = length(a)}
+      N := N+1
+      {X -> h * (X + 1) -> y * list(y, t) /\ N + length(t) = length(a)}
+      {X -> h * (X + 1) -> y * list(y,t) /\ N + length(t) = length(a) /\ [X+1] = [X+1]}
+      Y := [X+1]
+      {X -> h * (X + 1) -> y * list(y,t) /\ N + length(t) = length(a) /\ Y = [X+1]}
+      {X -> h * (X + 1) -> y * list(y,t) /\ N + length(t) = length(a) /\ Y = y}
+      dispose(X)
+      {(X + 1) -> Y * list(y, t) /\ N + length(t) = length(a) /\ Y = y}
+      dispose(X+1)
+      {list(y,t) /\ N + length(t) = length(a) /\ Y = y}
+      X := Y
+      {list(y,t) /\ N + length(t) = length(a) /\ X = y}
+    {list(X,t) /\ N + length(t) = length(a)}
+  (pick b = t)
+  {Eb. list(X,b) /\ N + length(b) = length(a)}
+end
+{Eb. list(X,b) /\ N + length(b) = length(a) /\ ~(X != null)}
+{Eb. list(null,b) /\ N + length(b) = length(a) /\ X = null}
+(since b has to equal [])
+{list(null, []) /\ N + length([]) = length(a) /\ X = null}
+{N = length(a) /\  list(X, [])}
+
+
+
+
+\end{verbatim}
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
+

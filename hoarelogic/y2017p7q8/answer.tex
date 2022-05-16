@@ -1,0 +1,60 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    If we have a valid total correctness Hoare triple $[P]C[Q]$, then this means that every program state that satisfies $P$, having $C$ executed in it, \textit{will} terminate and result in a program state that satisfies $Q$.
+
+  \item
+    We provide the command:
+
+\begin{verbatim}
+X := 0
+while (X >= 0) do
+  X := 0
+\end{verbatim}
+
+To satisfy a partial correctness triple $\{P\}C\{Q\}$, we have a similar requirement as total correctness triples, except we do not require termination, and in the case that there is no termination we make no claim on any final program state (since no such state exists for a divergent command). Therefore, since this command never terminates, we still satisfy the triple $\{X = x\}C\{1=2\}$, even though no program state can ever satisfy $1=2$.
+
+\item
+  We provide the following triple:
+
+  $\{X=1\} X := 2 \{2=1\}$
+
+  Suppose this triple was provable. By soundness of Hoare logic, this means that there exists a program state that satisfies $1=2$ (since $X := 2$ terminates). However, this is clearly a contradiction, since $1=2$ must be false, and therefore this triple cannot be provable.
+
+\item
+  We provide the following specification:
+
+  $\{X=x \wedge Y=y\}C\{Z = x+y\}$
+
+  We use ghost variables $x$ and $y$ here instead of program variables $X$ and $Y$ so that we cannot provide a program that, say, sets $Z=X=Y=0$, which would satisfy $\{Z = X+Y\}$, but without computing the sum of $X$ and $Y$. This specification ensures that $Z$ really does hold the sum of the initial values of $X$ and $Y$.
+
+\item
+  We propose the following loop invariant:
+
+  $\{X >= 0 \wedge Y + \sum_{i=1}^X i = \sum_{i=1}^n i\}$
+
+  We then provide the following proof outline:
+
+\begin{verbatim}
+{X = n /\ Y = 0 \wedge n >= 0}
+(since Y=0 and X=n)
+{X >= 0 /\ Y + sum(1..X) = sum(1..n)
+WHILE X > 0 do
+  {X >= 0 /\ Y + sum(1..X) = sum(1..n) /\ X > 0}
+  {X - 1 >= 0 /\ Y + X + sum(1..X-1) = sum(1..n)}
+  Y := Y + X
+  {X - 1 >= 0 /\ Y + sum(1..X-1) = sum(1..n)
+  X := X - 1
+  {X >= 0 /\ Y + sum(1..X) = sum(1..n)
+end
+{X >= 0 /\ Y + sum(1..X) = sum(1..n) /\ ~(X > 0)}
+{X = 0 /\ Y + sum(1..X) = sum(1..n)}
+(since sum(1..0) = 0)
+{Y = sum(1..n)}
+\end{verbatim}
+
+        
+\end{enumerate}
+\end{document}
