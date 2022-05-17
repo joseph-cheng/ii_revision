@@ -1,0 +1,196 @@
+\input{../../../template.tex}
+
+\usepackage{bussproofs}
+
+\begin{document}
+    \begin{enumerate}
+      \item
+        We show that $\neg A \vee B, A; \cdot \vdash B\ true$ is derivable in classical logic.
+
+        Note that this is equivalent to showing that modus ponens is derivable in classical logic.
+
+        \begin{prooftree}
+          \AxiomC{}
+          \UnaryInfC{$\neg A \vee B, A;B \vdash \neg A \vee B\ true$}
+          \AxiomC{}
+          \UnaryInfC{$\neg A\vee B,A;B \vdash B\ false$}
+          \AxiomC{}
+          \UnaryInfC{$\neg A \vee B, A;B \vdash A\ true$}
+          \UnaryInfC{$\neg A \vee B, A;B \vdash \neg A\ false$}
+          \BinaryInfC{$\neg A \vee B, A;B \vdash \neg A \vee B\ false$}
+          \BinaryInfC{$\neg A \vee B, A;B \vdash contr$}
+          \UnaryInfC{$\neg A \vee B, A;\cdot \vdash B\ true$}
+        \end{prooftree}
+
+      \item
+        We now show that $\neg(\neg A \wedge \neg B); \cdot \vdash A \vee B\ true$ is derivable in classical logic.
+
+        Note that this is showing that one of the De Morgan's Laws holds in classical logic.
+
+        Letting $\Gamma = \{\neg(\neg A \wedge \neg B)\}$:
+
+        Letting $\Delta = \{A \vee B\}$
+
+        \begin{prooftree}
+          \AxiomC{analogous}
+          \UnaryInfC{$\Gamma;\Delta \vdash \neg B\ true$}
+          \AxiomC{}
+          \UnaryInfC{$\Gamma, A; \Delta \vdash A\ true$}
+          \UnaryInfC{$\Gamma, A; \Delta \vdash A \vee B\ true$}
+          \AxiomC{}
+          \UnaryInfC{$\Gamma, A;\Delta \vdash A \vee B\ false$}
+          \BinaryInfC{$\Gamma, A;\Delta \vdash contr$}
+          \UnaryInfC{$\Gamma;\Delta \vdash A\ false$}
+          \UnaryInfC{$\Gamma;\Delta \vdash \neg A\ true$}
+          \BinaryInfC{$\Gamma;\Delta \vdash \neg A \wedge \neg B\ true$}
+          \AxiomC{}
+          \UnaryInfC{$\Gamma;\Delta \vdash \neg(\neg A \wedge \neg B)\ true$}
+          \UnaryInfC{$\Gamma;\Delta \vdash (\neg A \wedge \neg B)\ false$}
+          \BinaryInfC{$\Gamma;\Delta \vdash contr$}
+          \UnaryInfC{$\Gamma;\cdot \vdash A \vee B\ true$}
+        \end{prooftree}
+
+      \item
+        Now we prove substitution for values, assuming exchange and weakening hold.
+
+        This requires us to prove three lemmas. In each, we assume $\Gamma;\Delta \vdash e: A\ true$
+
+        \begin{itemize}
+
+          \item
+            We prove that if $\Gamma, x : T; \Delta \vdash e': C\ true$, then $\Gamma;\Delta \vdash [e / x]e' : C\ true$
+
+            We proceed by structural induction on the derivation of $\Gamma, x : T;\Delta \vdash e': C\ true$
+
+            \begin{itemize}
+              \item
+                Case:
+
+                \[
+                  \frac{y:C \in \Gamma, x: A}{\Gamma, x : T;\Delta \vdash y : C\ true}
+                .\] 
+
+                If $x=y$, then $[e / x]y = e$
+
+                So, $\Gamma;\Delta \vdash [e / x]y : A\ true$
+
+                Since $x=y$, we have $C=A$, and thus $\Gamma;\Delta \vdash [e / x]y : C\ true$
+
+                If $x \neq y$, then $[e / x]y = y$
+
+                Therefore, $y: C \in \Gamma$, and thus by the same rule we get $\Gamma;\Delta \vdash [e / x]y : C\ true$
+
+              \item
+                Case:
+
+                \[
+                  \frac{}{\Gamma, x : T; \Delta \vdash \langle \rangle : \top\ true}
+                .\] 
+
+                By definition, $[e / x]\langle \rangle = \langle \rangle$
+
+                So, we immediately get:
+
+                $\Gamma, \Delta \vdash [e / x]\langle \rangle : \top\ true$
+
+              \item
+                Case:
+
+                \[
+                  \frac{\Gamma, x : T;\Delta \vdash e_1 : A\ true \hspace{15pt}\Gamma, x : T;\Delta\vdash e_2:B\ true}{\Gamma, x: A;\Delta \vdash \langle e_1, e_2 \rangle : A \wedge B\ true}
+                .\] 
+
+                We assume we have substitution on the two subderivations, so we get $\Gamma;\Delta \vdash [e / x]e_1: A\ true$ and $\Gamma;\Delta \vdash [e / x]e_2 : B\ true$
+
+                By definition of substitution, $[e / x]\langle e_1, e_2\rangle = \langle [e / x]e_1, [e / x]e_2\rangle$, so using the same rule we derive $\Gamma;\Delta \vdash [e / x]\langle e_1, e_2 \rangle : A \wedge B\ true$
+
+              \item
+                Case:
+
+                \[
+                  \frac{\Gamma, x : T;\Delta \vdash e_1 : A\ true}{\Gamma, x : T;\Delta \vdash L e_1 : A \vee B\ true}
+                .\] 
+
+                We assume we have substitution on our subderivation, so we get $\Gamma;\Delta \vdash [e / x]e_1 : A\ true$
+
+                By definition of substitution, $[e / x]L e_1 = L [e / x]e_1$, so we then immediately get $\Gamma;\Delta \vdash [e / x]L e_1 : A \vee B\ true$ from the same rule.
+
+              \item
+
+                Case: 
+                \[
+                  \frac{\Gamma, x : T;\Delta \vdash e_2 : B\ true}{\Gamma, x : T;\Delta \vdash L e_2 : A \vee B\ true}
+                .\] 
+
+                Analogous to previous case.
+
+              \item
+                Case:
+
+                \[
+                  \frac{\Gamma,x : T;\Delta \vdash k: A\ false}{\Gamma, x : T;\Delta \vdash not(k) : \neg A\ true}
+                .\] 
+
+                Since we are proving for values and continuations mutually recursively, we have substitution on our derivation, and we get $\Gamma;\Delta \vdash [e / x]k:A\ false$
+
+                By definition of substitution, $[e / x]not(k) = not([e / x]k)$
+
+                Therefore, we immediately get that $\Gamma;\Delta \vdash [e / x]not(k) : \neg A\ true$
+            \end{itemize}
+
+          \item
+            The case for continuations is analogous to the case for values.
+
+          \item
+            Now we are required to prove the result for contradictions:
+
+            If $\Gamma, x : T;\Delta \vdash c\ contr$, then $\Gamma;\Delta \vdash [e / x]c\ contr$
+
+            We proceed by structural induction on the derivation of $\Gamma, x : T;\Delta \vdash c:contr$:
+
+            \begin{itemize}
+              \item
+                Case:
+
+                \[
+                  \frac{\Gamma,x : T;\Delta \vdash e': A\ true \hspace{15pt}\Gamma,x:T;\Delta \vdash k: A\ false}{\Gamma;\Delta \vdash \langle e' |_A k\rangle\ contr}
+                .\] 
+
+                We assume we have substitution on our subderivations by induction, so we have that $\Gamma;\Delta \vdash [e / x]e': A\ true$ and $\Gamma;\Delta \vdash [e / x]k: A\ false$.
+
+                By the definition of substitution, we have that $[e / x]\langle e' |_A k\rangle = \langle [e / x]e' |_A [e / x]k\rangle$
+
+                Therefore, we immediately get that $\Gamma;\Delta \vdash [e / x] \langle e'|_Ak\rangle\ contr$
+
+              \item
+
+                Case:
+
+                \[
+                  \frac{\Gamma,x : T;\Delta, u :A \vdash c\ contr}{\Gamma,x : T;\Delta \vdash \mu u: A. c : A\ true}
+                .\] 
+
+                By weakening, we get that $\Gamma, x : T;\Delta, u : A \vdash c\ contr$
+
+                Since we assume we have substitution on this by induction, we get $\Gamma;\Delta, u :A \vdash [e / x]c\ contr$
+
+                By the definition of substitution, $[e / x]\mu u : A.c = \mu u: A. [e / x]c$
+
+                Therefore, we immediately get that $\Gamma;\Delta \vdash [e / x]\mu u : A.C : A\ true$
+
+              \item
+                Case:
+
+                Analogous to previous case, replacing weakening with exchange.
+
+
+
+
+            \end{itemize}
+        \end{itemize}
+
+        Therefore, we are done.
+
+
+    \end{enumerate}
+\end{document}
