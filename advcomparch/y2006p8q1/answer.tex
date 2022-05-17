@@ -1,0 +1,36 @@
+\input{../../template.tex}
+
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    The standard processor and custom VLIW processor is clearly the best.
+
+    To handle audio, image, and video at low power consumption effectively requires a custom processor, such as the custom VLIW processor described. Such a processor would be able to do computation needed for these tasks, and only these tasks, and thus do them with good performance and power consumption. The standard processor could handle the more generic tasks (like word processing).
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        To perform dynamically scheduled instruction dispatch, our core needs to be rather complex, having to keep track of hazards, and being able to properly rollback on exceptions, etc. This means that this technology would likely not be suitable for the device. Furthermore, since we know the exact hardware we will be running on, it is likely that a lot of instruction scheduling decisions can be left to the compiler.
+
+      \item
+        Simultaneous multi-threading would likely not be suitable for this device. The portable device described is unlikely to have much thread-level parallelism, and therefore the extra state required to do simultaneous multi-threading (doubling of registers, etc.) would not be worth it for this device.
+
+      \item
+        SIMD extensions would be applicable for the device, assuming that we are not moving our audio/video processing to a separate accelerator. SIMD extensions would allow us to handle audio/video codecs with significantly higher speed, and reduce the amount of instructions we have to fetch to specify that work, meaning that we might make power savings as well.
+
+      \item
+        Virtual memory would likely not be applicable for the device. In such a device, computation could be split into two categories: critical code (like the OS), which can just run directly with the physical memory, and applications, which are likely in sandboxed environments (i.e. running in a VM), which will handle the use of physical memory itself. Therefore, having the extra complexity for virtual memory (like an MMU or page tables) is not worth it.
+
+      \item
+        Dynamic clock frequency/power control would be suitable for this device. Since we want to conserve battery power on the device as much as possible, switching to a lower clock frequency to conserve power when high performance is not needed would be very useful for this device.
+
+      \item
+        A snooping cache might be applicable for the device, assuming there are only a small number of cores (e.g. 2). This would allow a shared memory (and a cache coherency model) between the two processors, allowing for parallelism to be obtained. The main downsides of snooping caches are that they scale very poorly, but with a small number of cores this might be okay.
+        
+    \end{enumerate}
+        
+    \end{enumerate}
+\end{document}

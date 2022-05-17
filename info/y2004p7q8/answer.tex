@@ -1,0 +1,67 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+  \begin{enumerate}[label=(\roman*)]
+    \item
+      The most efficient sequence of questions would be as follows:
+
+      Is it A?
+
+      Is it B?
+
+      Is it C?
+
+      Is it D?
+
+      Is it E?
+
+      Is it F?
+
+      Is it G?
+
+    \item
+      We can claim that each of the proposed questions is maximally informative because each of the questions reduces the remaining uncertainty by 1 bit, and therefore we maximally reduce the remaining entropy with each question.
+
+    \item
+      We calculate:
+
+      $\frac{1}{2}  + \frac{2}{4} + \frac{3}{8} + \frac{4}{16} + \frac{5}{32} + \frac{6}{64} + \frac{7}{128} + \frac{7}{128} = \frac{127}{64}$.
+
+    \item
+      The entropy of the above symbol set is $\sum_{x \in S} p(x)\log_2 p(x)$, which results in the same sum as (iii), giving us an entropy of $\frac{127}{64}$ bits.
+
+    \item
+      We give the following code:
+
+\begin{verbatim}
+A: 1
+B: 01
+C: 001
+D: 0001
+E: 00001
+F: 000001
+G: 0000001
+H: 0000000
+\end{verbatim}
+
+It is uniquely decodable because no code can be interpreted as the concatenation of codes for other symbols. It has the prefix property because no code is the prefix of another.
+
+\item
+  The 0 bit represents a `no' answer, and the 1 bit represents a `yes' answer, if we were to ask the questions in (i).
+      
+  \end{enumerate}
+
+\item
+  Not relevant.
+
+\item
+  Not relevant.
+
+\item
+  Not relevant.
+        
+    \end{enumerate}
+\end{document}
