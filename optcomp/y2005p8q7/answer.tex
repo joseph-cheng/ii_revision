@@ -1,0 +1,78 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    \begin{enumerate}[label=(\roman*)]
+      \item
+
+        We construct the following two data-flow equations:
+
+        $in-R(n) = \bigcup_{p \in pred(n)} out-R(p)$
+
+        $out-R(n) = in-R(n) \setminus kill(n) \cup gen(n)$
+
+        Where $kill(n)$ is the set of variables that $n$ kills (reads from), and $gen(n)$ is the set of variables that $n$ generates (writes to).
+
+        We combine them into a single data-flow equation:
+
+        $R(n) = \bigcup_{p \in pred(n)} R(p) \setminus kill(p) \cup gen(p)$
+
+        Then, we provide the following algorithm which reports on such variables having anomalies. We initialise all the sets to the empty set to ensure we calculate the least solution.
+
+\begin{verbatim}
+R[1..n] = {}
+while (R[] changes)
+  for i in 1..n do
+    R[i] = big_union(p in pred(n), R(p) \ kill(p) U gen(p))
+
+
+for i in 1..n do
+  for v in R[i] do
+    print("Anomaly detected for variable", v)
+\end{verbatim}
+
+\item
+  The issue with address-taken local variables is that we can now have implicit reads and writes to our variables. Naively, we could modify our algorithm to never give warnings for write-write anomalies for any address-taken local variables, or consider implicit reads to access all address-taken variables. A more sophisticated solution might do some points-to analysis to find what variables might point to others, and use this to account for implicit reads and writes.
+
+  Similarly, global variables might be altered by procedures called during a function, so we could model all global variables as being read by any called function.
+        
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+\begin{verbatim}
+a = rand()
+b = rand()
+print(a,b)
+
+b = rand()
+c = rand()
+print(b,c)
+
+c = rand()
+d = rand()
+print(c,d)
+
+d = rand()
+a = rand()
+print(d,a)
+\end{verbatim}
+
+\item
+  In a $k$-cyclic graph, we might be able to colour the graph in just 2 colours, by alternating the colour at every node (and we can clearly not do it in 1 colour). However, this requires that $k$ is even.
+
+  If $k$ is odd, we can colour the graph in at minimum 3 colours, any strategy for colouring in 2 colours will always have two adjacent nodes with the same colour.
+
+  Therefore, we give:
+
+  $c(k) = \begin{cases}2 & k\text{ is even}\\3 & \text{otherwise}\end{cases}$
+
+        
+    \end{enumerate}
+        
+\end{enumerate}
+\end{document}

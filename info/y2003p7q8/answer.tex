@@ -1,0 +1,33 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+     Not relevant?
+
+   \item
+     The average codeword lengths for the two codes are:
+
+     Code 1: $2p(a) + 2p(b) + 2p(c) + 2p(d)$
+
+     Code 2: $p(a) + 2p(b) + 3p(c) + 3p(d)$
+
+     We require that code 2 is better than code 1, so $p(a) + 2p(b) + 3p(c) + 3p(d) < 2p(a) + 2p(b) + 2p(c) + 2p(d)$
+
+     This simplifies to $p(a) > p(c) + p(d)$
+
+     Since $p(a) \geq p(b) \geq p(c) \geq p(d)$, we require that $p(a) > \frac{1}{3}$, or else $p(c) + p(d) \geq p(a)$.
+
+     After $p(a) > 0.5$, any choice of $p(b), p(c), p(d)$ will satisfy the requirements.
+
+   \item
+     By the Source Coding Theorem, we know that the average length per symbol of the binary code will always be greater than or equal to $H(X)$, if $X$ is the source variable.
+
+     If $X$ is our alphabet consisting of $m$ equiprobable symbols, then its entropy is:
+
+     $H(X) = -\sum_{i=1}^m \frac{1}{m} \log_2 \frac{1}{m} = \log_2 m$
+
+     Therefore, $H(X) = \log_2 m$, and since the average length of any code is $\geq H(x)$, it is $\geq \log_2 m$.
+    \end{enumerate}
+\end{document}

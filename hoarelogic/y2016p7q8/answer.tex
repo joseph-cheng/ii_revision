@@ -1,0 +1,88 @@
+\input{../../template.tex}
+
+\usepackage{bussproofs}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    In $\{P\}C\{Q\}$, $P$ and $Q$ are assertions given in first-order logic, and $C$ is a program from our language $\mathcal{L}$.
+
+    A Hoare-logic partial-correctness triple $\{P\}C\{Q\}$ is valid when, if we have a program state that satisfies $P$, say $s$, then if executing $C$ from state $s$ terminates in some program state $s'$, then $s'$ satisfies $Q$.
+
+  \item
+    The definition for validity for total correctness $[P]C[Q]$ differs because total correctness requires termination, that is that executing $C$ from state $s$ requires termination in some program state $s'$ that satisfies $Q$.
+
+  \item
+    This is useful because it allows us to reason not just about variables in the language, but values.
+
+    For example, the first schematic $\{\top\}C\{R = X + Y\}$ is clearly a naive attempt at a schematic that finds the sum of two numbers $X$ and $Y$, whereas $\{X=x \wedge Y=y\}C\{R = x+y\}$ is a correct schematic for the same thing.
+
+    Consider the following program:
+
+\begin{verbatim}
+X := 0;
+Y := 0;
+R := 0
+\end{verbatim}
+
+This program satisfies the first schematic, but not the second.
+
+\item
+
+  We give:
+
+  \begin{align*}
+    \frac{}{\vdash \{[E / V]P\} V := E \{P\}}\\
+    \\
+    \frac{\vdash \{P\}C\{Q\} \hspace{15pt} \vdash \{Q\}C'\{R\}}{\{P\}C;C'\{R\}}\\
+    \\
+    \frac{\vdash \{P \wedge B\}C\{Q\} \hspace{15pt} \vdash \{P \wedge \neg B\}C'\{Q\}}{\{P\}if\ B\ then\ C\ else\ C'\{Q\}}\\
+    \\
+    \frac{\vdash \{P \wedge B\}C\{P\}}{\vdash \{P\}while\ B\ do\ C\{P \wedge \neg B\}}\\
+    \\
+    \frac{P_1 \rightarrow P_2 \hspace{15pt}\vdash \{P_2\}C\{Q_1\} \hspace{15pt} Q_1 \rightarrow Q_2}{\vdash \{P_1\}C\{Q_2\}}
+  \end{align*}
+
+\item
+  These rules are sound. They are only relatively complete, that is there are some valid Hoare triples that we are unable to prove, but the only reason we are unable to prove them is founded on the undecidability of arithmetic.
+
+\item
+
+  Writing $P'$ for $(X + 1) - 1 = x \wedge Y < 10$, and $Q$ for $X-1 = x \wedge Y < 10$
+
+  \begin{prooftree}
+    \AxiomC{$(X =x  \wedge Y=3) \rightarrow P'$}
+    \AxiomC{}
+    \UnaryInfC{$\vdash \{P'\} X:= X+1 \{Q\}$}
+    \AxiomC{$Q \rightarrow Q$}
+    \TrinaryInfC{$\vdash \{X=x \wedge Y=3\}X:=X+1\{Q\}$}
+  \end{prooftree}
+
+\item
+  The strongest postcondition that we can establish is $X=0 \wedge Y = y + 3 \cdot x$
+
+  The invariant we give to prove the loop is that $X \geq 0 \wedge Y = y + 3 \cdot (x - X)$
+
+  We provide a proof outline:
+
+\begin{verbatim}
+{X=x /\ Y = y /\ x >= 0}
+{X >= 0 /\ Y = y + 3 * (x - X)} (csq)
+WHILE X>0 DO
+  {X >= 0 /\ Y = y + 3 * (x - X) /\ X > 0}
+  {Y = y + 3 * (x - ((X - 1) + 1)) /\ X - 1 >= 0} (csq)
+  X := X - 1;
+  {Y = y + 3 * (x - X - 1) /\ X >= 0}
+  {Y + 3 = y + 3 * (x - X) /\ X >= 0}
+  Y := Y + 3
+  {Y = y + 3 * (x - X) /\ X >= 0}
+END
+{Y = y + 3 * (x - X) /\ X >= 0 /\ ~(X > 0)}
+{Y = y + 3 * (x - X) /\ X = 0}
+{Y = y + 3 * x /\ X = 0}
+\end{verbatim}
+
+The structure of this proof relates to the structure of $C$ in the sense that the syntax tree for $C$ has almost the exact same structure as the proof tree, although we will have uses of the rule of consequence in our proof tree which we will not have in our syntax tree.
+    \end{enumerate}
+\end{document}
