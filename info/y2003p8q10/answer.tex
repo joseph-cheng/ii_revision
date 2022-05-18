@@ -1,0 +1,82 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        We construct an optimal prefix code for this alphabet  using Huffman codes by progressively combining the least likely sets of variables.
+
+        We first combine $d$ and $f$.
+
+        We then combine $\{d,f\}$ and $e$
+
+        We then combine $b$ and $c$
+
+        We then combine $a$ and $\{d,e,f\}$
+
+        We then combine $\{a,d,e,f\}$ with $\{b,c\}$
+
+        This gives us the following code:
+
+\begin{verbatim}
+a:00
+b:10 
+c:11
+d:0100
+e:011 
+f:0101
+\end{verbatim}
+
+\item
+  The average number of bits per symbol in this code is as follows:
+
+  $2 \cdot 0.31 + 2 \cdot 0.18 + 2 \cdot 0.21 + 4 \cdot 0.08 + 3 \cdot 0.17 + 4 \cdot 0.05 = 2.43$.
+
+  The entropy of the alphabet is:
+
+  $-(0.31 \log 0.31 + 0.18 \log 0.18 + 0.21 \log 0.21 + 0.08 \log 0.08 + 0.17 \log 0.17 + 0.05 \log 0.05) = 2.38$ bits (3 s.f.)
+
+  This means the average codeword length is greater than the entropy of the alphabet.
+    \end{enumerate}
+
+  \item
+
+    To calculate $H(X)$ we do $-\sum_{i \in \{2,3,4\}} p(i)\log_2 p(i) = -(\frac{16}{64} \log_2 \frac{16}{64} + \frac{32}{64} \log_2 \frac{32}{64} + \frac{16}{64} \log_2 \frac{16}{64}) = \frac{3}{2}$ bits.
+
+    For $H(Y)$, we get $-(\frac{36}{64} \log_2 \frac{36}{64} + \frac{28}{64} \log_2 \frac{28}{64}) = 0.989$ bits (3 s.f.)
+
+    We calculate $H(X,Y)$ as the sum of the $p(x,y)\log_2 p(x,y)$s:
+
+    $-(\frac{8}{64}\log_2 \frac{8}{64} + \frac{24}{64}\log_2 \frac{24}{64} + \frac{4}{64}\log_2 \frac{4}{64} + \frac{8}{64}\log_2 \frac{8}{64} + \frac{8}{64}\log_2 \frac{8}{64} + \frac{12}{64}\log_2 \frac{12}{64}) = 2.11$ bits (3 s.f.)
+
+    We calculate $H(X|Y)$ as $H(X,Y) - H(Y) = 1.12$ bits (3 s.f.)
+
+    We calculate $H(Y|X)$ as $H(X,Y) - H(X) = 0.61$ bits 
+
+    We calculate $I(X;Y)$ as $H(X) - H(X|Y)  = 0.38$ bits.
+
+  \item
+    In order to make the mutual information 0, we need the events to be independent, i.e. being classic or modern does not impact the sales of the number of seats.
+
+    \begin{tabular}{c|ccc}
+      Style&2&3&4\\
+      \hline
+      Classic&8&16&8\\
+      Modern&8&16&8
+    \end{tabular}
+
+    This gives us $I(X;Y) = 0$.
+
+    In this table, $H(X,Y) = H(X) + H(Y)$.
+
+    $H(X)$ remains the same because the column totals do not change, but the row totals do. Each row has a total of 32, so the entropy is 1 bit, so $H(X,Y) = 2.5$ bits.
+    
+
+
+        
+    \end{enumerate}
+\end{document}

@@ -1,0 +1,50 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Strictness analysis is an analysis that can be applied to pure functional languages with the possibility for non-terminating computation. The language should also use call-by-need or call-by-name semantics.
+
+    The idea behind strictness analysis are to identify when a function definitely does not not terminate, or may terminate, depending on the termination behaviour of its arguments. It is a form of abstract interpretation, where we interpret expressions as a member of the set $2 = \{0,1\}$, where 0 means that the computation definitely does not terminate, and 1 means that the computation may terminate. We interpret $n$-argument functions (say of integers, but wlog) $f : \mathbb{Z}^n \rightarrow \mathbb{Z}$ as $f^{\#} : 2^n \rightarrow 2$, which gives the termination behaviour of $f$ based on the termination behaviour of its $n$ parameters. We might represent these strictness functions as a set of parameters that the function is strict in (although we lose information here), or as a propositional formula, perhaps as an OBDD.
+
+    To compute strictness of functions, we first need to manually create the strictness functions for built-in functions. For example, we might have that $cond^{\#}(b, x, y) = b \wedge (x \vee y)$.
+
+    Then, we can build up strictness functions for user-defined functions using composition. If we have recursive functions, then we calculate strictness by finding the least fixed point, starting at $\lambda \vec{x}. 0$
+
+    These results can be used to optimise programs because if a language has call-by-need or call-by-name semantics, then we would like to replace with call-by-value semantics where we can, since this means we do not need to carry around a closure (which helps with asymptotic memory complexity), we get better cache performance, and we do not need to evaluate parameters multiple times (in the case of call-by-name). If a function is strict in a particular argument (i.e. when that parameter does not terminate and all the other parameters do, the function does not terminate), we can use CBV semantics for that parameter.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        The strictness function is $\lambda x. 1$
+
+      \item
+        The strictness function is $\lambda x. 0$
+
+      \item
+        The strictness function is $\lambda y,z. 1 \wedge (y \vee z) = \lambda y,z. y \vee z$
+
+      \item
+        The difference here is we can still terminate even if $e$ does not terminate, as long as both $e'$ and $e''$ terminate, so we get:
+
+        $\lambda x,y,z. (x \wedge (y \vee z)) \vee (y \wedge z)$
+    \end{enumerate}
+
+  \item
+    From (b)(iii) we know that we can generate strictness functions of the form $\lambda x,y. x \vee y$ easily.
+
+    Furthermore, notice that the program \texttt{if 1 then x else (if 1 then y else z)} has strictness function $\lambda x,y,z. x \vee (y \vee z)$. We can extend this idea to obtain a strictness function containing the disjunction of any number of variables (or expressions).
+
+    Furthermore, we can construct strictness functions of the form $\bigwedge_{j=1}^{m_1}v_{i,j}$ with the expression $v_{i,1} + v_{i,2} + \cdots + v_{i, m_1}$
+
+    Therefore, we see can construct such an $e$ from a $be$ as follows:
+
+    \texttt{if 1 then }$\sum_{j=1}^{m_1} v_{1,j}$\texttt{ else (if 1 then }$\sum_{j=1}^{m_2} v_{2,j}$\texttt{ else (... else}$\sum_{j=1}^{m_n} v_{n, j}$)...)
+
+    
+
+        
+\end{enumerate}
+\end{document}

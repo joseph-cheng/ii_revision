@@ -1,0 +1,22 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    The 32-bit fixed length instruction encoding is no doubt easier to decode than the variable length encoding used by x86 and VAX. We do not necessarily know how much memory we need to fetch in order to decode an x86 instruction, so we must fetch the maximal amount (meaning that our instruction cache has to be very performant) , and then in the decode stage we need to figure out how much of the data we fetched is actually the instruction we care about. For fixed-length instructions, we know exactly how much to fetch and where each instruction starts and ends, making parallel decoding even easier for multiple issue. Also, if we design our ISA cleverly, we can ensure that parts of instructions like immediates, opcodes, etc. are always encoded in the same place, so no part of decoding relies on another part to start. However, the code density offered by variable length encodings can be better, since we can, for example, encode many more instructions (and also  have more semantically powerful instructions), without requiring that other, simpler instructions use the same instruction width.
+
+    Using 128-bit instruction bundles enforces that we always fetch at least 128-bits of instructions at a time, and this makes decoding and issuing very easy, since we simply fetch a bundle, and issue each instruction in the bundle to the correct functional units. The downside of this approach is that the code density achieved by such a VLIW approach is not always ideal, since whenever the compiler cannot find enough independent instructions to fill a bundle, we must put a no-op in its place, which is a waste of space. It is likely that we will not be able to find a set of independent instructions to fill a bundle often, and therefore this code density decrease will be observable.
+
+  \item
+
+    Architectures with a 64-bit word size have access to more memory, since a 32-bit word size can only specify 4GB worth of locations. Furthermore, a 64-bit word size allows more precise/larger datatypes to be supported natively, with double precision floats and 64-bit integers. However, the cost of a 64-bit word size means that our registers have to be double the size they would be in a 32-bit machine, since all of the native data we deal with will be 32-bits. Furthermore, all of our functional units, etc., must deal with 64-bits instead of 32-bits.
+
+    Devices that require a large amount of memory, like servers or computers with many concurrent users, will benefit from a 64-bit architecture, as well as applications that require computation of large numbers or with precise floating points, such as scientific computing or data science.
+
+  \item
+    To achieve efficient use of memory, we should ensure that we include only frequently used instructions, and do not include instructions that help deal with edge cases (even if including these instructions requires less instruction memory than without, since it is not the common case).
+    
+        
+\end{enumerate}
+\end{document}
