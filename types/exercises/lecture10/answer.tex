@@ -1,0 +1,22 @@
+\input{../../../template.tex}
+
+\begin{document}
+    \begin{enumerate}
+      \item
+
+        We give the embedding of classic into intuitionistic logic for the Godel-Gentzen translation.
+        
+
+        We only give the sum type embedding, since the embedding for the other translations is the same as the translation given in the lectures:
+
+        $(L e)^\circ = \lambda k: (\sim A^\circ \times \sim B^\circ) (fst\ k) e^\circ$.
+
+        $(R e)^\circ = \lambda k: (\sim A^\circ \times \sim B^\circ) (snd\ k) e^\circ$.
+
+      \item
+        Now, using the intuitionistic logic extended with continuations, we give a typed term proving Peirce's law, which says that $((X \rightarrow Y) \rightarrow X) \rightarrow X$.
+
+        $\lambda f : (X \rightarrow Y)\rightarrow X. letcont\ u: \neg X. throw_X(u, f (\lambda x : X. letcont\ v : \neg Y. throw_Y(u, x)))$
+
+    \end{enumerate}
+\end{document}
