@@ -1,0 +1,119 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=1.\arabic*]
+  \setcounter{enumi}{1}
+  \item
+
+    For a binary symmetric channel with noise level $f$, we get an error if 2 or more bits are corrupted in the repetition. This means that as long as we get 0 or 1 bit errors, we are fine.
+
+    The probability we get 2 bit errors is $3f^2(1-f)$. The probability we get 3 bit errors is $f^3$, so the probability we get an error in decoding is $f^3 + 3f^2(1-f) = 3f^2 - 2f^3$
+
+    When $0 \leq f \leq 1$, we see that $3f^2 - 2f^3 \leq f$, and so the error probability is reduced by using $R_3$.
+
+  \item
+    \begin{enumerate}
+        \item
+
+          For a binary symmetric channel with noise level $f$, we get an error when the majority of bits have bit errors, which is when we have $\frac{N+1}{2}$ bit errors, for code $R_N$.
+
+          The probability that this happens can be modelled binomially. The probability we get exactly $i$ bit errors is given by $\binom{n}{i} f^i (1-f)^{N-i}$, so the probability we get an error in decoding is:
+
+          \[
+            p_b = \sum_{i= \frac{N+1}{2}}^N \binom{N}{i} f^i (1-f)^{N-i}
+          .\] 
+
+          As required.
+
+        \item
+          If $f=0.1$, the biggest term will be the one with the least multiple of $f$, i.e. the term where $i = \frac{N+1}{2}$, the minimum value of $i$
+
+          The second biggest term will have its binomial coefficient decrease by a factor of $\frac{N-1}{N+3}$, and the rest will be equal to $f^{\frac{N+3}{2}}(1-f)^{\frac{N-3}{2}}$, so a decrease of $\frac{f}{1-f} = \frac{1}{9}$. Therefore, the next biggest term will be $\frac{N-1}{9(N+3)}$ smaller.
+
+        \item
+          Stirling's approximation tells us $x! \approx x^xe^{-x}$
+
+          So for $\binom{N}{\frac{N+1}{2}}$, we approximate to 
+
+          \[
+          \frac{N^Ne^{-N}}{\frac{N-1}{2}^{\frac{N-1}{2}} e^{-\frac{N-1}{2}} \cdot \frac{N+1}{2}^{\frac{N+1}{2}} e^{-\frac{N+1}{2}}}
+          .\] 
+
+          We assume this dominates, so multiplying by $f^{\frac{N+1}{2}}(1-f)^{\frac{N-1}{2}}$, we get our approximate error.
+
+        \item
+          Assuming $f=0.1$, we iteratively solve:
+
+\begin{verbatim}
+import math
+def f(N):
+    numerator = N**N * math.exp(-N)
+    denominator = ((N-1)/2)**((N-1)/2) * math.exp(-(N-1)/2) * ((N+1)/2)**((N+1)/2) * math.exp(-(N+1)/2)
+    frac = numerator/denominator
+    f = 0.1
+    return frac * (f**((N+1)/2)) * (1-f)**((N-1)/2)
+
+for N in range(1, 100):
+    error = f(N)
+    if error < 10e-15:
+        print(N)
+        break
+\end{verbatim}
+
+This gives us an answer of 61.
+
+    \end{enumerate}
+
+  \item
+  \item
+  \item
+    \begin{enumerate}
+      \item
+        A (7,4) Hamming code can correct any 1-bit errors (and of course 0-bit errors).
+
+        Therefore, we get a block error when we get 2 or more bit errors.
+
+        Just like in exercise 1.3, we get:
+
+        \[
+          p_B = \sum_{i=2}^7 \binom{7}{i} f^i(1-f)^{7-i}
+        .\] 
+
+        This polynomial will have leading order $2$, and this will only appear when $i=2$, so the leading order is $\binom{7}{2}f^2 = 21f^2$.
+
+      \item
+        In Hamming codes, a two-bit error (which is what we consider, for leading order) will result in a resulting decoded codeword with 3 errors, of length 7 (since we incorrectly identify the troublesome bits, and flip an innocent bit).
+
+        By symmetry, the probability of any of these 3 bit flips is equally likely, so the probability that a given bit is flipped will be $\frac{3}{7}$. Therefore, our probability of error is $\frac{3}{7} \cdot 21 f^2 = 9f^2$.
+      \item
+
+
+    \end{enumerate}
+
+
+      \item
+
+      \item
+      \item
+      \item
+
+        In 14 bits, the number of two errors is $\binom{14}{2} = 91$
+
+        Since we only have 6 parity bits, this gives us $2^6 = 64$ syndromes.
+
+        Therefore, no $(14,8)$ code can exist to correct all two errors, since we do not have enough syndromes to capture every two error.
+
+      \item
+      \item
+        We only consider leading order.
+
+        This requires us to get two bit errors in our $R_3$ codes, so we get $p_b(R_3) \cdot p_b(R_3)$ which has leading order $9f^4$
+
+        On the other hand, $R_9$ is dominated by leading order $126f^5$, so is asymptotically better.
+
+
+
+
+        
+\end{enumerate}
+\end{document}
