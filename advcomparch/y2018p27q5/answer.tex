@@ -1,0 +1,53 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    We give three techniques/elements:
+
+    \begin{itemize}
+      \item
+        \textbf{Branch prediction}
+
+        Branch prediction is a technique that allows us to try and predict the outcome of a branch instruction, i.e. whether it is taken or not. Combined with a branch target buffer, this allows us to (in most cases) start fetching from the correct stream of instructions after a branch, meaning that we introduce less incorrect instruction into the pipeline that we waste cycles on and eventually have to flush.
+
+      \item
+        \textbf{Out-of-order execution}
+
+        O3 execution is a technique that allows instructions to overtake each other in the issue stage. If there are instructions that we cannot yet issue due to hazards, for example, then out-of-order execution lets us issue independent instruction in their place, so we can still utilise the cycle that we would have otherwise wasted without O3 execution.
+
+      \item
+        \textbf{Caching}
+
+        Caching allows fetching data and instructions from memory to be significantly faster, meaning that we waste less time blocking on instructions that access memory, since most of the time the accesses will go to cache, which are much faster to access than main memory, saving potentially hundreds of cycles on each access.
+    \end{itemize}
+
+  \item
+    Out-of-order superscalar processors get their performance from exploiting as much ILP as possible, and a large portion of their power consumption comes from implementing the book-keeping that allows the execution to be safe.
+
+    The in-order scalar processor might end up being less power efficient than the superscalar design in a number of cases. For example, the in-order scalar processor might only have the same performance as the superscalar design by having large, high-associativity caches. The larger caches are, and the higher associativity they have, the more energy it takes to access them. Therefore, by having such caches, the power consumption might be vastly increased, even if the processor does not contain as much book-keeping for out-of-order execution. This applies to other types of caches as well, such as the BTB.
+
+    Furthermore, the in-order scalar processor might have increased power consumption because it is running at a higher clock frequency than the superscalar processor, since higher clock frequencies directly translate to a higher power consumption.
+
+
+  \item
+
+    If a stores occurs before a load in program order, but the load accesses a different memory location than the store, then it is safe to execute the load before the store, since we will still load the correct data. If we do not know the address of these older stores, then we can still execute the loads before the stores, but within the realms of speculative execution, because it could be the case that the instructions do access the same location and the load was incorrectly speculatively executed.
+
+    To actually perform this speculative execution, we usually hold loads and stores in queues, waiting to be actually executed, and permit loads to execute before older stores, providing that their addresses do not match the address of the load, or there addresses are not computed yet. When a store's address is calculated, we search the load queue and look for any residual executed loads that mis-speculated, and restart the processor at the mis-speculated load.
+
+  \item
+    Memory reference speculation can be supported in a VLIW processor by introducing speculative load instructions, and a new \texttt{chk} instruction. The compiler can then pull a load into an earlier bundle (before earlier stores for which we do not know the address of), and using the speculative load instruction instead, replacing the original load with a \texttt{chk} instruction.
+
+    When the processor executes a speculative load, we insert an entry into a table called the advance load address table (ALAT), containing the register that was loaded into and the address we loaded from. When any stores execute, they search the ALAT for any entries containing the address they store into, and remove matching entries. Finally, when the \texttt{chk} instruction runs, it searches the ALAT and sees if an entry exists that matches the load it replaced. If no such entry exists, we know we speculated incorrectly, so we run some code to patch up the mis-speculation.
+
+
+
+
+
+
+
+    
+\end{enumerate}
+\end{document}

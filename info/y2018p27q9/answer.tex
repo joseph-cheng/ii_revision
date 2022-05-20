@@ -1,0 +1,55 @@
+\input{../../template.tex}
+
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+
+    A channel matrix is a matrix that provides, for a given input value $x$ and output value $y$, the probability of observing $y$ after we encode $x$ in the channel.
+
+
+    Our channel will look like the following:
+
+    \[
+    \begin{pmatrix}
+      p(y_1|x_1) &p(y_2|x_1) & \cdots & p(y_K|x_1) & p(\bot|x_1)\\
+      p(y_1|x_2) & p(y_2|x_2) & \cdots & p(y_K|x_2) & p(\bot|x_2)\\
+      \vdots & \vdots & \ddots & \vdots & \vdots\\
+      p(y_1|x_J) & p(y_2|x_J) & \cdots & p(y_K|x_J) & p(\bot|x_J)
+    \end{pmatrix}
+    \] 
+
+  \item
+
+    The probability of error $P_e$ will be:
+
+    $\sum_{j=1}^J\sum_{k=1}^K p(y_k|x_j)p(x_j)\cdot (1 - \delta_{jk})$
+
+    Where $\delta_{jk}$ is the Kroneker delta.
+
+  \item
+
+    The mutual information of the system $I(X;Y) = H(X) - H(X|Y)$
+
+  \item
+    The mutual information $I(Y;X) = H(Y) - H(Y|X)$.
+
+  \item
+    The entropy will be:
+
+    $H(X) = -\sum_{j=1}^J p(x_j)\log_2 p(x_j)$
+
+    Since the elements are all equiprobable, this reduces to $-J (\cdot J^{-1} \cdot -N) = N$ bits.
+
+  \item
+    We know that $H(X) \approx 30$, from (e).
+
+    Then, from (c), we get $I(X;Y) = H(X) - H(X|Y) = 29$ bits.
+
+  \item
+    The channel capacity is exactly the mutual information, since we are already using the input distribution that maximises the mutual information, so 29 bits.
+
+
+        
+\end{enumerate}
+\end{document}
