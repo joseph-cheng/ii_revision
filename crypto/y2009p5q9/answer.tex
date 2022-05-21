@@ -1,0 +1,50 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        The \textbf{Data} Encryption Standard defines a 16-round Feistel cipher.
+
+      \item
+        Files encrypted with Cipher Block Chaining start with a \textbf{random} initial vector.
+
+      \item
+        Not relevant.
+
+      \item
+        Not relevant.
+
+      \item
+        Not relevant.
+        
+    \end{enumerate}
+
+  \item
+    Not relevant.
+
+  \item
+    Double DES feeds a plaintext $P$ into an instance of DES using key $K_1$ to create $C_1$, and then feeds $C_1$ into an instance of DES using key $K_2$ to create $C_2$, the output.
+
+    If we have an arbitrary fixed $P$ that encrypts to known $C$, then by encrypting $P$ once we can try all $2^{56}$ possible keys to build a table mapping keys for the first instance of DES to the intermediate value $C_1$.
+
+    Then, by decrypting $C$ once, we can try all $2^{56}$ possible keys to build a table mapping keys for the second instance of DES to the intermediate value $C_1$.
+
+    Then, we simply have to find two values of $C_1$ in both tables that match, which gives us the keys for the two instances of DES.
+
+    This only required time and space of order $2 \cdot 2^{56} = 2^{57}$.
+
+    Triple DES requires that we perform the meet-in-the-middle either after the first instance of DES (which requires a $2^{112}$ table to be built from the decryption side), or after the second instance of DES (which requires a $2^{112}$ table to be built from the encryption side), which is less feasible.
+
+  \item
+    The Vignere cipher is unconditionally secure if the key is as long as, or longer, than the plaintext.
+
+    If the key is shorter than the plaintext, then an adversary could try all possible keys shorter than the plaintext, and identify the correct plaintext from the other.
+
+    We also require that the key is picked uniformly randomly, used only once, and not revealed to the adversary.
+        
+\end{enumerate}
+\end{document}

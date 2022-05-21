@@ -1,0 +1,44 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Not relevant.
+  \item
+
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        Since DES is a Feistel structure, a single round of DES works be deriving a 48-bit key from the input key, call it $K_i$, taking the left half of the previous round $L_i$, and XORing it with $f(R_i, K_i)$, where $R_i$ is the right half of the previous round. Then, we assign $L_{i+1} = R_i$ and $R_{i+1} = L_i \oplus f(R_i, K_i)$
+
+        $f$ here is our PRF, and is what the S-boxes are used for.
+
+        $f$ works by first expanding the 32-bit input into 48-bits by duplicating every other bit, XORing it with the key, and finally feeding into the S-boxes, which turns each 6-bit block into a 4-bit block.
+
+        The purpose of S-boxes is to weaken the relationship between the output of $f$ and the key used by introducing non-linearity.
+
+      \item
+        Encrypting $P$ normally gives us the ciphertext $L_{16}||L_{15} \oplus f(R_{15}, K_{16})$, but encrypting with the short circuited S-boxes gives us the ciphertext $L_{16}||L_{15}$
+
+        By encrypting the same plaintext twice in both `modes' lets us discover $f(R_{15}, K_{16})$ for that plaintext.
+
+        The idea behind this attack is to discover where the output of an S-box in $f(R_{15}, K_{16})$ is all zero. We can do this by encrypting a few thousand plaintext blocks, both with and without the short circuit, and looking in the output where bits affected by the same S-box in the right-hand side of the ciphertext match in both modes.
+
+        We know here that an input into the S-box causes a real all-zero output. Since the S-boxes are fixed, we can then look at what values actually yield an all-zero output from the S-box. Furthermore, since we know $R_{15}$, and we know that the input to the S-box will be $R_{15} \oplus K_{16}$, there will only be a few possible portions of $K_{16}$s that are valid.
+
+        Suppose there are 4 possible 6-bit portions of $K_{16}$s for each 6-bit portion.
+
+        Since $K_{16}$ is 48-bits long, this gives us $4^8 = 2^{16}$ keys to search. Then, since $K_{16}$ is derived from $K$, but missing out on 8 bits, we then have to bruteforce another $2^8$ bits, giving us $2^{16} \cdot 2^8 = 2^{24}$ possible values of $K$ in total.
+
+        Since $10^9 < 2^{24}$, we can then derive $K$ feasibly.
+ 
+
+
+        
+    \end{enumerate}
+    
+\end{enumerate}
+    
+\end{document}
