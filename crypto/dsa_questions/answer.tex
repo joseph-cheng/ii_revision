@@ -1,0 +1,214 @@
+\input{../../template.tex}
+
+\begin{document}
+
+In these questions, we consider whether the signature algorithm on slide 221 of the lecture notes would still be (a) functional and (b) secure, under the given changes.
+
+We provide the algorithm as below:
+
+Let $\mathbb{G}, q ,g$ be scheme-wide choices that are a cyclic group $\mathbb{G}$ of order $q$ with generator $g$, and let $H : \{0,1\}^* \rightarrow \mathbb{Z}_q$ be a collision resistant hash function, and $F : \mathbb{G} \rightarrow \mathbb{Z}_q$
+
+Let $x \in \mathbb{Z}_q$ be a secret key, and public key be $y = g^x \in \mathbb{G}$
+
+Then, to sign a message $m \in \{0,1\}^*$, we choose a random $k \in \mathbb{Z}_q^*$ and set $r = F(g^k)$
+
+Then, solve for $s$ in $ks - xr \equiv H(m) \pmod{q}$
+
+If $r=0$ or $s=0$, restart with a different $k$.
+
+Finally, output $(r,s)$ as the signature.
+
+To verify, consider with a valid signature:
+
+$g^{ks - xr} = g^{H(m)}$
+
+$(g^k)^s = g^{H(m)}y^r$
+
+$g^k = g^{H(m)s^{-1}}y^{rs^{-1}}$
+
+$r = F(g^{H(m)s^{-1}}y^{rs^{-1}})$
+
+So we simply verify whether $r$ matches the expression on the RHS.
+
+
+
+    \begin{enumerate}
+      \item
+
+        In this scenario, suppose the signer uses the same $k$ to sign two different messages.
+
+        \begin{enumerate}
+
+          \item
+            The scheme remains functional, since verification is stateless. Essentially, re-using the same $k$ does not stop any certificates from being verified, or make any false certificates verifiable.
+          \item
+            The scheme does not remain secure.
+
+            Suppose we generate two signatures $(r_1, s_1)$ and $(r_2, s_2)$ for messages $m_1, m_2$, both using the same $k$.
+
+            Since $r = F(g^k)$, we actually get that $r_1 = r_2$ (so we refer to both of them just by $r$ now)
+
+            So we know that $s_1 = k^{-1} \cdot (H(m_1) + xr) \mod q$
+
+            And $s_2 = k^{-1} \cdot (H(m_2) + xr) \mod q$
+
+            So $s_1 - s_2 = k^{-1} \cdot (H(m_1) + H(m_2)) \mod q$
+
+            Thus, $k = \frac{H(m_1) + H(m_2)}{s_1 - s_2} \mod q$
+
+            Which we can solve easily.
+
+            Furthermore, we can then solve for $x$ in either equation, completely breaking the scheme.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose $H$ is not collision resistant.
+
+        \begin{enumerate}
+          \item
+            The scheme remains functional, since functionality of the scheme does not depend on collision resistance, the functionality just depends on $H$ generating a member of $\mathbb{Z}_q$.
+
+          \item
+            The scheme does not remain secure, however, since someone could generate two $m_1 \neq m_2$ such that $H(m_1) = H(m_2)$. Then they could generate a signature for $m_1$ (which is really a signature for $H(m_1)$), and then later substitute $m_1$ for $m_2$, with the signature still being verifiable.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose $F$ is not collision resistant.
+
+        \begin{enumerate}
+          \item
+            The scheme remains functional. Commonly, we choose $F$ to not even be pre-image resistant. We can see that even if $F$ is the identity (with $\mathbb{G} = \mathbb{Z}_q$), the algorithm still works as expected.
+
+          \item
+            The scheme also remains secure. If $F$ was not collision resistant, an attacker would just be able to generate a different group element $l$ such that $F(g^k) = F(l)$, but since $k$ is never divulged, or known, we cannot attack the scheme with this.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose $k$ and $r$ are omitted, so a signature is just $s$ satisfying $x \cdot s \equiv H(m) \pmod {q}$.
+
+        \begin{enumerate}
+          \item
+            In this case, to verify, we check that $g^{H(m)s^{-1}} = y$
+
+            The scheme remains functional, since we still have a verification condition that will verify the signature of a message $m$, and does not verify every other message.
+
+          \item
+            The scheme does not remain secure, however. Since $xs \equiv H(m) \pmod{q}$, we get $x \equiv H(m) \cdot s^{-1} \pmod{q}$, so we can easily solve for $x$, the private key, rendering the scheme insecure.
+        \end{enumerate}
+
+      \item
+
+        In this scenario, suppose $r$ is generated randomly rather than as a function of $k$.
+
+        \begin{enumerate}
+          \item
+            The scheme is no longer functional, since the verification that works by using everything as an exponent to $g$ no longer works, because there is simply nothing to verify, since we do not know $g^k$. (If $k$ is published so we know $g^k$, we can recover $x$).
+
+          \item
+            The scheme still remains secure (assuming secure means $x, k$ is not leaked), by appeal to the security of our original algorithm, since we make no changes that could reveal either number.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose we do not check for $r=0$ or $s=0$ special cases.
+
+        \begin{enumerate}
+          \item
+            The scheme is not functional, since the verifier must compute $s^{-1}$, and this is not possible if $s=0$. If only $r=0$, however, then the scheme remains functional, since all of the equations still hold.
+
+          \item
+            The scheme does not remain secure. If $s=0$, then an attacker can recover $x$ (as seen in scenario 4). If the verifier accepts $r=0$, then we can create a signature for any message by simply choosing $s = k^{-1} H(m)$ with an arbitrary $k$, without needing to know $x$.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose we require that $ks + xr \equiv H(m) \pmod{q}$ instead if $ks - xr \equiv H(m) \pmod{q}$.
+
+        \begin{enumerate}
+          \item
+            We see that:
+
+            $g^{ks + xr} = g^{H(m)}$
+
+            $g^{ks} = g^{H(m)}y^{-r}$
+
+            $g^k = g^{H(m)s^{-1}}y^{-rs^{-1}}$
+
+            So the verifier is still functional, since we can compute the term on the RHS to verify against $r$.
+
+          \item
+            The verifier remains secure, also, since this is equivalent to picking $F' = -F$, so the security properties still all hold.
+        \end{enumerate}
+
+      \item
+
+        In this scenario, suppose we require that $ks \cdot xr \equiv H(m) \pmod{q}$ instead of $ks - xr \equiv H(m) \pmod{q}$.
+
+        \begin{enumerate}
+          \item
+            Now, we see that:
+
+            $g^{ksxr} = g^{H(m)}$
+
+            $g^{k} = g^{H(m)s^{-1}x^{-1}r^{-1}}$
+
+            Since the verifier does not know $x$, they cannot compute this.
+
+            Another strategy might be to view it as:
+
+            $y^{ksr} = g^{H(m)}$
+
+            $y = g^{H(m)k^{-1}s^{-1}r^{-1}}$
+
+            But since the verifier does not know $k$, they cannot compute this either.
+
+          \item
+            We now get that $s := k^{-1}x^{-1}r^{-1}H(m) \mod q$
+
+            This means that after an attacker learns a signature, they know $s, r$ and thus can compute $kx = H(m)s^{-1}r^{-1}$
+
+            Since they know $kx$, they can forge signatures for any message without knowing $x$ by reusing $r' = r$ and setting $s' = H(m')(kx)^{-1}r^{-1}$
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose we use $\mathbb{Z}_q$ under addition as $\mathbb{G}$.
+
+        \begin{enumerate}
+          \item
+            The scheme remains functional, since $\mathbb{G}$ is still a valid group, and the algorithm simply requires that, the details of $\mathbb{G}$ are abstracted away.
+
+          \item
+            The scheme does not remain secure, however.
+
+            $g^x$ becomes equivalent to $xg \mod q$, so since we know $y = xg \pmod{q}$, we can compute $x = yg^{-1} \pmod{q}$ easily.
+
+            Essentially, the scheme is not secure because the discrete logarithm problem becomes easy.
+        \end{enumerate}
+
+      \item
+
+        In this scenario, suppose $q$ is not prime.
+
+        \begin{enumerate}
+          \item
+            The scheme remains functional. $q$ not being prime simply means that it may not be trivial to find a generator $g$, but a generator may still exist. We have to be careful of when $k,q$ are not coprime, since then there does not exist a $k^{-1}$, and so we must generate a different $k$, but apart from that we retain functionality.
+
+          \item
+            The scheme is not trivially breakable, but is less secure, since Pohlig-Hellman can be used to solve the discrete log problem in time proportional the largest prime factor of $q$.
+        \end{enumerate}
+
+      \item
+        In this scenario, suppose $g$ is not a generator of $\mathbb{G}$.
+
+        \begin{enumerate}
+          \item
+            The scheme remains functional. Since $g = g'^l$ for some real generator $g'$ and natural number $l$, we get that we are effectively working in the $l$th residues of $\mathbb{G}$.
+
+            This means that our scheme is still functional, since we are still working in a subgroup.
+
+          \item
+            Again, the scheme is not trivially breakable, but is less secure, since we are effectively working in a smaller group, and security grows not with $q$ but with $\frac{q}{l}$.
+        \end{enumerate}
+
+
+        
+    \end{enumerate}
+\end{document}
