@@ -1,0 +1,61 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    Global alignment forces the alignment to be computed from the first characters of each sequence, and at the end of both sequences, whereas local alignment allows the alignment to start and end at any substrings of the two sequences.
+
+    For example, globally aligning the sequences \texttt{ACGTGGGGG} and \texttt{TTTTTACGT} would not give us a very good alignment, even though the strings \texttt{ACGT} appear perfectly in both, whereas local alignment would let us find these two aligning substrings.
+
+  \item
+    Clustal is a progressive alignment algorithm. The idea behind Clustal is that if a multiple alignment induces many pairwise alignments, can we use many pairwise alignments to induce a multiple alignment? Progressive alignment works by building up a multiple alignment by progressively adding sequences into an unchanging multiple alignment.
+
+    Then, of course, the question remains of how do we choose the order in which we add sequences to our multiple alignment. This is an important question because aligning sequences in some orders can result in a bad multiple alignment because the errors (gaps and mismatches) in the alignments have to be propagated down. In order to get a good multiple alignment, we should align sequences that are most similar first, to reduce the distance that errors are propagated down the multiple alignment.
+
+    To do this, Clustal uses a guide tree, which gives us distances between each sequence, which we can then use to choose a good order by picking the closest (and thus most similar) sequences first.
+
+  \item
+    The field of phylogeny is used to produce evolutionary trees of a number of species, in order to find out who their common ancestors might be, and how far apart they are from each other in the evolutionary context.
+
+    Phylogeny algorithms use DNA sequences to calculate phylogeny trees, by using similarity of DNA sequences as a proxy metric for evolutionary distance.
+
+  \item
+    The UPGMA algorithm is an algorithm that builds a rooted tree from a distance matrix (which in a phylogeny context might be computed from global alignment scores between each DNA sequence).
+
+
+    It works by hierarchically clustering nodes together.
+
+    We initially put each node in its own cluster.
+
+    Then, we join the two closest clusters, replacing it with a node whose distance to the other nodes is given by the average distance between each node in the clusters.
+
+    Then, we iteratively compute the tree with these steps until we are left with a single cluster, our root.
+
+  \item
+
+    A phylogenetic tree being ultrametric means that the distance from the root is the same for all leaf nodes.
+
+    This means that we can interpret distances in our phylogenetic tree as time passed (assuming that genetic variation is proportional to time), so we can make estimates about when common ancestors might have formed.
+
+  \item
+    The divide and conquer approach to sequence alignment allows us to reduce the space complexity to just $O(n)$ whilst keeping the time complexity at $O(n^2)$ (albeit with a bigger constant).
+
+    The algorithm works as follows:
+
+    First, notice that we can compute the alignment score of two sequences in just $O(n)$ space, since we only ever need two columns worth of space at a time (the column we are filling in, and the column we are computing answers from).
+
+    Then, we need to see how to compute the alignment from this.
+
+    Notice that any alignment path must pass through a single cell in the middle column of an alignment matrix.
+
+    If we have this middle node, we can get the entire alignment path by recursively solving the alignment in the two sub-rectangles that the two halves of the alignment must pass through.
+
+    We can find this middle node in $O(n^2)$ time and $O(n)$ space by finding the scores in the middle column in the normal alignment plus the scores in the middle column in the reverse alignment, and taking the node with the maximum value.
+
+    This took time proportional to the area, $O(n^2)$, but each of the subproblems are a quarter of the size, so the total time is $O(n^2) \cdot \sum_{i=0}^\infty 2^{-i} = O(n^2)$, all whilst retaining $O(n)$ space.
+
+
+    
+        
+\end{enumerate}
+\end{document}
