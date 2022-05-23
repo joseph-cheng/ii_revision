@@ -1,0 +1,27 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Such an $h$ must be pre-image resistant, or else when an attacker finds a hash $y$ in the database, they could easily construct a password $x$ such that $h(x) = y$.
+
+    However, $h$ need not be collision resistant, since this would just allow an attacker to create an account that let them log in with two different passwords, which is not much of a threat.
+
+    This construction, however, is not a suitable hash function, since it is not pre-image resistant.
+
+    Suppose we have the output of the hash function $y$.
+
+    Then, we can decrypt with $K=0^{128}$ using $D_K(y)$.
+
+    Then, using $D_K(y)$ as a password, they can immediately log in, since this will only use a single block, and since the IV is zero the hash will just be $E_K(D_K(y)) = y$
+
+
+  \item
+    Not relevant.
+
+  \item
+    Not relevant.
+        
+    \end{enumerate}
+\end{document}

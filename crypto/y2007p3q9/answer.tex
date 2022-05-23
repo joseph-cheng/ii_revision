@@ -1,0 +1,68 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        This reduces the security of a system because there a maximum of $2^{30}$ possible 128-bit random numbers that can be generated, as opposed to $2^{128}$ actually possible 128-bit random numbers. Brute forcing $2^{30}$ possible values is feasible compared to brute forcing $2^{128}$ possible values, and thus MACs could be forged.
+
+        \item
+
+          If we get one random number every 10 milliseconds, in half an hour we get 180000 random numbers.
+
+          If we are generating truly random 128-bit numbers, then we only expect to see a collision within around $\sqrt{2^{128}} = 2^{64}$ numbers, by the birthday problem, whereas if we are using a tampered device, we expect to see a collision within around $\sqrt{2^{30}} = 2^{15}$ numbers, again by the birthday problem.
+
+          $2^{64} \gg 180000$, but $2^{15} < 180000$, so we would only expect to see a collision if we are using a tampered device.
+
+          The probability that we see a collision with a non-tampered device will be almost zero.
+
+          The probability that we do not see a collision with a tampered device will be almost zero also.
+
+          Therefore, after generating 180000 random numbers, we simply check if there is a collision, and if there is we guess that it is tampered, and if not then we guess that it is not tampered, which has a more than 0.5 success chance of winning.
+    \end{enumerate}
+
+    \item
+      \begin{enumerate}[label=(\roman*)]
+
+        \item
+          In CFB, our encryption equation is:
+
+          $C_{i+1} = M_{i+1} \oplus E_K(C_{i})$
+
+          So we encrypt the previous ciphertext block with our PRP, and then XOR it with the message block.
+
+          By rearranging, to decrypt we see that:
+
+          $M_{i+1} = C_{i+1} \oplus E_K(C_i)$
+
+          So we encrypt the previous ciphertext block with our PRP, and XOR it with the next ciphertext block.
+
+          \item
+            Not relevant?
+
+            \item
+              A secure hash function can be used to implement a one-time signature scheme using Lamport signatures.
+
+              With an $n$-bit hash function $H$, we generate $2n$ random bit strings, each $n$ bits long, call them $R_{b,i}$ where $0 \leq b \leq 1$ and $0 \leq i \leq 255$.
+
+              We then distribute $H(R_{b,i})$ for all $b,i$ as our public key.
+
+              Suppose we want to sign message $m$.
+
+              We first compute $x = H(m)$ to give us a 256-bit bitstring.
+
+              Then, we produce signature $y = (R_{x_0, 0}, \ldots, R_{x_{255}, 255})$. Essentially, we use each bit of $x$ to choose a bitstring.
+
+              Then, a recipient can verify the signature by computing $H(m)$, and verifying that each element $y_i$ when hashed gives $H(y_i) = H(R_{x_i, i})$ from the public key.
+
+              \item
+                If the same private key is used multiple times to sign different messages, then the scheme loses security as more and more of the private key $R$ is leaked, since the signature leaks parts of the private key. After just one signature, an adversary could only forge a signature if they knew a message $m$ with the same hash. However, as more bits get leaked, there are more possibilities of $m$, as the attacker knows more of the bitstrings in $R$.
+          
+      \end{enumerate}
+        
+    \end{enumerate}
+\end{document}

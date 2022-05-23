@@ -1,0 +1,56 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    From a program, take its concrete syntax tree.
+
+    Each node in the concrete syntax tree corresponds to a program point. These program points might be variables,  or subexpressions.
+
+    For example, in the given program, we get:
+
+    $(let\ x^1 = o^2\ in\ (let\ y^3 = o^4\ in\ e^5)^6)^7$
+
+    Where the superscripts give a numbering for a program point.
+
+    Then, flow variables might take the values of sets of objects that are available at a particular program point.
+
+    \item
+      For each expression construct, we can generate a different constraint representing the objects that might be available.
+
+      We give an inductive definition, with flow variable $\alpha_i$ at program point $i$:
+
+      $n^i$ gives $\alpha_i \supseteq \{\}$
+
+      $o^i$ gives $\alpha_i \supseteq \{o\}$
+
+      $x^i$ gives $\alpha_i \supseteq \alpha_j$, where $x_j$ is the associated binding.
+
+      $f(e_1^{j,1}, \ldots, e_k^{j,k})^i$ gives that $\alpha_{m,n} \supseteq \alpha_{j,n}$ for $1 \leq n \leq k$ and $\alpha_{i} \supseteq \alpha_r$, where $\alpha_{m,n}$ are the flow variables for the parameters of $f$, and $\alpha_r$ is the flow variable for the return value of $f$.
+
+      $(let\ x^l = e_1^j\ in\ e_2^k)^i$ gives $\alpha_i \supseteq \alpha_k$ and $\alpha_l \supseteq \alpha_j$
+
+      $(if\ e_1^j\ then\ e_2^k\ else\ e_3^l)^i$ gives $\alpha_i \supseteq \alpha_k$ and $\alpha_i \supseteq \alpha_l$.
+
+      Solving these constraints gives us a solution that represents the values that might be returned at any subexpression of the program.
+
+      \item
+        If variables can reference functions and be called by the given syntax, then we need to change our constraint generation rule for functions, since we are no longer certain what the flow variables for the parameters of the function and the return value of the function are.
+
+        This means we need to modify our analysis to also track function values, and from function application we emit a meta constraint that says we generate the constraint given in (b) for every function value that $e_0$ might be.
+
+        \item
+          This analysis would not fail under those circumstances because we are not tracking such values. Under the assumption that we cannot perform arithmetic on object references (which seems very sensible), then even though  arithmetic is undecidable in general, we do not need to worry about it, since the addition of two numbers will result in the following constraint:
+
+          $(e_1^j + e_2^k)^i$ gives $\alpha_i \supseteq \{\}$.
+
+          The same applies for other arithmetic operators, so we are fine.
+
+          \item
+            Knowing that two sub-expressions do not alias is useful because it allows us to optimise with parallelisation. If we have two sub-expressions $e_1$ and $e_2$, knowing that neither of them alias means that we can compute $e_1$ and $e_2$ in parallel.
+
+        
+    \end{enumerate}
+\end{document}

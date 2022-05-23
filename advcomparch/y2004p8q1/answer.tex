@@ -1,0 +1,41 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Accurate branch prediction is so important to modern microprocessor designs because the penalty for mispredicting a branch is so high. As we use deeper pipelines, the misprediction penalty increases because we have to flush more instructions.
+
+    \item
+
+      Local history branch predictors work by maintaining a history of each branch's behaviour.
+
+      We maintain a hardware table, and `hash' the program counter of a branch to find its entry in the table. At each entry is a shift register, representing the history of the branch, where each bit specifies whether the branch was taken or not taken a particular time.
+
+      This history is then used to index another table, and for each history we store a saturating bi-modal counter, which we take the most significant bit of to make a prediction.
+
+      When we want to predict a branch, we hash its address to find its history, use this history to index the counter table, and then make a prediction. When we find out the actual outcome of the branch, we update the counter accordingly (increment if taken, decrement if not taken for example), and then add the corresponding bit to the shift register.
+
+      The tradeoffs here are mostly to do with the size of each element. By increasing the output size of the hash function, we reduce aliasing between different branch addresses, at the expense of needing to store a much larger table. Similarly, by increasing the amount of history we store, we allow ourselves to both learn large patterns, and reduce aliasing, at the expense of the size of the counter table, and by increasing the number of bits in each saturating counter, we allow our prediction to be more stable, at the expense of taking longer to learn patterns.
+
+      Some branches are simply not predicted easily with local history predictors, since their behaviour is more dependent on the outcome of other branches than their own history, which limits their performance.
+
+      \item
+         Some branches are hard to predict because their behaviour is dependent on not just local history, but global history. To mitigate problems in this case, we can implement a global branch history predictor where we have a single shift register that captures all branch history, and use this to index its own table. Then, we use a tournament predictor to decide whether to use the local or global history predictor for a particular branch.
+
+         Other branches are hard to predict because they do not go to predictable locations, which makes the branch target hard to predict. For example, return instructions. To mitigate these performance problems, we can store a hardware return address prediction stack to predict the target of return instructions.
+
+         \item
+           A trace cache is an instruction cache that instead of caching instructions based on memory location, caches instructions based on the order that they were executed in.
+
+           Instead of fetching instructions based on their address, we fetch a corresponding trace using branch information, which means that we get all of the instructions immediately available, instead of having to predict branch targets, etc., making it potentially more effective than a traditional instruction cache.
+
+           \item
+             Such a system might operate by finding the most common case (perhaps through statistical methods) through the flowgraph of a program (or a procedure, at a smaller level), and rewriting the binary to contain this sequence of instructions as a single basic block.
+
+             We can then duplicate the original flowgraph such that there are no side entrances to this one large block, and that any instructions that would jump to this large block instead jump to the slower, duplicated flowgraph.
+
+
+        
+    \end{enumerate}
+\end{document}
