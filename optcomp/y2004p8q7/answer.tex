@@ -1,0 +1,90 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+  \item
+    The idea behind strength reduction is to replace an expensive operator with a cheaper one.
+
+    It works by finding induction variables whose only assignment in the loop is $i = i \oplus c$, where $c$ is a loop invariant.
+
+    Then, find variables $j$ whose only assignment in the loop is $j = c_2 \oplus c_1 \otimes i$ where $c_1,c_2$ are loop invariants and $\otimes$ distributes over $\oplus$.
+
+    Instead of computing $j$, we rely on inductive properties of $i$. We move $j = c_2 \oplus c_1 \otimes i$ to entry of the loop, and add an assignment at the end of the loop $j = j \oplus (c_1 \otimes c)$, hoping that $c_1 \otimes c$ gets optimised to a constant in some later optimisation pass.
+
+    Then, we rewrite the loop termination condition in terms of $j$
+
+    First we consider what this loop might actually be:
+
+\begin{verbatim}
+extern int a[M][N];
+char *p1;
+char *p2;
+for (i=0; i<M; i++) {
+  for(j=0; j<N; j++) {
+   p1 = (char *)a + 4 * N * i;
+   p2 = p1 + 4 * j;
+   t = t + *p2;
+  }
+}
+\end{verbatim}
+
+
+Here $i,j$ are induction variables, $p1, p2$ are the assignments we can reduce the strength of, $\oplus$ is + and $\otimes$ is *.
+
+We first pull the assignments to the start of the loop, and reduce the strength of the operators:
+
+\begin{verbatim}
+extern int a[M][N];
+char *p1;
+char *p2;
+for ((i=0;p1 = (char *)a + 4 * N * i); i<M; (i++; p1 += 4 * N)) {
+  for((j=0;p2 = p1 + 4 * j;); j<N; (j++; p2 += 4)) {
+    t = t + *p2;
+  }
+}
+\end{verbatim}
+
+Then, we rewrite our loop conditions. Since we know that  4, $N$ are positive (i.e. we always increment p1 and p2), we do not have to flip the direction of the inequality. We might not always be able to do this. We also find that in this case we can propagate the initial value of $i,j$ and remove them entirely.
+
+\begin{verbatim}
+extern int a[M][N];
+char *p1;
+char *p2;
+for (p1 = (char *)a; p1<a + 4*N*M; p1 += 4 * N) {
+  for(p2 = p1 + 4; p2<p1 + 4*N; p2 += 4) {
+    t = t + *p2;
+  }
+}
+\end{verbatim}
+
+Strength reduction would not be sufficient to reduce this to a single loop. In the syntax of our program, we cannot find any $j$s of the form we need.
+
+\item
+
+  An expression is available at a particular point in a program if it would have already been computed (and not invalidated by an intervening assignment) previously, in every execution of the program. In general this is uncomputable, so we consider instead availability along every previous path through the program's flowgraph.
+
+  Here, computed just before entry means after the very first check of the loop condition, and before anything else in the loop executed. We need to check the loop condition first or else lifting the computation of an invariant may create a new error that would not have existed beforehand. In this example, it could be the case that when $n \geq 5$, $z=0$, so we would introduce a new error.
+
+  Furthermore, in this example, \texttt{1000 / y} cannot be lifted because the call to \texttt{p(\&y)} could modify the value of y.
+  
+  So, we get the following optimised code:
+
+\begin{verbatim}
+extern int u[100], v[100], w[100];
+void f(int n) {
+  int i, t, y = ..., z = ...;
+
+  for ((i=5; t = i < n ? 1000/z : 0); i < n i++) {
+    u[i] += 1000/y;
+    v[i] += t;
+    p(&y);
+    w[i] += t;
+  }
+}
+\end{verbatim}
+
+Here, we initialise $t$ with \texttt{1000/z} at entry to the loop, (we add in an additional condition check because the syntax of the program makes it hard to express real `at entry to the loop').
+
+        
+\end{enumerate}
+\end{document}

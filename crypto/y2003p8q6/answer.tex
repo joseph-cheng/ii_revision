@@ -1,0 +1,46 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Here, $g$ is the generator of some group. $q$ is the order of that group. Since we take $g^k \mod p$, it appears that the group is a subgroup of $Z^*_p$
+
+    $k$ is some randomly chosen secret key generated per signature, and $x$ is a secret key that is held for a longer period of time (i.e. reused). $M$ is the message the signature is being taken of, and $h$ is a secure hash function.
+
+    Finally, $r$, $s$ are the two components of the signature.
+
+    \item
+      To verify a signature, consider what happens if $r,s$ are generated as expected, where $g^k$ here means applying the group operator to $g$ $k$ times, not anything to do with integer exponentiation.
+
+      $g^{ks + xr} = g^{h(M)}$
+        
+      $g^{ks} = g^{h(M)}(g^{x})^{-r}$
+
+      $g^k = g^{h(M)s^{-1}}(g^x)^{-rs^{-1}}$
+
+      Since a verifier knows $g^x$ (the public key), $r$, $s$, $M$, and $h$, they can compute the RHS, and check whether it equals $r$ (which is $g^k$).
+
+      \item
+        If an implementation does not check this, then for example an adversary could generate a signature $(r,s)$ with $r=0$, choosing an arbitrary $k$ and thus $s = \frac{h(M)}{k} \pmod{q}$, which would be a valid signature generated without needing $x$.
+
+        Choosing and $r$ greater than or equal to $q$ should not have an impact since it will be reduced by the modulus (unless $r$ is a multiple of $q$, when it is the same as if it is zero).
+
+        \item
+          The consequences of this are that we can forge a signature for any message.
+
+          Under the proposed scheme, the verifier would check that:
+
+          $r = g^{Ms^{-1}}y^{-rs^{-1}}$
+
+          Now, suppose we choose $r = g^ay^b$, and $m = \frac{ar}{b}$, where $a,b$ are arbitrary.
+
+          Then, let $s = \frac{r}{b}$
+
+          We see that $g^{Ms^{-1}}y^{-rs^{-1}} = g^{a}y^{b}$.
+
+          Therefore, we have a forgery.
+
+
+    \end{enumerate}
+\end{document}

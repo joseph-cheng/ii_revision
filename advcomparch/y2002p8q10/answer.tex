@@ -1,0 +1,28 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Many statically scheduled superscalar processors have long pipelines because having long pipelines means that we can reduce the length of the critical path, meaning that we can drive the clock frequency higher. Driving the clock frequency higher means that we get better performance. Furthermore, by having longer pipelines, we ensure that we can have more of the logic in the processor active at once.
+
+    \item
+      Long pipelines introduce problems introduction of more data and control hazards.
+
+      When we predict a branch (or don't predict a branch), there is a possibility that we will have predicted incorrectly and started fetching from the wrong instruction stream. In this case, we have to flush the pipeline (or at least the incorrectly fetched instructions) to ensure correctness, and the deeper the pipeline we have, the more work we have to flush away. This penalty can be improved by increasing the effectiveness of our branch predictor, or by ensuring that a branch condition is calculated as early as possible in the pipeline.
+
+      By introducing more pipeline stages, we also increase the amount of data hazards we will get because we simply have more data and instructions in the pipeline at the same time. This can lead to more logic being needed to forward data around (which can be power consuming), as well as potentially the need to stall more often. We can mitigate this penalty by building a larger DFN.
+
+      \item
+        Not relevant.
+
+        \item
+          By supporting floating point exceptions, we need to be able to save the processor state, jump to, the associated exception handler, revert to the old processor state, and jump back.
+
+          This is especially tricky for pipelined processors that might have multiple instructions in flight at the point we detect the exception. To handle this, we might flush all instructions before the instruction that generated the exception, and re-issue them again, but we have to be careful that these instructions have not modified program state.
+
+          In the case of floating point exceptions, where floating point instructions might be overtaken by non-fp instructions, this is slightly more tricky, we might have to not issue stores until we are certain that any future FP instructions will not cause an exception, and the same with register writeback (although this might be more easily done with multiple register renaming tables).
+
+        
+    \end{enumerate}
+\end{document}

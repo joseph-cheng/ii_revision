@@ -1,0 +1,60 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        Consider the triple $\{\top\}\texttt{X := X + 1}\{X = X+1\}$.
+
+        This cannot  be proved using Hoare Logic because it is not true, since the computation terminates, and $X$ cannot equal $X+1$. Therefore, by soundness of Hoare logic, it is unprovable.
+
+        \item
+          The issue arises when $E$ contains $V$ as a free variable. Therefore, we have the condition that $V \not \in fv(E)$ (this is technically too strong a condition, since $V := V$ is fine, but this still is valid for the question).
+
+          To prove a triple of this form, by the rule of consequence we are simply required to prove $\{E = E\}V := E\{V = E\}$, which we can prove with the assignment rule.
+
+          \item
+            $wlp(V:= E, Q) = [E / V]Q$. This holds because this is the weakest condition that guarantees that $Q$ will hold after executing the assignment. This relates to the given Hoare triple in that it holds iff $P \implies [E / V]Q$
+
+            $sp(V:= E, P) = \exists v. [v / V]P \wedge V = [v / V]E$. This holds because if $P$ held before the assignment, it must still hold (with the old value of $V$), and this new value of $V$ must be equal to $E$ (with the corresponding substitution applied). This relates to the given Hoare triple in that it holds iff $sp(V:= E, P) \implies Q$.
+            \item
+              Weakest preconditions and strongest postconditions can be applied in mechanised program verification by using weakest preconditions to show that the given precondition for a program implies the weakest precondition calculated from the given postcondition, as well as proving that loop invariants really are invariant.
+
+              Strongest postconditions can be used to provide some kind of semantics for a language, letting us derive what the behaviour of a given program might be.
+
+              \item
+                The two axioms are as follows:
+
+                \[
+                  \frac{}{\{[E / X]P\}X := E\{P\}}
+                .\] 
+
+                \[
+                  \frac{}{\{P\}X:= E\{\exists x. [x / X]P \wedge X = [x / X]E\}}
+                .\] 
+
+                The Hoare axiom is true because if $P$ holds after some assignment, it must have also held before the assignment, but instead of using $X$, it must hold for $E$ instead.
+
+                The Floyd axiom holds because if $P$ holds before some assignment, then after the assignment $P$ must also hold, but using the old value of $X$, and $X$ must now equal its newly assigned value.
+
+                \item
+                  Suppose Hoare's axiom holds.
+
+                  We are then required to prove that $\{P\}X:=E\{\exists x[x / X]P \wedge X = [x / X]E\}$ holds.
+
+                  We know that $\{\exists x.[x / X]P \wedge X = x\}X :=E\{\exists x.[x / X]P \wedge X = [x / X]E\}$ holds by Hoare's axiom.
+
+
+                We have that $P \implies (X = X) \wedge P \implies (X = X) \wedge [X / X]P \implies \exists x. [x / X]P \wedge X = x$
+
+                And therefore, we have that $\{P\}X:=E \{\exists x.[x / X]P \wedge X = [x / X]E\}$ holds.
+
+        
+    \end{enumerate}
+        
+    \end{enumerate}
+\end{document}

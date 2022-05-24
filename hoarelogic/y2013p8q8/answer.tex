@@ -1,0 +1,59 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    Formally, $\{P\}C\{Q\}$ holds if $\forall s, s'.  s \in \llbracket P \rrbracket \wedge \langle C, s \rangle \leadsto^* \langle skip, s'\rangle \implies s' \in \llbracket Q \rrbracket$
+
+    In other words, the triple $\{P\}C\{Q\}$ holds if for every program state $s$ that satisfies $P$, when $C$ is executed starting in program state $s$, then if $C$ terminates than it results in a program state $s'$ that satisfies $Q$.
+
+  \item
+    Formally, $[P]C[Q]$ holds if $\forall s, s'.  s \in \llbracket P  \implies \rrbracket \wedge \langle C, s \rangle \leadsto^* \langle skip, s'\rangle \wedge s' \in \llbracket Q \rrbracket$
+
+    In other words, the triple holds if for every program state $s$ that satisfies $P$, when $C$ is executed starting in $s$, it terminates in program state $s'$ that satisfies q.
+
+    The totality here means that we guarantee termination.
+
+    \item
+
+      We give the rule for loops:
+
+      \[
+        \frac{\{P \wedge B\}C\{P\}}{\{P\}while\ B\ do\ C\{P \wedge \neg B\}}
+      .\] 
+
+      This is not sound in total correctness Hoare logic because it does not guarantee that the loop condition eventually fails to hold, meaning that if we used this rule, we could have a program $C$ that satisfied $[P]C[Q]$, but when $C$ was executed in state $s \in \llbracket P \rrbracket$, we do not terminate, so we lose soundness.
+
+      \item
+
+        $\{P\}C\{Q\}$ holds if $\forall s,h_1, h_F. \text{dom}(h_1) \cap \text{dom}(h_F) = \emptyset \wedge h_1 \in \llbracket P \rrbracket(s) \implies (\langle C, \langle s, h_1 \cup h_F \rangle \rangle \not \leadsto \lightning \wedge (\forall s', h'. \langle C, \langle h_1 \cup h_F \rangle \rangle \leadsto \langle skip \langle s', h' \rangle \implies .\exists h_1'.h_1' \cup h_F = h' \wedge h_1' \in \llbracket Q \rrbracket(s)$
+
+        Essentially, executing $C$ with stack $s$ and heap $h_1 \cup h_F$ with $h_1 \in \llbracket P \rrbracket(s)$ does not fault, and if it terminates it does not modify $h_F$ and results in a program state that satisfies $Q$
+
+        Separation logic has the idea of heaps, which does not exist in traditional Hoare logic. Furthermore, separation logic requires that programs do not fault, whereas Hoare logic makes no such claim.
+
+        \item
+          We give the dereference rule:
+
+          \[
+            \frac{}{\{E \mapsto v \wedge X := x \}X := [E]\{E[x /X] \mapsto v \wedge X =v\}}
+          .\] 
+
+          \item
+
+            Separation logic assumes that an unbounded number of locations can be allocated, whereas real-world programs will have a fixed number of locations that can be allocated.
+
+            Hoare logic cannot deal with reasoning about undefined expressions, like $\frac{1}{0}$ in arithmetic, whereas real programming languages will have some formal description of their behaviour.
+
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}

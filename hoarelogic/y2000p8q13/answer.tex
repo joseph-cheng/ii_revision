@@ -1,0 +1,32 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    CTL is defined as a $\psi$, where $\psi$ is defined as follows:
+
+    $\psi ::= \top | \bot | injp p | \psi_1 \wedge \psi_2 | \psi_1 \vee \psi_2 | \neg \psi | \psi_1 \implies \psi_2 | A \phi | E \phi$
+
+    $\phi ::= X \psi | G \psi | F \psi | \psi_1 U \psi_2$
+
+    \item
+      \begin{enumerate}[label=(\roman*)]
+          
+        \item
+      $req \implies A (req\ U\ (ack \wedge A (X \neg ack)))$
+
+      \item
+        $req \wedge \neg started \implies A (F (A (G\ error)))$
+      \end{enumerate}
+
+      \item
+        The ideas behind model checking are that given a model (set of states, distinguished start states, transition relation, and labelling), and a formula in some logic (like CTL or LTL), we want to either prove that this formula is true in the model, or prove it is not (and normally provide a counter example). Since paths are infinite, we have to eliminate loops in the paths we consider, which makes the search space finite and thus guarantees that we can either prove or disprove a given formula.
+
+        Symbolic model checking not relevant.
+
+        \item
+        For formal verification, a theorem prover is more expressive, since it will likely deal with some logic like first or second order logic, which are more expressive than the languages used for model checking. This means that we can potentially prove results that we could not with model checking, but we lose some guarantees that model checking gives us: for example theorem provers are not guaranteed to be able to prove/disprove a formula, since the search space is infinite. Furthermore, model checkers are able to provide a counter example in a refutation, which theorem provers might not always be able to.
+        
+    \end{enumerate}
+\end{document}
