@@ -219,17 +219,52 @@ sent: 000 001 001 000 101 011 000
 \end{verbatim}
 
 So our final encoding is \texttt{000001001000101011000}
+\end{enumerate}
+
+\item
+  \begin{enumerate}
+      \item
+        To emit a single number from our distribution, we have to generate 32 random bits.
+
+        So to generate a thousand samples, we generate 32000 random bits.
+
+        \item
+          Since arithmetic coding is optimal, and the entropy of the source is $-0.99\log_2 0.99 - 0.01 \log_2 0.01 = 0.081$ bits, we only need 0.081 random bits to specify a single output bit that matches our distribution.
+
+          Therefore, to specify 1000 output bits, we only need 81 random bits.
+  \end{enumerate}
+
+  \item
+    We are required to prove that any uniquely decodable code from $\{0,1\}^+$ to $\{0,1\}^+$ necessarily makes some strings longer if it makes some strings shorter.
+
+    Suppose we have such a code.
+
+    Suppose we have three different elements of $\{0,1\}^+$, $x_1, x_2, x_3$.
+
+    We can feed $x_1$ into this encoder to obtain a shorter string $x_1^1$
+
+    We can repeat this as many times as we like to obtain $x_1^{j_1}$, which is only a single bit.
+
+    We do this with all  our other strings to obtain $x_2^{j_2}$ and $x_3^{j_3}$ also.
+
+    Since they are all a single bit, two of them must be equal, and thus we are unable to differentiate them, and thus our code cannot be uniquely decodable.
+
+    \item
+      Done in supervision.
 
 
 
 
 
-            \end{enumerate}
 
 
 
 
 
+
+
+      \item
+        Done in supervision.
 
 
 
