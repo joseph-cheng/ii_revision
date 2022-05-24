@@ -1,0 +1,240 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}
+  \item
+    The Kraft-McMillan inequality says that for an alphabet codeword size of $r$, and codeword lengths $\ell_i$, we get:
+
+    $\sum_{i=1}^n r^{-\ell_i} \leq 1$
+
+    For a uniquely decodable code encoding $n$ symbols.
+
+    We provide a proof for a prefix code:
+
+    We can represent a prefix code as a $n$-ary tree, where each branch corresponds to one of the $r$ symbols. The leaves will be the resulting codewords.
+
+    Let the codeword lengths be ordered in ascending order, so $\ell_n$ is the length of the longest codeword.
+
+    Then, consider the full $n$-ary tree of depth $n$ $A$.
+
+    Each codeword corresponds to a node in $A$.
+
+    Consider $A_i$, the set of leaves in the subtree of $A$ rooted at the node for codeword $i$.
+
+    $|A_i| = r^{\ell_n - \ell_i}$
+
+    Since this is a prefix code, we know for any two $i \neq j$, $A_i \cap A_j = \emptyset$, or else one code would be a prefix of another.
+
+    Considering the big union of all $A_i$, we know this must be less than or equal to the total number of leaves in $A$, $r^{\ell_n}$
+
+    Therefore:
+
+    $\bigcup_{i=1}^n A_i = \sum_{i=1}^n |A_i| = \sum_{i=1}^n r^{\ell_n - \ell_i} \leq r^{\ell_n}$
+
+
+    And thus:
+
+    $\sum_{i=1}^n r^{-\ell_i} \leq 1$
+
+    Conversely, consider we are given natural numbers $\ell_i$ satisfying the Kraft-McMillan inequality.
+
+    For each $\ell_i$, choose an arbitrary node in $A$ at depth $\ell_i$, and remove any of its descendants (to keep it a prefix code).
+
+    Each choice removes $r^{\ell_n - \ell_i}$ leaf nodes.
+
+    So, in total, we remove:
+
+    $\sum_{i=1}^n r^{\ell_n - \ell_i} \leq r^{\ell_n}$ leaf nodes, so we do not remove more leaf nodes than we have.
+
+    \item
+      Arithmetic coding can get closer to the entropy of a source than Huffman coding because Huffman codes have to use an integer number of bits to encode each symbol. This means that we may encounter some overhead in encoding a symbol with Huffman coding. With arithmetic codes, we can somewhat eliminate this overhead, so if we are encoding a long enough message, we are able to get closer to the entropy of a source with arithmetic coding compared to Huffman coding.
+
+      \item
+        A terminating character is used in arithmetic coding because otherwise, a code will specify an infinite stream of data, where it is likely that the sender intends to send a finite amount of data. Using a terminating character will still not stop a code from specifying an infinite stream of data, but the decode knows to ignore the rest of the message after seeing the first terminating character in decoding.
+
+        If it were not included, we would need to know the length of the message we are decoding in advance.
+
+        If it is included, giving it a higher probability means we need more bits to specify the actual data, but less bits to specify termination, whereas giving it a lower probability results in the inverse. This means that a higher probability is better for shorter messages, and vice versa.
+
+        \item
+          You must transmit the probability model you used to encode the message. Alternatively, if the message was encoded with adaptive arithmetic encoding, then we simply specify the initial conditions (i.e. the initial model, which might be easy to specify), and then how the model is changed as more data is observed.
+
+          You must also transmit the order in which symbols are ordered.
+
+          \item
+
+            We use a frequentist approach to estimate probability. We encode blocks of 3 symbols at a time for Huffman and arithmetic encoding (otherwise we just have two symbols, might as well transmit in binary)
+\begin{verbatim}
+AAA: 0
+AAB: 2/7
+ABA: 0
+ABB: 1/7
+BAA: 2/7
+BAB: 0
+BBA: 1/7
+BBB: 1/7
+\end{verbatim}
+
+            \begin{enumerate}
+                \item
+
+                  We create the following code:
+\begin{verbatim}
+AAB: 00
+ABB: 11
+BAA: 01
+BBA: 100
+BBB: 101
+\end{verbatim}
+
+So we encode it as \texttt{0110100}
+
+\item
+
+  We add a terminating character with probability $\frac{1}{8}$, and we get model:
+
+\begin{verbatim}
+AAB: 2/8
+ABB: 1/8
+BAA: 2/8
+BBA: 1/8
+BBB: 1/8
+EOF: 1/8
+\end{verbatim}
+
+  With that ordering.
+
+  We work in decimal first, and then convert to binary.
+
+  To encode BAA, we add $\frac{3}{8}$ to our total.
+
+  To encode BBB, we add $\frac{3}{8} \cdot \frac{1}{8}$ to our total
+
+  Then, to encode AAB, we add $\frac{3}{8} \cdot \frac{1}{8} \cdot \frac{6}{8}$ to our total.
+
+  Finally, to encode EOF we add 0 to our total (since it is at the bottom).
+
+  So our number becomes:
+
+  $0.45703125$
+
+  So our encoded version is 01110101
+
+  \item
+    We do the following LZ encoding:
+
+\begin{verbatim}
+BAABBBAAB
+
+dict:
+B: 000
+A: 001
+
+sent:
+-------------
+B|AABBBAAB
+
+dict:
+B:  000
+A:  001
+BA: 010
+
+sent: 000
+-------------
+B|A|ABBBAAB
+
+dict:
+B:  000
+A:  001
+BA: 010
+AA: 011
+
+sent: 000 001
+-------------
+B|A|A|BBBAAB
+
+dict:
+B:  000
+A:  001
+BA: 010
+AA: 011
+AB: 100
+
+sent: 000 001 001
+
+-------------
+B|A|A|B|BBAAB
+
+dict:
+B:  000
+A:  001
+BA: 010
+AA: 011
+AB: 100
+BB: 101
+
+sent: 000 001 001 000
+-------------
+B|A|A|B|BB|AAB
+
+dict:
+B:   000
+A:   001
+BA:  010
+AA:  011
+AB:  100
+BB:  101
+BBA: 110
+
+sent: 000 001 001 000 101
+-------------
+B|A|A|B|BB|AA|B
+
+dict:
+B:   000
+A:   001
+BA:  010
+AA:  011
+AB:  100
+BB:  101
+BBA: 110
+AAB: 111
+
+sent: 000 001 001 000 101 011
+
+-------------
+B|A|A|B|BB|AA|B|
+
+dict:
+B:   000
+A:   001
+BA:  010
+AA:  011
+AB:  100
+BB:  101
+BBA: 110
+AAB: 111
+
+sent: 000 001 001 000 101 011 000
+\end{verbatim}
+
+So our final encoding is \texttt{000001001000101011000}
+
+
+
+
+
+            \end{enumerate}
+
+
+
+
+
+
+
+
+
+
+    
+\end{enumerate}
+\end{document}
