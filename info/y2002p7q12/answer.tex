@@ -1,0 +1,43 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    (Second half of this question is not relevant).
+
+    We know that any real continuous channel will have Gaussian noise (or else we can transmit with infinite precision and transmit infinite data per symbol).
+
+
+    Since the noise is Gaussian, and the output is Gaussian, we require that the input is Gaussian for maximum mutual information.
+
+    Therefore, the capacity of the channel is given by $H(Y) - H(Y|X)$ with $X,Y$ Gaussian.
+
+    Furthermore, we know that $H(Y|X)$ must be $H(N)$ where $N$ is the noise, because that is all the uncertainty that is added.
+
+    If $Y = X + N$ and $X \sim N(\mu_X, \sigma_X^2)$ and $N \sim N(\mu_N, \sigma_N^2)$, then $Y \sim N(\mu_X + \mu_N, \sigma_X^2 + \sigma_N^2)$
+
+    So, $H(Y) =\frac{1}{2}\log_2 (2\pi e (\sigma_X^2 + \sigma_N^2))$
+
+    And $H(Y|X) = \frac{1}{2}\log_2(2\pi e (\sigma_N^2))$
+
+    So $C = \frac{1}{2}\log_2 (2\pi e (1 + \frac{\sigma_X^2}{\sigma_N^2})$
+
+   $C = \frac{1}{2}\log_2 2\pi e (1 + \frac{S}{N})$
+
+   If we are transmitting a bandwidth limited signal, let the signal transmit between frequencies $\omega_1$ and $\omega_2$ ($\omega_1 = 0$ for lowpass, e.g.), with bandwidth $\omega = \omega_2 - \omega_1$
+
+   Assuming that the signal's signal to noise ratio does not change with frequency, the capacity of the signal in  information per second (as opposed to information per symbol) becomes $\omega \log_2 2\pi e (1 + + \frac{S}{N})$ because we must sample at $2\omega$.
+
+   \item
+     This code must satisfy the Kraft-MacMillan inequality, which says that:
+
+     $\sum_{i=1}^N n_i^{-1} \leq 1$
+
+     \item
+       Not relevant.
+
+
+        
+    \end{enumerate}
+\end{document}

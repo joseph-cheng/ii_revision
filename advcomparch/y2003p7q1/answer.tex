@@ -1,0 +1,46 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Statically scheduled superscalar processors work by fetching and issuing multiple instructions at once, by duplicating portions of the pipeline like functional units to allow multiple instructions to be executed in parallel.
+
+        This technique aims to exploit independence between instructions as they are scheduled by the compiler, since the processor makes no attempt to change the order in which they are scheduled. This means that the amount of parallelism we can exploit is bottlenecked by the compiler's static scheduling (not dynamic behaviour).
+
+        \item
+          Out-of-order speculation execution works by fetching instructions into a buffer, and instructions are issued by simply finding an instruction that can be scheduled from this buffer, i.e. one that does not stall, and does not break the programmer's sequential model.
+
+          This technique exploits independence between instructions, but to a further extent than (i), since instructions can be re-ordered, meaning that we can use aspects of the dynamic behaviour of the program (for example reordering instructions over a loop boundary) to extract more ILP.
+
+          These processors also execute instructions speculatively, for example by predicting branches. This means that branches are less of a performance hindrance, since we do not have to wait for a branch condition to be evaluated and its target calculated, and we can start fetching from the correct instruction stream earlier, achieving more ILP than (i).
+
+          \item
+            VLIW processors aim to keep the processor very simple, and have the compiler extract all of the ILP. They work by having the instructions compiled into bundles of independent instructions, and in the processor having enough pipelines to issue every instruction in a bundle at once.
+
+            Similar to (i), we have the compiler finding all of the independence between instructions, instead of performing any kind of dynamic scheduling, and we get performance increases from executing multiple instructions in parallel, just like (i). However, in (i), when we fetch a bundle of instructions we know they are all independent, whereas a statically scheduled superscalar processor has to do work to see if the instructions are independent. However, if we do not have variable length bundles, then a VLIW processor might reduce the ILP that can be gained because a bundle might be padded with NOP instructions, whereas a statically scheduled superscalar processor might have other instructions it can issue.
+
+            \item
+              EPIC processors are similar to VLIW processors, but have extra power over the control flow. For example, EPIC processors have full instruction predication, whereas VLIW processors do not, meaning that executing short conditional branches can be faster, since we do can pack the entire statement into a single bundle, as opposed to needing to split the bundle.
+
+              Furthermore, EPIC processors have a branch predictor, like (ii), meaning that branches are again less costly, whereas VLIW processors might even expose branch delay slots.
+    \end{enumerate}
+
+    \item
+      Hardware multi-threading is the process of executing multiple threads on a single core, at the hardware level. Different implementations differ mostly on the granularity of the multithreading.
+
+      At a low granularity, one approach is to simply run instructions from one thread until it blocks/stalls, at which point we perform a light `context switch' to another thread.
+
+      We can increase granularity to try and stall less by interleaving instructions from multiple different threads with each other, where we decide on a static schedule and simply fetch instructions from each thread's instruction stream based on this schedule. This interleaving helps dependencies be resolved in the background, but the static schedule means that we may sometimes have to fetch a NOP if no instruction can be fetched for a particular instruction stream.
+
+      At the highest level of granularity we have simultaneous multithreading, which is where we dynamically choose an instruction from a thread to fetch, meaning that we get all the benefits from the previous technique, but without being forced to fetch NOPs in some cases.
+
+      Multithreading improves performance because it hides latencies and allows for higher levels of ILP to be exploited (instructions from different threads are likely to all be independent).
+
+      There are pitfalls with multithreading in that we need to store enough state to support all the threads, which can be expensive. Furthermore, threads might access shared memory, and thus actually have dependencies on each other which might lead to unexpected program behaviour if the programmer is not aware.
+        
+    \end{enumerate}
+\end{document}

@@ -1,0 +1,240 @@
+\input{../../../template.tex}
+
+\begin{document}
+    \begin{enumerate}
+
+      \item
+        Information should be continuous, such that changing the probabilities by a small amount should only result in a small change in information content, and we do not get any large jumps.
+        
+        Information should be additive because observing two independent events should yield the same information as the sum of the information gained observing each event on their own.
+
+        Information should be symmetric for independent events because observing outcomes in any particular order should not affect how much information we get from them.
+
+        \item
+          Satisfies (1)
+
+          \item
+
+            Suppose we have an event $x$ with probability $0.5$
+
+            It will have information content $\log 0.5$.
+
+            Halving its probability should increase the information content linearly, since it should be logarithmic, but we get information content $\log 0.25$. Since $0.5 = 2^{-1}$ and $0.25 = 2^{-2}$, the information contents are actually:
+
+            $-\log 2$ and $-2\log 2$, so the information content has doubled.
+
+            $\log(\frac{1}{P(x)^2})$ would be a suitable information measure.
+
+            Additivity and symmetry:
+
+            If we have two independent events $x$ and $y$, the joint probability they occur is $P(x)P(y)$
+
+            Their surprisals are given:
+
+            $h(x) = \log(\frac{1}{P(x)^2})$
+
+            $h(y) = \log(\frac{1}{P(y)^2})$
+
+            $h(x,y) = \log(\frac{1}{P(x)^2P(y)^2})$
+
+            We see that:
+
+            $h(x) + h(y) = \log(\frac{1}{P(x)^2}) + \log(\frac{1}{P(y)^2}) = \log(\frac{1}{P(x)^2P(y)^2}) = h(x,y)$
+
+            Furthermore, it is logarithmic, decreasing, and continuous by analogy to real information content.
+
+            \item
+              \begin{enumerate}
+                  \item
+                    There are 256 possibilities, and they are uniformly distributed, so the information content is $\log_2 256 = 8$ bits.
+
+                    \item
+                      All humans are mammals, so the information content is 0 bits.
+
+                      \item
+                        Entropy is just $\frac{1}{4}\log_2 \frac{1}{4} + \frac{1}{4}\log_2 \frac{1}{4} + \frac{1}{2}\log_2 \frac{1}{2} = \frac{3}{2}$ bits.
+
+                        \item
+                          Half the population must be older than the median age, and half must be younger, by definition, so each event has probability $\frac{1}{2}$, so the entropy is $1$ bit.
+              \end{enumerate}
+
+              \item
+
+                Done, but picture not available here.
+
+                \item
+
+                  Suppose we enumerate the balls 1 to 12.
+
+                  We know that if we weigh six balls against six, say 1 to 6 against 7 to 12, the scales must tip in one direction.
+
+                  If the scales tip on the side of 1 to 6, we know that either one of those balls is heavy, or the 7 to 12 balls is light. This means that the 1 to 6 balls cannot be light, and the 7 to 12 balls cannot be heavy, so we do in fact gain information. We get an analogous result for the other direction.
+
+                  We gain 1 bit of information about the odd ball, but no information about whether it is heavy or light.
+
+                  The second group is still correct in the sense that it is not the best first weighing, since the case where the scales do not tip does not happen, so the probability is not spread evenly across all outcomes, so entropy is not maximal.
+
+                  \item
+                    In the $n$ ball weighing problem, there are $2n$ possible outcomes that are equiprobable.
+
+                    If we first weigh $\lfloor \frac{n}{3} \rfloor$ balls against $\lfloor \frac{n}{3} \rfloor$ balls, in each case, we end up with $2 \lfloor \frac{n}{3} \rfloor$ outcomes in left tip, right tip, and $2(n - \lfloor \frac{n}{3} \rfloor)$ outcomes for no tip, which is optimal.
+
+                    We can then recursively solve this problem.
+
+                    So for $n$ balls, we consider $2n+3$ hypotheses (increasing by 3 to remove floor), and at each step we divide by 3.
+
+                    So, we get $W = \log_3 (2n+3)$ which yields $N = \frac{3^W - 3}{2}$
+
+                    \item
+                      This code is not uniquely decodable.
+
+                      The message \texttt{111111} can be decoded as \texttt{11 11 11} or \texttt{111 111}.
+
+                      \item
+                        This code is uniquely decodable because it is a prefix code (no code is a prefix of another), which implies it is uniquely decodable.
+
+    \item
+
+      The lowest probability symbol will always be $1^n$, and by increasing the number of 0s we increase the probability of the code.
+
+      So for $X^2$ we make:
+
+\begin{verbatim}
+11: 000
+10: 001
+01: 01
+00: 1
+\end{verbatim}
+
+This has expected length $0.03 + 0.27 + 0.18 + 0.81 = 1.29$.
+
+The entropy of the source is around 0.94 bits, less than the expected code length.
+
+For $X^3$ we make:
+
+\begin{verbatim}
+111: 00000
+110: 00001
+101: 00010
+011: 00011
+100: 001
+010: 010
+001: 011
+000: 1
+\end{verbatim}
+
+This has expected length around 1.60, and entropy around 1.4
+
+For $X^4$ we make:
+
+\begin{verbatim}
+1111: 0110010110
+0111: 0110010111
+1011: 011001000
+1101: 011001001
+1110: 011001010
+0011: 0110011
+0101: 0110100
+0110: 0110101
+1001: 0110110
+1010: 0110111
+1100: 011000
+0001: 0111
+0010: 000
+0100: 001
+1000: 010
+0000: 1
+\end{verbatim}
+
+This has expected length around 1.97 and entropy around 1.86.
+
+For the new probability distribution, we get $X^2$ as follows:
+
+\begin{verbatim}
+11 : 010
+01 : 011
+10 : 00
+00 : 1
+\end{verbatim}
+
+This has expected length around 2.04 and entropy around 1.94.
+
+We get $X^4$:
+
+
+\begin{verbatim}
+1111 : 0110010110
+0111 : 0110010111
+1011 : 011001000
+1101 : 011001001
+1110 : 011001010
+0011 : 0110011
+0101 : 0110100
+0110 : 0110101
+1001 : 0110110
+1010 : 0110111
+1100 : 011000
+0001 : 0111
+0010 : 000
+0100 : 001
+1000 : 010
+0000 : 1
+\end{verbatim}
+
+This has expected length around 5.30 and entropy around 3.88
+
+\item
+
+  Yes, such a scenario is possible.
+
+  Suppose we are encoding a source with 4 symbols $A,B,C,D$, with:
+
+  $P(A) = \frac{1}{3}$
+  
+  $P(B) = \frac{1}{3}$
+
+  $P(C) = \frac{1}{6}$
+
+  $P(D) = \frac{1}{6}$
+
+  We first combine $C$ and $D$, and then have a choice has to combine $A$ and $B$ or $A$ and $\{C,D\}$ (choosing $A$ here wlog).
+
+  Choosing the first results in code:
+
+\begin{verbatim}
+A: 01
+B: 00
+C: 11
+D: 10
+\end{verbatim}
+
+Whereas choosing the latter results in code:
+
+\begin{verbatim}
+A: 00
+B: 1
+C: 010
+D: 011
+\end{verbatim}
+
+The average code length of the first code is $\frac{2}{3} + \frac{2}{3} + \frac{1}{3} + \frac{1}{3} = 2$
+
+The average code length of the second code is $\frac{2}{3} + \frac{1}{3} + \frac{1}{2} + \frac{1}{2} = 2$
+
+So even though there are two codes with different code lengths, they are equally optimal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
