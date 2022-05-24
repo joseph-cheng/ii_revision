@@ -1,0 +1,52 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Hidden Markov models have many bioinformatics applications. For example, they can be used to predict gene structure from a DNA sequence (i.e. where introns, exons, etc. are).
+
+    To do this, we must first model our problem: our hidden states will be the underlying gene structure, and the emissions will be the DNA sequence.
+
+    Now, suppose we had a transition probability matrix and an emission probability matrix. Then, given a DNA sequence, we could use a decoding algorithm (like Viterbi) to predict the most likely sequence of hidden states corresponding to that DNA sequence, i.e. the most likely underlying gene structure.
+
+    To get this transition probability matrix and emission probability matrix, we could then use already tagged data, counting frequencies of each transition and emission, to allow us to estimate the transition and emission probabilities.
+
+    \item
+      The Markov clustering algorithm is an algorithm for clustering graphs.
+
+      As input, it takes a graph, and creates an adjacency matrix from it.
+
+      Then, we iterate two steps, expansion and inflation, until we converge. This is analogous to taking a random walk within a graph, weakening links to far away nodes, and strengthening links to close nodes. Since a random walk is likely to remain within a cluster, this generates good clusters.
+
+      The expansion step takes the power of the adjacency matrix, and the inflation step takes the power of each individual element, normalising along columns.
+
+      The $k$-means clustering algorithm takes as input a set of $n$-dimensional points and an integer $k$, and produces $k$ clusters. Comparing this to the MCL algorithm, we see that the MCL algorithm does not require a number of clusters to be given, which is useful if we do not know this information beforehand. However, each iteration of the $k$-means algorithm is $O(n^2)$ (where $n$ is the number of points), but each iteration of the MCL algorithm is $O(n^3)$.
+
+      The hierarchical clustering algorithm progressively joins clusters together (starting with each node in its own cluster) based on the smallest average distance, terminating when we only have a single cluster. Then, with the output cluster tree, we can cut it off at any point to obtain however many clusters we want. This means we do not have to specify the number of clusters before running the algorithm (like $k$-means), but we do have to choose a number eventually (unlike MCL).
+
+      \ite
+      The Doob-Gillespie algorithm is an algorithm for simulating reactions within a mixture. It has the following steps:
+
+      \begin{itemize}
+          \item
+            Calculate the propensities $a_i$ of each reaction$i$ based on the molecule concentrations.
+
+            \item
+              By normalising the propensities, form a probability distribution for the reactions and randomly pick a reaction based on this distribution.
+
+              \item
+                Using the unnormalised propensities' sum as input to an exponential distribution, choose a time $\tau$ for the reaction's duration.
+                
+                \item
+                  Update the molecule concentrations based on this time $\tau$ and the reaction.
+      \end{itemize}
+
+      These steps are iterated until we wish to stop.
+
+      Relation to biochemical networks not relevant.
+
+
+        
+    \end{enumerate}
+\end{document}
