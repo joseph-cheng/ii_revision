@@ -1,0 +1,73 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    When the matrices are very large, the performance of the program is poor because it has poor spatial locality, due to the order of the loops.
+
+    Since iteration over $k$ is the innermost loop, this means our accesses to C (and A) look like the following:
+
+\begin{verbatim}
+C[0][0]
+C[1][0]
+C[2][0]
+\end{verbatim}
+
+   When the matrices are very large, it is almost certain that each of these will be in its own cache line, so each iteration of the innermost loop will result in a cache miss.
+
+   Furthermore, if the matrices are large enough, by the time we have enough iterations to start accessing the elements \texttt{C[0][1]}, \texttt{C[1][1]}, etc. (which are probably in the same cache line as \texttt{C[0][0]} and \texttt{C[1][0]} respectively), we might have evicted these cache lines, so they will result in another cache miss.
+
+   This means that every iteration of the innermost loop likely results in a few cache misses, making performance very slow.
+
+   \item
+     Consider:
+
+\begin{verbatim}
+for(k=0;k<N;++k) {
+  for(j=0;j<N;++j) {
+    for (i=0;i<N;++i) {
+      C[k][i] = C[k][i] + ( A[k][j] * B[j][i] );
+    }
+  }
+}
+\end{verbatim}
+
+This performs exactly the same operation as the old loop, but will have much better performance.
+
+Accesses on each iteration look like:
+
+\begin{verbatim}
+C[0][0], A[0][0], B[0][0]
+C[0][1], A[0][0], B[0][1]
+C[0][2], A[0][0], B[0][2]
+...
+\end{verbatim}
+
+This has much better spatial locality, and it is likely that we will only need to cache miss once every few iterations of the loop, instead of multiple times on every loop.
+
+\item
+
+  Further improvements can be made through cache blocking, which is a technique where we do not iterate along entire rows at a time, we iterate along sections of rows:
+
+\begin{verbatim}
+for(kk=0;kk<N;kk += BLOCK) {
+  for(jj=0;jj<N;++j) {
+    for (i=0;i<N;++i) {
+      for (k=kk; k<kk+BLOCK;++k) {
+        for (j=jj; j<jj+BLOCK;++j) {
+          C[k][i] = C[k][i] + ( A[k][j] * B[j][i] );
+      }
+    }
+  }
+}
+\end{verbatim}
+
+This optimisation helps us to access submatrices of $B$ instead of having to iterate over the entire matrix, meaning we get better performance if the matrix cannot hold the entirety of $B$ at once.
+
+\item
+  The algorithm is a parallelisable, since each iteration  is independent, however it may not be a good idea unless we construct our threads carefully. If we have our threads accessing completely separate blocks of the matrices, then we will be constantly fighting over cache lines, which could reduce performance. Instead, if we ensure that the threads interleave the indices that they are accessing, then we might be able to get better performance by hiding memory access latency, and keeping the same cache locality.
+  
+        
+    \end{enumerate}
+\end{document}

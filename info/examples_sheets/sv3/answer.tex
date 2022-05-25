@@ -1,0 +1,176 @@
+\input{../../../template.tex}
+
+\begin{document}
+\begin{enumerate}
+  \item
+    For two r.v.s $X$ and $Y$, we define the joint entropy $H(X,Y)$ as follows:
+
+    \[
+      H(X,Y) = -\sum_{x \in X} \sum_{y \in Y} p_{X,Y}(x,y) \log_2(p_{X,Y}(x,y))
+    .\] 
+
+    We define conditional entropy $H(Y|X)$ as follows:
+
+    \[
+      H(Y|X)= -\sum_{x \in X}\sum_{y \in Y} p_{X,Y}(x,y) \log \frac{p_{X,Y}(x)}{p_X(x)}
+    .\] 
+
+    We define mutual information $I(X;Y)$ as follows:
+
+    \[
+      I(X;Y) = -\sum_{x \in X}\sum_{y \in Y} p_{X,Y}(x,y) \log \frac{p_{X,Y}(x)}{p_X(x)p_Y(y)}
+    .\] 
+
+    They are related in that $I(X;Y) = H(X,Y) - H(X|Y) - H(Y|X)$
+
+    \item
+      \begin{enumerate}
+          \item
+
+
+            We get that $H(X) = \log_2 8 = 3$ bits.
+
+            Then, $H(Y) = \sum_{i=1}^\infty i2^{-i}$
+
+            $H(Y) = \frac{1}{2} + \frac{2}{4} + \frac{3}{8} + \frac{4}{16} + \frac{5}{32} + \frac{6}{64} + \cdots$
+
+            $H(Y) < \frac{1}{2} + \frac{2}{4} + \frac{4}{8} + \frac{4}{16} + \frac{8}{32} + \frac{16}{64} + \cdots$
+
+            $H(Y) < 3(\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \cdots)$
+
+            $H(Y) < 3$
+
+            Therefore, $X$ has more uncertainty than $Y$.
+
+            We can actually completely calculate $H(Y)$ as follows:
+
+            $H(Y) = \frac{1}{2} + \frac{2}{4} + \frac{3}{8} + \frac{4}{16} + \cdots$
+
+            $H(Y) = \frac{1}{2} + (\frac{1}{4} + \frac{1}{4}) + (\frac{1}{8} + \frac{2}{8}) + (\frac{1}{16}) + (\frac{3}{16}) + \cdots$
+
+
+            $H(Y) = (\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \cdots) + (\frac{1}{2})(\frac{1}{2} + \frac{2}{4} + \frac{3}{8} + \cdots)$
+
+            $H(Y) = 1 + \frac{1}{2}H(Y)$
+
+            $H(Y) = 2$
+
+            \item
+              Since these variables are independent, their joint entropy $H(X,Y) = H(X) + H(Y) = 5$ bits.
+
+              Again, by independence, their mutual information is zero.
+      \end{enumerate}
+
+      \item
+
+        In the proof of the noisy channel theorem, we use a typical set decoder since we can reason about its behaviour. The noisy channel theorem proof is not a constructive proof, it simply enough to prove that there exists such a code that obtains rate at the capacity. The typical set decoder exists, but is not necessarily optimal, so if we find that with the typical set decoder there exists some random code that can obtain error-free communication with rate at capacity, then there must exist some code and decoder that can obtain error-free communication with rate at capacity.
+
+
+        \item
+          The second region would be of interest if we care about making a code that achieves a high rate, but that loses information, i.e. a lossy code. For example, we might be able to tolerate loss, like in video calls, voice calls, or compression of images, and in these scenarios we would like as high a rate as possible.
+
+          \item
+            We calculate $h(Y)$ as follows:
+
+            $h(Y) = -\int_0^\infty e^{-x}\log e^{-x} \mathrm{d}x$
+
+            $h(Y) = -\int_0^\infty -xe^{-x}\mathrm{d}x$
+
+            $h(Y) = [-xe^{-x} -e^{-x}]^\infty_0$
+
+            $h(Y) = 1$ bit.
+
+
+            We calculate $h(Z)$ as follows:
+
+            $h(Z) = -\int_0^\alpha \frac{1}{\alpha}\log_2 \frac{1}{\alpha} \mathrm{d}x$
+
+            $h(Z) =  \log_2 \alpha$
+
+            These entropies are the same when $\alpha = 2$
+
+            \item
+              \begin{enumerate}
+                  \item
+
+                    The channel capacity is maximised when $I(X;Y)$ is maximised under the best input distribution $X$.
+
+                    This means we need to maximise $H(Y) - H(Y|X)$
+
+                    $H(Y|X)$ is determined by the noise, so we can reduce this term by setting the error probability to either $f=0$ or $f=1$.
+
+                    Then, we just need to maximise $H(Y)$
+
+                    This is equivalent to maximising $H(X)$ if $f=0$ or $f=1$, so $X$ should be uniform.
+
+                    \item
+                      The probability that the scheme fails $P_e$ is the probability that we get 2 or more bit errors in a block.
+
+                      The probability we get 0 or 1 bit errors is given by $(1-f)^7 + 7(1-f)^6f$
+
+                      So the probability we get 2 or more bit errors is $1 - (1-f)^7+ 7(1-f)^6f$
+
+                      \item
+                        The probability that such a scheme fails $P_e$ is the probability that we get $m+1$ or more bit errors.
+
+                        This is binomial, given by:
+
+                        $\sum_{i=m+1}^N \binom{N}{i} f^i(1-f)^{N-i}$
+
+                        \item
+
+                          By the Shannon-Hartley theorem, the capacity of this channel is given by:
+
+                          $C = W\log_2(1 + 1000) = 1000000\log_2(1 + 1000) \approx 10000000$ bits per second.
+
+                          If the signal to noise ratio is four times better, the capacity of the channel is given by:
+
+                          $C = W\log_2(1 + 4000) = 1000000\log_2(1 + 4000) \approx 40000000$ bits per second.
+
+\item
+  The capacity of this channel is given by:
+
+  $C = W\log_2(1 + \frac{S}{N_0W})$
+
+  Suppose we increase $W$ arbitrarily, so take the limit of $C$ as $W$ approaches infinity.
+
+  Substituting $x = \frac{1}{W}$ this is equivalent to:
+
+  $\lim_{x \to 0} \frac{\log_2(1 + \frac{S}{N_0}x)}{x}$
+
+  The numerator and denominator both approach 0, so we use L'Hopital's rule to get:
+
+  $\lim_{x \to 0} \frac{S}{N_0(1 + \frac{S}{N_0}x)}$
+
+  Which approaches $\frac{S}{N_0}$, so there is a limit.
+
+  If we increase the SNR unboundedly, then there is no limit as to how high the capacity can go.
+
+  \item
+    The Kullback-Leibler divergence $D_{KL}(P||Q)$ is defined as the following:
+
+    $D_{KL}(P||Q) = \sum_{x} P(x) \log \frac{P(x)}{Q(x)}$
+
+    It is a measure of how far apart two probability distributions are.
+
+    It can also be interpreted as the amount of the extra bits needed to encode a source that we think has distribution $Q(x)$, but actually has distribution $P(x)$.
+
+    It is not a distance because it is  not symmetric. $D_{KL}(P||Q)$ is not necessarily equal to $D_{KL}(Q||P)$.
+
+
+
+
+
+
+
+              \end{enumerate}
+
+
+
+
+
+
+
+        
+\end{enumerate}
+\end{document}

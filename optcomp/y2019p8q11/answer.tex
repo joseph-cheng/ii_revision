@@ -1,0 +1,90 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Alias analysis is an analysis on procedural code that associates gives information as to which variables might alias with each other at particular points during a program/procedure, i.e. which variables might point to the same memory location.
+
+    This can provide the possibility for many different transformations along the course of a program. For example, it gives us a more accurate view of the data-flow of a program, which might allow us to make optimisations like propagating constants, where we would not have been able to previously.
+
+    Knowing that two pieces of code do not use any variables that alias with each other also means that they can be executed in parallel, which is another performance gain.
+
+    \item
+      Andersen's analysis is a flow insensitive analysis that associates every variable $x$ with a set $pt(x)$ which is the set of values that $x$ might point to over the course of a program.
+
+      It works by having a number of inference rules that yields constraints on our $pt$ sets for each statement in our program, which we then solve for their least solution.
+
+      We give rules for the relevant statements seen in the program
+
+      \begin{align*}
+        &\frac{}{\vdash  x := \&y : y \in pt(x)}\\
+        &\frac{v \in pt(x)}{\vdash *x := \&y : y \in pt(v)}\\
+        &\frac{}{\vdash x := y : pt(x) \supseteq pt(y)}\\
+        &\frac{u \in pt(a) \hspace{15pt} v \in pt(u) \hspace{15pt} w \in pt(x)}{\vdash *x := **a : pt(w) \supseteq pt(v)}\\
+        &\frac{u \in pt(y) \hspace{15pt} v \in pt(x)}{\vdash *x := *y : pt(v) \supseteq pt(u)}\\
+      \end{align*}
+
+      On the first iteration, we get the following constraints:
+
+      $b \in pt(c)$
+      
+      $pt(a) \supseteq pt(c)$
+
+      $d \in pt(c)$
+
+      So we get sets $pt(c) = \{b,d\}$ and $pt(a) = \{b,d\}$
+
+      On the next iteration, we get the following additional constraints:
+
+      $c \in pt(b)$
+
+      $c \in pt(d)$
+
+      $a \in pt(b)$
+
+      $a \in pt(d)$
+      
+      So we get sets $pt(a) = \{b,d\}, pt(b) = \{a,c\}, pt(c) = \{b,d\}, pt(d) = \{a\}$
+
+      On the next iteration, we get the following additional constraints:
+
+      $pt(b) \supseteq pt(a)$
+
+      $pt(b) \supseteq pt(c)$
+
+      $pt(d) \supseteq pt(a)$
+
+      $pt(d) \supseteq pt(c)$
+
+      So we get sets $pt(a) = \{b,d\}, pt(b) = \{a,b,c,d\}, pt(c) = \{b,d\}, pt(d) = \{a,b,c,d\}$
+
+      On the next iteration, we get the following constraints:
+
+      $pt(b) \supseteq pt(b)$
+
+      $pt(b) \supseteq pt(d)$
+
+      $pt(d) \supseteq pt(b)$
+
+      $pt(d) \supseteq pt(d)$
+
+      So we get sets $pt(a)= \{b,d\}, pt(b) = \{a,b,c,d\}, pt(c) = \{b,d\}, pt(d) = \{a,b,c,d\}$, so we have reached a fixed point and we stop.
+
+      \item
+        The analysis overestimates the answers in (b) because it is a flow-insensitive analysis, it does not consider where in the program each line of code is, it just cares that they exist. This means that some variables are said to point to others, even though in this particular program that is not actually possible.
+
+        \item
+          Using the analysis from part (b), we see that $pt(a) \cap pt(c) \neq \{\}$, meaning that if the two calls were executed concurrently, we might get unexpected results since they could alter memory locations that the other accesses. 
+
+          Knowing what we do in (c), we can alter our analysis to be flow-sensitive, which we can do by considering each line in order, since lines 6 and 8 perform actually identical things, and get that at lines 10 and 11, $pt(a) = \{b\}$ and $pt(c) = \{d\}$, so they are disjoint and thus the two calls can be executed in parallel.
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}

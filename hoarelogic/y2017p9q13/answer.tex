@@ -1,0 +1,99 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We give an inductive definition:
+
+    $M, \pi \vDash X \psi$ if $M, (tailn \pi 1) \vDash \psi$
+
+    $M, \pi \vDash F \psi$ if $\exists n. M (tailn \pi n) \vDash \psi$
+
+    $M, \pi \vDash G \psi$ if $\forall n. M (tailn \pi n) \vDash \psi$
+
+    $M, \pi \vDash \psi_1 U \psi_2$ if $\exists n. \forall k < n$, $M (tailn \pi k) \vDash \psi_1$ and $\M, (tailn \pi n) \vDash \psi_2$
+
+    Then,
+
+    $M, s \vDash  \top$ always
+
+    $M, s \vDash  \bot$ never
+
+    $M, s \vDash p$ if $p \in M.L s$
+
+    $M, s \vDash \psi_1 \wedge \psi_2$ if $M, s \vDash \psi_1$ and $M, s \vDash \psi_2$
+
+    $M, s \vDash \psi_1 \vee \psi_2$ if $M, s \vDash \psi_1$ or $M, s \vDash \psi_2$
+
+    $M, s \vDash \psi_1 \implies \psi_2$ if $M, s \vDash \neg \psi_1$ or $M, s \vDash \psi_2$
+
+    $M, s \vDash \neg\psi$ if $M, s \not\vDash \psi$
+
+    $M, s \vDash A \phi$ if $\forall \pi \in paths(s). M, \pi \vDash \phi$
+
+    $M, s \vDash A \phi$ if $\exists \pi \in paths(s). M, \pi \vDash \phi$
+
+    Where $tailn \pi n$ removes the first $n$ elements from $\pi$ to form a new path, and $paths(s)$ is a set of all paths that start from state $s$.
+
+    \item
+      \begin{enumerate}[label=(\roman*)]
+
+        \item
+          The formula $A G p$ means that $p$ holds in every state reachable from the start state.
+
+          Therefore, this holds for $s_0, s_2, s_4$.
+
+          This is because all even numbers are connected to each other, (and no odd numbers are connected to even numbers), and $p$ holds in every even state.
+
+          \item
+            The formula $E F q$ means that there exists a path from the start state where $q$ holds somewhere.
+
+            This holds for $s_1, s_3$, no even numbers are connected to odd numbers, and all odd numbers connected to each other.
+
+            \item
+              The formula $E X (p \wedge r)$ means there exists a path from the start state whose next state is labelled with $p$ and $r$.
+
+              No such state exists, so this formula is not satisfied by any state.
+          
+      \end{enumerate}
+
+      \item
+
+        Two formulae $\phi_1$ and $\phi_2$ are semantically equivalent when, for every model $M$, and every state $s$, $M, s \vDash \phi_1 \leftrightarrow M, s \vDash \phi_2$
+
+        \item
+
+          Let $M, s$ be arbitrary.
+
+          Suppose $M,s \vDash (\phi_1 \vee \phi_2) \wedge \phi_3$
+
+          This means that $M,s \vDash \phi_1 \vee \phi_2$ and $\M,s \vDash \phi_3$
+
+          $M,s \vDash \phi_1 \vee \phi_2$ means that either $M,s \vDash \phi_1$ or $M,s \vDash \phi_2$. Suppose the first case holds (the second is analogous.
+
+          Then, $M,s \vDash (\phi_1 \wedge \phi_3)$, and thus $M,s \vDash (\phi_1 \wedge \phi_3) \vee (\phi_2 \wedge \phi_3)$.
+
+          This holds analogously in the second case.
+
+          Now consider the other direction.
+
+          Suppose $M, s \vDash (\phi_1 \wedge \phi_3) \vee (\phi_2 \wedge \phi_3)$.
+
+          This means that either $M,s \vDash (\phi_1 \wedge \phi_3)$ or $M,s \vDash (\phi_2 \wedge \phi_3)$. Assume the first case holds, the second is analogous.
+
+          This means that both $M,s \vDash \phi_1$ and $M,s \vDash \phi_3$
+
+          Therefore, $M, s \vDash (\phi_1 \vee \phi_2)$ holds, and thus $M, s \vDash (\phi_1 \vee \phi_2) \wedge \phi_3$ holds
+
+          Therefore, we are done.
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
