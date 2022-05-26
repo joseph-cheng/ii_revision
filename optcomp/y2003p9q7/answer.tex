@@ -1,0 +1,78 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+
+        Strictness analysis is a form of abstract interpretation used for pure, functional languages, where we abstractly interpret expressions as values from the set $2 = \{0,1\}$, where 0 means guaranteed non-termination, and 1 means possible termination.
+
+        Then, a $k$-argument, 1-result function $\mathbb{Z}^k \rightarrow \mathbb{Z}$ (assuming integers here, but could be any domain/range) as $2^k \rightarrow 2$, where given the termination behaviour of its arguments, we get the termination behaviour of the function call.
+
+        Built-in functions are given an abstract interpretation through manual labelling. User-defined functions are given abstract meanings through composition of abstract interpretations of the built-in functions (or perhaps user-defined ones we have already calculated).
+
+        We require some extra work if we allow for recursion in our language, since we cannot simply compute our abstract function interpretations through composition, we have to compute a fixed point instead, by initialising the abstract interpretation(s) to never terminate, and then finding the least fixed point through iteration.
+
+        This analysis allows us to determine which functions are strict in particular arguments. A function is strict in a particular argument if, when that argument does not terminate but all other arguments may terminate, the function does not terminate, i.e. when $f^{\#}(1,\ldots,1,0,1,\ldots,1) = 0$. This allows us to replace the use of this parameter with CBV semantics instead of call-by-name or call-by-need semantics. Using CBV semantics instead of call-by-name semantics means we might avoid having to re-evaluate the argument multiple times, and using CBV semantics instead of call-by-need semantics means we get better asymptotic space complexity because we don't need to carry around a closure, and we also get better cache affinity.
+
+        \item
+          \begin{enumerate}[label=(\roman*)]
+
+            \item
+              We abstractly interpret values as members of the set $2 = \{0,1\}$, where being 0 means a cons cell definitely does not escape in the value, but 1 means a cons cell may escape in the value.
+
+              Then, we can abstractly interpret $k$-argument, 1-result functions as being $2^k \rightarrow 2$, where the meaning is analogous to strictness analysis.
+
+              We give the following abstract interpretations:
+
+              $cond^{\#}(c,x,y) = \lambda c,x,y. x \vee y$
+
+              $cons^{\#}(h, t) = \lambda h,t. t$
+
+              $hd^{\#}(l) = 0$ (since we have no lists of lists).
+
+              $tl^{\#}(l) = l$
+
+              \item
+                We solve these using fixed-point iteration.
+
+                We first yield:
+
+                $f^{\#}(x,y,z) = y \vee z$
+
+                $g^{\#}(x,y) = g^{\#}(x,y)$
+
+                $h^{\#}(x,y) = x \vee h^{\#}(x,y)$
+
+                $k^{\#}(x,y) = y \vee k^{\#}(x,y)$
+
+                So we have $f$ immediately, and then we initialise each $g^{\#}, h^{\#}, k^{\#}$ to $\lambda x,y. 0$, and substitute to get:
+
+                $g^{\#}(x,y) = 0$
+
+                $h^{\#}(x,y) = x$
+
+                $k^{\#}(x,y) = y$
+
+                $g^{\#}$ did not change so we are done, and then we iterate again for $h$ and $k$:
+
+                $h^{\#}(x,y) = x$
+
+                $k^{\#}(x,y) = y$
+
+                Neither change, so we are done for those as well.
+
+              
+          \end{enumerate}
+
+
+
+        
+    \end{enumerate}
+        
+    \end{enumerate}
+\end{document}
