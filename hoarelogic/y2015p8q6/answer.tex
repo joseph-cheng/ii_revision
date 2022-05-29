@@ -1,0 +1,39 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    In temporal logic, path formulae make claims about a path, like does a proposition hold on every step of a path, does it hold on some state in the path, does the property holds in the  next node in the path?
+
+    Whereas, state formulae instead make claims about a particular state, or all paths that start in a state, like does there exist a path from this state where some path formula holds, or do all paths from this state have a particular path formula hold.
+
+    We can, in the most general grammar, also combine path formulae together with standard logical operators, and the same for state formulae.
+
+    \item
+      The meaning of $F( G p)$ is that on some suffix of the current path, $p$ holds indefinitely, i.e. at some point along the path, $p$ becomes always true.
+
+      On the other hand $AF(AG p)$ means that on all paths from the current state, some suffix of those paths starts with a state where every state reachable from it satisfies $p$
+
+      \item
+        The meaning of $G( F p)$ is that in all suffixes of the current path, at some point along that suffix $p$ holds, i.e. $p$ holds infinitely often.
+
+        The meaning of $AG(AF p)$ is that on all paths from the current state, every suffix of those paths starts with a state where $p$ is reachable from it, i.e. $p$ holds infinitely often along every path from the current state.
+
+        \item
+
+          We give the formula:
+
+          $AG (p \implies E (F q))$
+
+          This is a state formula that says that if $p$ is true at a particular state, then there exists a path from that state where $q$ is true in the future, i.e. if $p$ is true, then we can reach $q$.
+
+          \item
+            We give:
+
+            $\neg E (p \wedge X p \wedge \cdots \wedge X^{255} p)$
+
+            This is a state formula that says that no path exists such that $p$ is true at the start state, $p$ is true at the second state, etc., and $p$ is not true at the 256th state.
+        
+    \end{enumerate}
+\end{document}
