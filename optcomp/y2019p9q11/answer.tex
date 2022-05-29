@@ -1,0 +1,48 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    The phase order problem in a compiler relates to the problem of deciding in which order analyses and their transformations should be done on a piece of code in order to produce the best optimised code.
+
+    For example, consider common subexpression elimination and register allocation, as well as the following code:
+
+\begin{verbatim}
+ADD t1, t2, t3
+ADD t1, t1, t1
+ADD t4, t2, t3
+MUL t2, t2, t3
+\end{verbatim}
+
+We see here that $t_2 + t_3$ is recomputed, so we can use CSE to remove its recomputation:
+
+\begin{verbatim}
+ADD t5, t2, t3
+MOV t1, t5
+ADD t1, t1, t1
+MOV t4, t5
+MUL t2, t2, t3
+\end{verbatim}
+
+Before CSE, we only required three registers, whereas after CSE we actually need four registers, so the phase order problem applied here is deciding whether or not we should perform register allocation before or after CSE. In this particular case, we could imagine that if we only had three registers available to us, then we would have to spill to memory if we did CSE before register allocation, resulting in potentially slower code.
+
+\item
+  Since the 32-bit registers effectively alias with the 64-bit registers, we have problems in code generation in register allocation, since if we find that we allocate a variable to $s_i$, we cannot allocate another variable to $r_i$, and vice versa, even if they do not clash, or else we will overwrite their data. We also get similar problems in instruction scheduling. To solve this, we should ensure that we consider dependencies in our DAG when two instructions access any part of the same register, and not just those registers with the same name. We must also ensure that our LVA for example kills both $s_i$ and $r_i$ on a write to $r_i$.
+
+  Code generation becomes more difficult with branch delay slots since we need to ensure that the instruction after a branch is safe to execute, regardless of whether or not the branch is taken. If we do not, then we might end up erroneously executing an instruction. Since branch instructions only occur at the end of basic blocks, we can ensure that we always schedule a no-op after the final branch, or even better, we prefer branches over other instructions when there are only two instructions left to schedule, meaning that if we can we fill the branch delay slot with useful work.
+
+  Non-orthogonal instructions (like the one described) cause problems in register allocation because registers become implicitly live, and if we use a traditional register allocation algorithm we might overwrite the correct source operand for a complex arithmetic instruction. To solve this, we ensure that these complex arithmetic instructions generate $r_{15}$ as being live in our LVA for register allocation.
+
+  \item
+    With this approach, we never need to perform register allocation, which means that we do not have to deal with its interaction with the phase order problem like we saw in (a). In order to maintain SSA form, it is likely that it has to be the last phase that we do, since other transformations might break the guarantees that SSA makes. Furthermore, it is likely that without this idea, we still would convert to SSA form at some point, but would instead have to convert out of it at some point, which could generate a lot of wasteful MOV instructions for the $\phi$ instructions.
+
+    However, there is a potential optimisation that we could make after conversion to SSA form, since we would have to ensure temporal locality of registers, or else our program might be very slow to run, which means that our instruction scheduling algorithm becomes more complicated, since we need to prefer instructions that use registers that were recently used, which could be complex to implement well, since the performance of our program is much less deterministic, since it depends on how our registers are used (we might even have to simulate the cache).
+
+    Finally, we get issues with return values and parameters: they must be placed in memory, since a function is unable to dynamically select the correct register to use, and so our only solution is to store them in memory, which makes function calls more expensive.
+
+
+        
+    \end{enumerate}
+\end{document}

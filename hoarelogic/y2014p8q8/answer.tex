@@ -1,0 +1,68 @@
+\input{../../template.tex}
+\begin{document}
+    
+
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+  \begin{enumerate}[label=(\roman*)]
+      
+  \item
+    We can represent our states by a 10-tuple, where the first 9 elements are from the set $\{0,1,2\}$ representing nought, cross, and empty space respectively. These 9 elements read across in rows, so the fourth element of the tuple is the center-left cell. Finally, the 10th element of the tuple is in the set $\{0,1\}$ representing whose turn is next (0 for nought, 1 for cross).
+
+    \item
+      
+
+      The set of initial states are the two states $(0,0,0,0,0,0,0,0,0,0)$ and $(0,0,0,0,0,0,0,0,0,1)$, representing the empty grid, with either player to start.
+
+      \item
+
+
+        We have that $R(s,s')$ if $s$ is of the form $(s_0, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, p)$, and $s'$ is of the form $s[p / s_i, 1-p / p]$ where $i$ is arbitrary as long as $s_i = 2$, 
+
+        Where $s[x / y, u / v]$ corresponds to replacing occurrences of $y$ with $x$ and $v$ with $u$ simultaneously in $s$.
+
+        \item
+          For the state $s = (s_0, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9)$, we have that $Has(i, s_{i-1}) \in L(s)$ holds for all $i \in \{1\ldots9\}$
+
+          We also have that $Start(p) \in s$ if $s_9 = p$ and $2 \in \{s_0, \ldots, s_8\}$
+    
+  \end{enumerate}
+
+  \item
+    We give a CTL formula:
+
+    $(Start(0) \implies E X (A X (E X (A X (E X (A X (E X (A X (E X (Win(0) \vee Draw(0))))))))))) \wedge (Start(1) \implies E X (A X (E X (A X (E X (A X (E X (A X (E X (Win(1) \vee Draw(1)))))))))))$
+
+    Where $Win(p)$ is the compound formula:
+
+    $(Has(1,p) \wedge Has(2,p) \wedge Has(3,p)) \vee$
+
+    $(Has(4,p) \wedge Has(5,p) \wedge Has(6,p)) \vee$
+
+    $(Has(7,p) \wedge Has(8,p) \wedge Has(9,p)) \vee$
+
+    $(Has(1,p) \wedge Has(4,p) \wedge Has(7,p)) \vee$
+
+    $(Has(2,p) \wedge Has(5,p) \wedge Has(8,p)) \vee$
+
+    $(Has(3,p) \wedge Has(6,p) \wedge Has(9,p)) \vee$
+
+    $(Has(1,p) \wedge Has(5,p) \wedge Has(9,p)) \vee$
+
+    $(Has(3,p) \wedge Has(5,p) \wedge Has(7,p))$
+
+    And $Draw(p)$ is the compound formula:
+
+    $\neg (Has(1, 2) \vee \ldots \vee Has(9,2)) \wedge \neg (Win(0) \vee Win(1))$
+
+    This formula holds because there are at most 9 moves in a given game, so the computation tree has only a depth of 9. At each step, we use either $E X$ (if the first player is playing) to say that we can choose a `best' move, and $A X$ (if the second player is playing) to ensure that we consider every possible play that the second player can make.
+
+    We duplicate this for both players.
+
+
+
+
+
+\end{enumerate}
+\end{document}

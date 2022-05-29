@@ -1,0 +1,31 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Not relevant
+\item
+  For assertions $P,Q$ and command $C$, we have that $\{P\}C\{Q\}$ holds in separation logic if for all heaps $h_1$ and stacks $s$ that satisfy $P$, if we choose arbitrary $h_F$ disjoint from $h_1$, then $\langle C, \langle h_1 \uplus h_F, s \rangle \rangle \not \leadsto^* \lightning$ (it does not fault), and if $\langle C, \langle h_1 \uplus h_f, s \rangle \rangle$ terminates in some program state $h', s'$, then there exists an $h_1'$ such that $h' = h_1' \uplus h_F$, and then $h_1', s'$ satisfy $Q$.
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+        \item
+          This triple is not true.
+
+          In order for us to be able to prove it true, we would have to be able to reduce it to something of the form $\{X \mapsto t\}[X]:= 1\{X \mapsto 1\}$
+
+          Since the given precondition ($\{X = 0\}$) has an empty heap, there is no way we can get the precondition $\{X \mapsto t\}$ for some $t$, since there are no allocations in the command. Therefore, by the relative completeness of separation logic, this triple is not true.
+
+          Another argument is that $\{X =0\}[X]:= 1\{X \mapsto 1\}$ requires as a precondition that the heap is empty, so the assignment $[X] := 1$ will fault.
+
+          \item
+            Not relevant.
+          \item
+
+            Not relevant.
+    \end{enumerate}
+
+        
+    \end{enumerate}
+\end{document}

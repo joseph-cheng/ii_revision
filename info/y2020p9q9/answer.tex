@@ -1,0 +1,44 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        The cross entropy $H(p,q)$ is defined as the follows:
+
+        $H(p,q) = -\sum_{x} p(x) \log_2 q(x)$
+
+        The cross entropy is minimised when the two random variables are perfectly correlated, and then has value $H(p,q) = H(p) = H(q)$
+
+        \item
+          $D_{KL}(p||q)$ is defined as $\sum_x p(x) \log_2 \frac{p(x)}{q(x)}$.
+
+          Again, it is minimised when the two variables are perfectly correlated, and then has value $D_{KL}(p||q) = 0$ (since the log is always 0)
+
+          \item
+
+            We are required to prove that $H(p,q) = D_{KL}(p||q) + H(p)$
+
+            Consider:
+
+            $D_{KL}(p||q) + H(p)$
+
+            $= \sum_x p(x) \log_2 \frac{p(x)}{q(x)} + \sum_x p(x) \log_2 \frac{1}{p(x)}$
+
+            $= \sum_x p(x) \log_2 \frac{1}{q(x)}$
+
+            $= -\sum_x p(x) \log_2 q(x)$
+
+            $= H(p,q)$
+
+
+
+        
+    \end{enumerate}
+
+        
+    \end{enumerate}
+\end{document}

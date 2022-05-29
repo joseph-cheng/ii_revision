@@ -1,0 +1,27 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    This can be viewed as a compression problem, so since each question reveals one bit of information, we need to ask what the entropy of the source is.
+
+    In our case, it is:
+
+    $\lim_{n \to \infty} \sum_{i=1}^n (\frac{1}{2})^i \log_2 ((\frac{1}{2})^i)$
+
+    This has known limit of 2, so this source has 2 bits of entropy.
+
+    Therefore, we can expect to ask 2 yes/no questions by the Source Coding Theorem, which tells us we can always compress down to the entropy of a source, but not any lower (without losing information).
+
+    The sequence of questions that would be best to pick is the sequence of questions that ensures we half the remaining entropy with each question, so we ask:
+
+    Is the number 1?
+
+    Is the number 2?
+
+    $\ldots$
+        
+    \end{enumerate}
+\end{document}
