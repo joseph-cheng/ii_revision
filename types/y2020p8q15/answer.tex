@@ -1,0 +1,75 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        Yes, this does hold.
+
+        To prove, we exhibit a term of type $A \rightarrow ((A \rightarrow \bot) \rightarrow \bot)$
+
+        $\lambda x : A. \lambda k : A \rightarrow \bot. kx$
+
+        \item
+          This does not hold in general for constructive logic.
+
+          \item
+            This does hold.
+
+            To prove, we exhibit a term of type $(((A \rightarrow \bot) \rightarrow \bot) \rightarrow \bot) \rightarrow (A \rightarrow \bot)$
+
+            $\lambda f : (((A \rightarrow \bot) \rightarrow \bot) \rightarrow \bot). \lambda x : A. f (\lambda g: A \rightarrow \bot. g x)$
+    \end{enumerate}
+
+    \item
+      We have:
+
+      \[
+        \frac{}{\Gamma \vdash z : nat}
+      .\] 
+
+      \[
+        \frac{\Gamma \vdash e : nat}{\Gamma \vdash s(e) : nat}
+      .\] 
+
+      \[
+        \frac{\Gamma \vdash e : nat \hspace{15pt} \Gamma \vdash e_z : T \hspace{15pt} \Gamma \vdash e_s : (nat \rightarrow T)}{\Gamma \vdash iter(e, z \rightarrow e_z, s(x) \rightarrow e_s) : T}$
+      .\] 
+
+      \item
+        We give:
+
+        $add \triangleq \lambda n : nat. \lambda m : nat. iter(n, z \rightarrow m, s(x) \rightarrow \lambda x:nat . add\ x\ m)$
+
+        \item
+          We define:
+
+          \[
+            \frac{}{\Gamma \vdash Leaf: tree}
+          .\] 
+
+          \[
+            \frac{\Gamma \vdash l : tree \hspace{15pt} \Gamma \vdash x : nat \hspace{15pt} \Gamma \vdash r : tree}{\Gamma \vdash Node(l,x,r): tree}
+          .\] 
+
+          \[
+            \frac{\Gamma \vdash t : tree \hspace{15pt} \Gamma \vdash e_l : T \hspace{15pt} \Gamma \vdash e_b : (tree \rightarrow T') \hspace{15pt} \Gamma \vdash e_c: T' \rightarrow T' \rightarrow int \rightarrow T}{\Gamma \vdash traverse(t, Leaf \rightarrow e_l, Node(l,x,r) \rightarrow e_c (e_b l) (e_b r) x)}
+          .\] 
+
+          \item
+            Then we define $size$:
+
+            $size \triangleq \lambda t: tree. traverse(t, Leaf \rightarrow 0, Node(l,x, r) \rightarrow (\lambda l':nat ,r':nat, x':nat. add(add(l',r',), s(z))) ((\lambda t':tree. size t') l) ((\lambda t' : tree. size t') r) x)$
+
+            \item
+
+              This typing means that to call $zip$, we give it two sets (domains) $A$ and $B$, a natural number $n$, a vector containing elements from $A$ of length $n$, and a vector containing elements from $B$ of length $n$, and then returns a vector of length $n$ where each element is a pair of elements: one from  the first vector, and one from the second vector.
+
+
+
+        
+    \end{enumerate}
+\end{document}
