@@ -1,0 +1,74 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Hamming distances measure the number of mismatches between two sequences, with no in-dels permitted.
+
+    Edit distances measure the number of actions required to make two sequences match up, including both mismatches and in-dels.
+
+    Consider the two sequences:
+
+\begin{verbatim}
+ATTAG
+ATAGA
+\end{verbatim}
+
+They have a Hamming distance of 3, with the three mismatches, but an edit distance of only 2, with the following gaps:
+
+\begin{verbatim}
+ATTAG-
+A-TAGA
+\end{verbatim}
+
+\item
+The Smith-Waterman algorithm is a sequence alignment algorithm.
+
+The sequence alignment problem is the problem of finding the best alignment between two sequences such that regions of similarity are conserved. For example, this can help to find similarities between DNA sequences of two different species.
+
+In particular, the Smith-Waterman algorithm solves the local alignment problem, which is where we align in subrectangles of the edit matrix.
+
+The algorithm is a dynamic programming algorithm, so if we are trying to align two sequences $x$ and $y$, if we have alignments of prefixes of $x$ and $y$, we can align these prefixes plus 1 character, for example.
+
+The algorithm takes as input two strings $x, y$, a gap penalty $\delta$, and a scoring matrix $s$ (which gives the match/mismatch score between two characters), and returns as output an alignment score and alignment.
+
+Then, we compute the following function/matrix with dynamic programming:
+
+\[
+  F(i,j) = \max\begin{cases}0\\F(i-1, j) - \delta\\F(i, j-1) - \delta\\F(i-1, j-1)+ s(x_i, y_j)\end{cases}
+.\] 
+
+With initialisation of $F(i,0) = 0$ and $F(0, j) = 0$ for all $i$ and $j$.
+
+We also store an additional $Ptr$ matrix that tells us in what direction to go to trace back an alignment.
+
+The addition of 0 into the cases of the dynamic programming function is what makes this algorithm compute local alignment: at any point we are allowed to reset to consider a new subrectangle.
+
+Then, we get the alignment score in $F(|x|, |y|)$, and backtrack using the $Ptr$ matrix to obtain an alignment.
+
+
+This algorithm has $O(nm)$ time complexity and $O(nm)$ space complexity to fill the matrix (where $n = |x|$ and $m = |y|$).
+
+By setting the gap penalty to 0, mismatch penalty to infinity, and the match score to 1, then the longest common subsequences can be found by finding the highest scoring cells in our matrix, and tracing back until we hit 0.
+
+\item
+  This is a modification of the Needleman-Wunsch algorithm for global alignment, which assumes that the two strings are very similar.
+
+  The idea behind it is that if the two strings are very similar, we are unlikely to stray far from the leading diagonal in the best alignment. So if our grid is $N \times M$ (assuming $N > M$ wlog), then we choose $k$ as a function of $N$, and only fill in the cells $(i,j)$ where $i - k < j < i + k$
+
+  This will disregard a large portion of the edit matrix, so our space and time complexity (for a naive solution) goes from $O(N^2)$ to $O(Nk)$.
+
+  \item
+An optimisation also exists to improve the time complexity of these alignment algorithms to $O(\frac{n^2}{\log n})$ from $O(n^2)$ with space complexity $O(n^2)$ (assuming that $n = \max(n,m)$ here for simplicity).
+
+This is the Four Russians speedup. It works by dividing our matrix into a grid of blocks of size $t \times t$. We then create a lookup table that has pre-calculated alignments for each block. For each possible pairs of $t$-length sequences, we can compute their alignment and store it in a lookup table. Then, we compute an alignment through these blocks, by simply considering blocks of characters instead of individual characters, and using the lookup table to determine the alignment scores between each block.
+
+This lookup table will be of size $4^t \times 4^t$, so if $t = \frac{\log n}{4}$ it has size $n$.
+
+Since we require $\frac{n}{t} \cdot \frac{n}{t}$ accesses in total (since our new grid is of size $\frac{n}{t} \times \frac{n}{t}$, and each access takes $O(\log n)$ time, we get the total running time as $O(\frac{n^2}{(\log n)^2} \log n) = O(\frac{n^2}{\log n})$ time.
+
+
+        
+    \end{enumerate}
+\end{document}

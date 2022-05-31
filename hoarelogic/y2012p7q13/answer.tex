@@ -1,0 +1,49 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We can represent this state space by a single natural number, representing the value of \texttt{N}, since the value of \texttt{N} perfectly describes the state of the program (\texttt{N=1} only if we are in the first line, \texttt{N>1} only if we are in the loop, and \texttt{N =0} only if we are at the end of the program).
+
+    Given this, we have that two states $n,n'$ are related if $n' = n+1$ and $n \neq 0$, or if $n' = 0$ (such that 0 relates to itself [and only itself] for left-totality).
+
+    The only start state is $n=1$.
+    
+    \item
+
+      We introduce two atomic propositions: $term$ and $zero$. $term$ and $z$ are both only true in the state where $n=0$.
+
+      \begin{enumerate}[label=(\roman*)]
+
+        \item
+          We provide the following formula, in CTL:
+
+          $A F(term)$
+
+          This formula means that along all paths from the start state, somewhere along that path we reach a state that terminates.
+
+          This is not true in the given model, since there exists a path $1 \rightarrow 2 \rightarrow \cdots$ forever, and this never reaches state 0 and thus never terminates.
+
+          \item
+            We provide the following formula, in CTL:
+
+            $E F(term)$
+
+            This formula means that along some path from the start state, somewhere along that path we reach a state that terminates.
+
+            \item
+              We provide the following formula, in CTL:
+
+              $AG (term \implies zero)$
+
+              This formula means that in all reachable states, if we terminate, then zero also holds.
+
+              This does hold, since the only state where $term$ holds is the state for 0, where $zero$ also holds.
+          
+      \end{enumerate}
+
+
+        
+    \end{enumerate}
+\end{document}

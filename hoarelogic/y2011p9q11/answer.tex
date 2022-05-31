@@ -1,0 +1,29 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    Not relevant.
+
+    \item
+      To check properties of the form $G\ p$, we have to check that at all states reachable from the start states, $p$ holds.
+
+      An algorithm to do this might work as follows:
+
+      Maintain a set of nodes to explore, and nodes visited, initialised to the starting states and the empty set respectively.
+
+      Then, remove a node from the set of nodes to explore, add it to the set of nodes visited, and add any of its children to the set of nodes to explore (if they are not already in the visited nodes set).
+
+      Terminate when there are no nodes left to explore.
+
+      Then, iterate over each node we visited (which is the set of all reachable nodes), and check if $p$ holds in each state. If it does, then $G\ p$ is true. If $p$ does not hold in any state, than $G\ p$ is false.
+
+      \item
+
+        Explicit state model checking works by holding explicit data structures that store all of the states, and the transition relation is a data structure that contains mappings between states (or is perhaps a function from one state, returning a set of the states we could transition to).
+
+        Symbolic model checking works by defining the state space (all states in the state space are not necessarily states in the model, though), and then the states and transition relation are defined as Boolean formulae over the state space. For example, a state $s$ from the state space is in the model if the Boolean formula holds for $s$. Similarly, we can transitions from states $s$ and $s'$ (that are in the model), if the Boolean formula for the transition relation is true for $s$ and $s'$.
+        
+    \end{enumerate}
+\end{document}
