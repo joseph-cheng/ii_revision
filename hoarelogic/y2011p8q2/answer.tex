@@ -1,0 +1,61 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We construct:
+
+    \texttt{SKIP} $\triangleq$ \texttt{X=X}
+
+    The assignment rule tells us that $\{P[X / X]\}SKIP\{P\}$ holds for all $P$, and since $P[X / X] = P$, we have $\{P\}SKIP\{P\}$, as required.
+
+    \item
+      We propose:
+
+      \texttt{IF S THEN C} $\triangleq$ \texttt{IF S THEN C ELSE SKIP}
+
+      Applying the conditional rule, we get:
+
+      \[
+        \frac{\vdash \{P\wedge S\}C\{Q\} \hspace{15pt} \vdash\{P \wedge \neg S\}\texttt{SKIP}\{Q\}}{\vdash \{P\}IF\ S\ THEN\ C\{Q\}}
+      .\] 
+
+      We have that $\vdash \{P \wedge S\}C\{Q\}$ is true by assumption.
+
+      Then, by post-condition weakening, to prove $\vdash\{P \wedge \neg S\}SKIP\{Q\}$ we can prove $\vdash \{P\wedge \neg S\}SKIP\{P \wedge \neg S\}$, which is true by (a).
+
+      Therefore, we have $\vdash \{P\}IF\ S\ THEN\ C\{Q\}$
+
+      \item
+        We provide the command:
+
+        \texttt{MAGIC} $\triangleq$ \{WHILE 0=0 DO SKIP\}
+
+        Assuming we have integers and an equality operator. If not, then we encode $\top$ in some other way.
+
+        We provide a proof outline:
+\begin{verbatim}
+{P}
+{P /\ T}
+WHILE 0=0 DO
+  {P /\ T /\ 0=0}
+  SKIP
+  {P /\ T /\ 0=0}
+  {P /\ T}
+{P /\ T /\ ~(0=0)}
+{P /\ T /\ ~T}
+{Q} (explosion)
+\end{verbatim}
+
+
+
+
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}
