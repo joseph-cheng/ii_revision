@@ -1,0 +1,56 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We give the following effect system, as an augmented type system. We also augment types such that function types are now represented by $\tau \xrightarrow{F} \tau'$, where $F$ is the set of latent effects of the function.
+
+     \begin{align*}
+       \frac{}{\Gamma \vdash x : T, \emptyset}(x:T \in \Gamma)\\\\
+       \frac{\Gamma, x : T \vdash e: T', F}{\Gamma \vdash \lambda x. e : T \xrightarrow{F} T', \emptyset}\\\\
+       \frac{\Gamma \vdash e_1 : T \xrightarrow{F''} T', F \hspace{15pt} \Gamma \vdash e_2 : T, F'}{\Gamma \vdash e_1\ e_2: T', F \cup F' \cup F''}\\\\
+       \frac{\Gamma \vdash e : int, F}{\Gamma \vdash ref\ e : int\ ref, F \cup \{A\}}\\\\
+       \frac{\Gamma \vdash e : int\ ref, F}{\Gamma \vdash !e : int, F \cup \{R\}}\\\\
+       \frac{\Gamma \vdash e_1: int\ ref, F \hspace{15pt} \Gamma \vdash e_2: int, F'}{\Gamma \vdash e_1 := e_2 : int, F \cup F' \cup \{W\}}\\\\
+       \frac{\Gamma \vdash e_1: int, F \hspace{15pt} \Gamma \vdash e_2 : T, F', \hspace{15pt} \Gamma \vdash e_3 : T, F''}{\Gamma \vdash if\ e_1\ then\ e_2\ else\ e_3 : T, F \cup F' \cup F''}\\\\
+       \frac{\Gamma \vdash e : \tau \xrightarrow{F} \tau', F'' \hspace{15pt} F \subseteq F'}{\Gamma \vdash e : \tau \xrightarrow{F'} \tau', F''}
+     \end{align*}
+
+     \item
+       \begin{enumerate}[label=(\roman*)]
+         \item
+           
+
+       Since $g$ is of type int ref, $!g$ has judgement $int, \{R\}$ through the deref rule.
+
+       Then, since 1 is of type int, $int\ 1$ gets judgement $int\ ref, \{A\}$ through the allocate rule.
+
+       Finally, $g$ has judgement $int\ ref, \{\}$ through the var rule.
+
+       Therefore, through the if rule, the whole expression has judgment $int\ ref, \{R,A\}$
+
+       \item
+         First, we put $x: int$ in our context through the function rule, and then we have to prove that the $if$ is well typed.
+
+         We get the same judgments for $!g$ and $g$ as before, and $ref\ x$ simply gets the judgment $int\ ref, \{A\}$, as before.
+
+         Therefore, the whole expression has type $int \xrightarrow{\{R,A\}} int\ ref$, using the function rule.
+
+         \item
+           In both lambda abstractions, we put $x: int$ in our context.
+
+           In the first lambda abstraction, we get $\Gamma \vdash ref\ x: int\ ref, \{A\}$, as before, so the whole abstraction has judgement $int \xrightarrow{\{A\}} int\ ref, \{\}$
+
+           The second lambda abstraction gets judgment $int \xrightarrow{\{\}} int\ ref, \{\}$
+
+           Using the subtyping rule, we can then give this second abstraction the judgment $int \xrightarrow{\{A\}} int\ ref, \{\}$ instead.
+
+         Then, we get the whole $if$ as typing to $int \xrightarrow{\{A\}} int\ ref, \{R\}$
+       \end{enumerate}
+
+
+
+        
+    \end{enumerate}
+\end{document}

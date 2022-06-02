@@ -1,0 +1,98 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        We define three abstract values, 0, 1, or 2, representing not a tree, definitely a tree, and maybe a tree respectively.
+
+        0 represents concrete values of \texttt{graph\_node}s that have cycles (i.e. are not trees). 1 represents concrete values of \texttt{graph\_node}s that do not have cycles (i.e. are trees), and 2 represents concrete values of all \texttt{graph\_node}s.
+
+        This is safe because if graph node is a tree, then it will either be 0 or 2, and if it is not a tree then it will be either 1 or 2, so properties exhibited by the abstract interpretation hold in the concrete world.
+
+        \item
+          \begin{enumerate}[label=(\Alph*)]
+
+            \item
+
+              We provide the following `matrix':
+
+\begin{verbatim}
+g:   0 1 2
+ret: 1 1 1
+\end{verbatim}
+
+\item
+  We provide the following matrix:
+
+\begin{verbatim}
+ g 0 1 2
+c  
+0  0 0 0
+1  0 2 2
+2  0 2 2
+\end{verbatim}
+
+Even adding a tree as a child to another tree does not always result in a tree, for example we could call \texttt{add\_child(g,g)}, and the result is clearly not a tree.
+
+\item
+  We provide the following matrix:
+
+\begin{verbatim}
+ g 0 1 2
+c
+0  2 1 2
+1  0 1 2
+2  2 1 2
+\end{verbatim}
+
+\item
+   We provide the following matrix:
+
+\begin{verbatim}
+g   0 1 2
+ret 2 1 2
+\end{verbatim}
+          \end{enumerate}
+
+
+        
+    \end{enumerate}
+
+          \item
+
+            We consider the following tuple as an abstract value $(n, b)$ where $n$ tells us the shortest path to a leaf node, and $b$ is a Boolean that is true if $n$ is exactly correct, or false if the actual value is greater than or equal to $n$.
+
+            Functions:
+
+\begin{verbatim}
+create\_child(g):
+
+(n, b) -> (0, T)
+
+
+add\_child(g,c)
+
+(n, T) x (m, F) -> (min(n, m+1), T if n <= m+1 else F)
+(n, T) x (m, T) -> (min(n, m+1), T)
+(n, F) x (m, T) -> (min(n, m+1), T if m+1 <= n else F)
+(n, F) x (m, F) -> (min(n, m+1), F)
+
+
+remove_child(g,c)
+
+(n, b1) x (m, b2) -> (n, b) if n < m+1
+(n, b1) x (m, b2) -> (n, F) if n >= m+1
+
+
+dfs(g,v)
+(0, T) -> (0, T)
+(n, b) -> (0, F)
+\end{verbatim}
+
+      
+  \end{enumerate}
+\end{document}
