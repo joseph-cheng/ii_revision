@@ -1,0 +1,30 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    For the given device, it is important to recognise the constraints that the requirements give us.
+
+    Perhaps the largest constraint is power. Since the device is battery powered, it is essential that the power consumption of the device be minimal to ensure that the device is usable for long periods of time without charging. Furthermore, the fact that device is a mobile device means that it needs to have a small form factor, meaning that any components we use must fit this specification, which might limit implementation of technologies like main memory.
+
+    In order to handle audio/video playback, we need some way to handle the audio/video codecs. Implementing these with a usual general purpose processor is unlikely to be very fruitful: in order to achieve the performance required for real-time playback would require such too high power consumption, so we might instead opt to have a separate accelerator just for the video/audio codecs. This is a reasonable idea, since we know that the hardware specifications of the device (e.g. screen resolution) will be the same for all devices, so the accelerator can be very specialised. This ensures high performance whilst maintaining low power consumption by avoiding the Turing tax.
+
+    For the architecture of the device, we might try and use a RISC design, to avoid needing the logic for implementing complex instructions that are rarely used in our pipeline. This allows us to keep the logic in our pipeline simpler, keeping power consumption low.
+
+    For our microarchitecture, we might choose to use a relatively short pipeline, since although deeper pipelines allow for higher clock frequencies, they require more logic to ensure correctness, and require very good branch predictors to be worth it (inaccurate branch predictors result in lots of work being thrown away through pipeline flushes). We also would probably want to use in-order execution to minimise issue logic. One option might even be to use a VLIW architecture, since most of the code that runs on the device will be compiled before it is shipped and thus can be heavily optimised. This would allow the device to be very low-power.
+
+    Another option we might opt for is to actually have two separate cores: a complex, high-performance, high-power core, and a simpler, low-performance, low-power core, similar to ARM's big.LITTLE architecture. Then, we could dispatch different workloads to different processors depending on whether they are a priority to execute fast. This allows interactive programs to still remain responsive and fast, whilst keeping the power consumption of other programs low.
+
+    Another option worth considering would be moving the last layer cache on to a separate chip, that uses a fabrication technology optimised for memory, instead of processing. Then, we could connect this to our core(s) with a high-bandwidth interconnect. This may result in potentially worse performance for cache access time, but would significantly improve power consumption, especially since accesses to last layer caches are usually very energy consuming.
+
+    \item
+
+      To determine whether or not a candidate CPU would provide sufficient performance to fully implement the device's specification would require some verification technology. We could simulate running expected workloads on the processor design and see what power consumption we might expect, and what implications that has on battery life, for example.
+
+
+
+
+        
+    \end{enumerate}
+\end{document}

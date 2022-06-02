@@ -1,0 +1,29 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    A logic is sound iff when we can prove something true in the logic, $\vdash P$, we also have that it is true in the real world, $\vDash P$.
+
+    A logic is complete iff when something is true in the real world, $\vDash P$, it is also provable in the logic $\vdash P$.
+
+    \item
+      To prove soundness, we assume we have $\vdash P$, and we are required to prove that $\vDash P$.
+
+      We can prove this by rule induction over the inference rule of Hoare Logic.
+
+      So, we iterate over each rule in Hoare logic, and assume that $\vdash P$ was derived from that rule as its final step. Then, we have that its subderivations $\vdash P_i$ are true, and by inductive hypothesis we get that $\vDash P_i$.
+
+      To show that $\vDash P$ is true, we usually assume that the precondition of $P$ is true, i.e. quantify over all arbitrary stacks that satisfy the precondition of $P$, and then show that when executing $C$, we either do not terminate, or result in a stack that satisfies the postcondition of $P$ (usually using the results from the IH).
+
+      \item
+        When we say Hoare logic is relatively complete, we mean that when we have $\vDash \{P\}C\{Q\}$, we either have that we can derive $\vdash \{P\}C\{Q\}$, or we cannot derive $\vdash \{P\}C\{Q\}$, but in the latter case we have that the reason we cannot derive $\vdash \{P\}C\{Q\}$ can be reduced to the fact that arithmetic is undecidable.
+
+        \item
+          Not relevant.
+
+
+        
+    \end{enumerate}
+\end{document}

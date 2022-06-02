@@ -1,0 +1,52 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    \begin{enumerate}[label=(\roman*)]
+
+      \item
+        The benefits of implementing deep pipelines is that by splitting the pipeline into more stages, we could reduce the length of the critical path. By doing this, we could increase the clock frequency, and thus get performance gains.
+
+        They were eventually scaled back because not only did making pipelines deeper have diminishing returns, it became harder to find realistic places to be able to shorten pipeline stages, and with the breakdown of Dennard scaling it became infeasible to increase the clock frequency for free whilst making fabrication technologies smaller. Even if we could increase the clock frequency higher, we cannot scale all components like this, for example cache accesses might take extra cycles, increasing slowdowns.
+
+        Furthermore, having deeper pipelines means that the penalty for taking branches or having precise exceptions (anything that might require us to flush the pipeline) became larger, since we would have to throw more work away on a pipeline flush, and thus pipeline lengths were scaled back to optimise for this.
+
+        \item
+
+          Pipelines that support out-of-order execution will have lots of additional logic to ensure correctness. For example, they will have an instruction buffer that holds all of the instruction that can be scheduled when their operands are free, which will also keep track of the order in which instructions should be committed. We will also have a reorder buffer which keeps of track of when we can commit instructions to ensure correctness. To determine when an instructions operands are free, we might use something like a scoreboard.
+
+          Furthermore, out-of-order pipelines are also much more likely to make use of register renaming, so they will have at least one register renaming map to avoid false dependencies from reducing ILP.
+
+          We might also have load/store queues to allow loads to execute speculatively before stores.
+
+
+        
+    \end{enumerate}
+
+    \item
+      \begin{enumerate}[label=(\roman*)]
+
+        \item
+          A tournament branch predictor combines both a global and a local branch predictor. When we need to predict a branch, the tournament predictor decides which branch predictor would be best, and takes the prediction from that one. In order to make this initial prediction, we might store a table, for each branch PC, of what prediction has worked most accurately.
+
+          They can generally perform better than just a global or local branch predictor because the branches that global and local branch predictors are good at predicting are relatively disjoint. By combining both with a tournament branch predictor, we can predict the union of these sets well instead.
+
+          \item
+            We might combine this branch predictor with another simpler, faster branch predictor (i.e. one that can produce a prediction within a single cycle). When we initially need a prediction, we use the simple predictor, and then we later verify this with the complex predictor to determine if we can continue on this instruction stream.
+
+            This is still better than just using the simple predictor on its own, because we are more likely to find mispredictions earlier, and thus waste less cycles.
+
+            \item
+              Predicated execution turns control dependencies into data dependencies.
+
+              Predicated execution might be useful, for example by setting conditions implicitly we might be able to reduce code size, and also use less cycles on executing short if/else statements by simply predicating their execution instead of requiring a full branch.
+
+              However, since the control dependencies turn into data dependencies, we now have instructions being data-dependent on many previous instructions which means that it is hard to extract a lot of ILP whilst also ensuring correctness. We either have to stall the pipeline whilst we wait for a predicate to be evaluated, or we have to nullify instructions in flight, both of which are undesirable scenarios.
+          
+      \end{enumerate}
+    
+\end{enumerate}
+  
+\end{document}

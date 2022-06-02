@@ -1,0 +1,40 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We provide the following LTL formula:
+
+    $F (G p)$
+
+    This means that on some suffix of every path, $p$ becomes always true.
+
+    \item
+      We provide the following CTL formula:
+
+      $AG (E F p)$
+
+      This means that from every reachable state ($AG$), there exists a path for which $p$ eventually becomes true.
+
+      \item
+        We provide the following LTL formula:
+
+        $(p \wedge (X p) \wedge \cdots \wedge (X^{99} p)) \implies (X^{99} F q)$
+
+        This means that for all paths, if $p$ is true at the start state, and $p$ is true on the next state, etc. until the 100th state, then after that state, $q$ is true somewhere on the path.
+
+        \item
+          We provide the following LTL formula:
+
+          $(G (F p)) \implies (G (F q))$
+
+          Here, $(G (F p))$ means that on every suffix of the path, $p$ eventually becomes true, i.e. $p$ is true infinitely often.
+
+          Therefore, the whole formula means that if $p$ is true infinitely often, then $q$ is true infinitely often.
+
+
+
+        
+    \end{enumerate}
+\end{document}
