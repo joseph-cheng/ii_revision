@@ -1,0 +1,52 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    A deductive system makes truth judgements $\vdash P$ about assertions $P$. This will correspond to truth judgments $\vDash P$ in the real-world that the deductive system is modelling.
+
+    A deductive system is sound if whenever $\vdash P$, we have $\vDash P$. In essence, this means that our deductive system will not make incorrect claims about the truth of an assertion.
+
+    A deductive system is complete if whenever $\vDash P$, we can show $\vdash P$. In essence, this means that our deductive system can prove everything that is true in the real-world.
+
+    \item
+      Soundness is thought of as more important than completeness because if our logic is not sound, then proving $\vdash P$ does not really allow us to do anything useful, since we do not know whether or not $\vDash P$ is true, and ultimately we care about making decisions based on truths in the real-world, as opposed to our deductive system (which is really just a means to say useful things about the real world).
+
+      Completeness is useful, since it allows us to prove everything we could want, but without completeness we can still make claims about the real world using our deductive system.
+
+      \item
+\begin{verbatim}
+{X = x}
+if (arith(X) = 0) THEN X := 1 ELSE SKIP
+if (arith2(X) != 0) THEN X := 1 ELSE SKIP
+{X = 1}
+\end{verbatim}
+
+The above triple is unprovable, assuming \texttt{arith} and \texttt{arith2} are some arbitrary arithmetic functions of \texttt{X} that are equivalent, but not syntactically, due to Hoare logic only being relatively complete. Since arithmetic is undecidable in general, we cannot determine that \texttt{arith(X)} and \texttt{arith2(X)} are equivalent, and thus we cannot determine that we will always end with $X=1$, unless we assume an oracle for our assertions.
+
+\item
+  We propose:
+
+  $C = X := 1$
+
+  $P = X = X$
+
+  $Q = X = 1$
+
+  $R = X = 0$
+
+  Clearly, we have $\{X=X\}X := 1\{X = 1\}$ by application of the assignment rule.
+
+  If we had this rule, then we could derive $\{X=X \wedge X=0\}X := 1\{X = 1 \wedge X = 0\}$.
+
+  This triple is clearly not true, since it terminates, and the postcondition has to be false, and therefore this rule cannot be sound because we have $\vdash \{P \wedge R\}C\{Q \wedge R\}$ but not $\vDash \{P \wedge R \}C\{Q \wedge R\}$.
+
+  \item
+    We have soundness as long as $C$ does not affect any variables that $R$ makes claims about, i.e. $fv(C) \cap fv(R) = \{\}$.
+
+    These conditions ensure soundness if $C$ cannot change any of the state that $R$ makes claims about, then if $R$ is true beforehand, it must still be true, so the rule is sound
+    
+\end{enumerate}
+
+\end{document}

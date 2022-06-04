@@ -1,0 +1,80 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+
+    For instruction scheduling, we propose the following algorithm:
+
+    The algorithm takes as input some original scheduling of instructions of a basic block whose semantics should be preserved. As output, it produces a scheduling of the same instructions with the same semantics as the original scheduling, but that should execute in fewer cycles on the target architecture.
+
+    The algorithm works as follows:
+
+    \begin{itemize}
+        \item
+          Construct a DAG from the instructions. To do this, we create a node for each instruction, and create an edge from $n_1$ to $n_2$ if $n_1$ occurs before $n_2$ in the original scheduling and there is a dependency between $n_1$ and $n_2$ (a WAR, RAW, or WAW hazard), i.e. they cannot be permuted.
+
+          \item
+            Initialise a set of instructions that can be validly scheduled as those instructions who have no predecessors in the DAG.
+
+            \item
+              While the aforementioned set is not empty:
+
+              \begin{itemize}
+                  \item
+                    Select an instruction from the set to schedule, based on the following heuristics:
+
+                    \begin{itemize}
+                        \item
+                          The instruction should not conflict with the previously emitted instruction.
+
+                          \item
+                            The instruction should be more likely to conflict if first of a pair (e.g. loads over adds)
+
+                            \item
+                              The instruction should have the longest distance to a maximal node along the longest path
+                    \end{itemize}
+
+                    If we are on a MIPS architecture, or any other non-interlocked architecture, then if we cannot find an instruction that satisfies all three heuristics then we should issue a NOP. If we are on an interlocked hardware, then it is okay if we cannot satisfy all three.
+
+                    The first heuristic aims to reduce stalls.
+
+                    The second heuristic aims to allow time for dependencies to be resolved to avoid stalls.
+
+                    The third heuristic aims to interleave instructions from independent streams.
+
+                    \item
+                      Emit that instruction, and remove it from the DAG. If any of its successors now no longer have predecessors, add them to the set of instructions to schedule.
+              \end{itemize}
+    \end{itemize}
+
+
+    The worst case running time of the algorithm is $O(n^2)$, if $n$ is the number of instructions. This is because constructing the DAG can take $O(n^2)$ time, since its construction works by iterating backwards from the end of the basic block, giving edges where there are dependencies. So, if every instruction has a dependency with every instruction after it, then we get $O(n^2)$ edges.
+
+    Such a program might look like:
+
+\begin{verbatim}
+str r1, 0(r2)
+str r2, 0(r2)
+str r3, 0(r2)
+str r4, 0(r2)
+str r5, 0(r2)
+...
+\end{verbatim}
+
+Since each of these instructions writes to the same memory location, we get a WAW hazard between each of the instructions.
+
+\item
+  On such a machine, register allocation would aim to produce code that uses the fewest number of registers possible. This directly conflicts with instruction scheduling. Instruction scheduling aims to exploit the most ILP possible, but using as few registers as possible will result in an abundance of false dependencies, which introduces more edges in the scheduling DAG, which reduces the amount of valid permutations of the original instruction scheduling we can generate.
+
+  CSE conflicts with register allocation. This is because CSE can increase register pressure. If the temporary variable we create with CSE has to be moved into many different registers later on, then we increase register pressure since this temporary variable will end up being live for a significant portion of time, thus effectively reducing how many architectural registers we have left to allocate to the rest of the program variables. This means that we are more likely to have to spill registers to memory (or just use more registers than before, if that is our primary concern) if we perform register allocation after CSE.
+
+  \item
+    SSA form describes a program such that every variable is only statically assigned to at most once (i.e. if in a loop, it might get dynamically assigned to multiple times). For compilation, this provides the benefit of minimising the live ranges of variables. This means that problems like register allocation have simpler solutions because there will be fewer clashes, for example. In essence, SSA form allows us to have a clearer view of the data-flow of a program.
+
+    SSA can also help is in decompilation to help us with type reconstruction. With SSA form, we know that a register will exist for a single program variable, and that a single register will not be used for multiple variables over the length of a program. This means that we can give each SSA variable a type, knowing that the type will not suddenly change when a register is reused.
+
+        
+    \end{enumerate}
+\end{document}
