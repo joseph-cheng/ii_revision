@@ -1,0 +1,134 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    LICM is a transformation that detects assignments in loops that are invariant: i.e. those whose expressions are the same on every iteration of the loop. Then, it moves these assignments to just before entry to the loop.
+
+    In the code above, we should move the assignment \texttt{c = b + 5} to just before entry to the loop, since the value of \texttt{b} cannot change throughout the loop.
+
+    \item
+      The data-flow analysis we propose is to find those expressions who only use variables that are redefined within the loop body.
+
+      To do this, our analysis should produce, for each line of code, a set of definitions that can reach that line:
+
+      $in-rd(n) = \bigcup_{p \in pred(n)} out-rd(p)$
+
+      $out-rd(n) = in-rd(n) \setminus kill(n) \cup gen(n)$
+
+      Where $kill(n)$ is the set of definitions that assign to the same variable that $n$ assigns to, and $gen(n)$ is the singleton set of the definition in $n$, if there is one.
+
+      Then, we combine:
+
+      $rd(n) = (\bigcup_{p \in pred(n)} rd(p) \setminus kill(p) \cup gen(p))$
+
+      To deal with address-taken variables, we consider that any indirection can access any address-taken variable.
+
+\begin{verbatim}
+l0: a = read();           {}
+l1: b = read();           {l0}
+l2: p = &a;               {l0,l1}
+l3: q = &b;               {l0,l1,l2}
+l4: r = &p;               {l0,l1,l2,l3}}
+l5: if (read() > 0) {     {l0,l1,l2,l3,l4}
+l6:   a = b + 5;            {l1,l2,l3,l4}
+l7: } else {
+l8:   i = 0;                {l0,l1,l2,l3,l4}
+l9:   while (i < 10) {      {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l10:     c = b + 5;         {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l11:     **r += *q;         {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l12:     i += 1;            {l3,l4,l8,l10,l11,l12}
+l13:   }
+l14:   a += c;              {l0,l1,l2,l3,l4,l8,l10,l11,l12}}
+l15: }
+l16: print(a);              {l1,l2,l3,l4,l6,l8,l10,l11,l12,l14}
+
+\end{verbatim}
+
+
+\item
+   Here, we do not see that \texttt{l10} is invariant, because the definition at \texttt{l11} reaches it, and we make the conservative assumption that all indirect writes must access all address-taken variables, so the write to \texttt{**r} might access \texttt{b}.
+
+   \item
+     An analysis that might make this more accurate is Andersen's analysis, which is a flow insensitive analysis that attempts to find what variables other variables might point to. It uses an inference system:
+
+     \begin{align*}
+       \frac{}{\vdash x := \&y : y \in pt(x)}\\\\
+       \frac{}{\vdash x := y : pt(x) \supseteq pt(y)}\\\\
+       \frac{u \in pt(x) \hspace{15pt}v \in pt(u) \hspace{15pt} w \in pt(y)}{\vdash **x := *y : pt(v) \supseteq pt(w)}
+     \end{align*}
+
+     \item
+       After running the analysis, we get the following results:
+
+       $pt(p) = \{a\}$
+       
+       $pt(q) = \{b\}$
+
+       $pt(r) = \{p\}$
+
+       $pt(b) = \{\}$
+
+       $pt(a) = \{\}$
+
+       $pt(i) = \{\}$
+
+       With these results, by running LICM again, we get:
+
+\begin{verbatim}
+l0: a = read();           {}
+l1: b = read();           {l0}
+l2: p = &a;               {l0,l1}
+l3: q = &b;               {l0,l1,l2}
+l4: r = &p;               {l0,l1,l2,l3}}
+l5: if (read() > 0) {     {l0,l1,l2,l3,l4}
+l6:   a = b + 5;            {l1,l2,l3,l4}
+l7: } else {
+l8:   i = 0;                {l0,l1,l2,l3,l4}
+l9:   while (i < 10) {      {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l10:     c = b + 5;         {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l11:     a += b;            {l0,l1,l2,l3,l4,l8,l10,l11,l12}
+l12:     i += 1;            {l1,l2,l3,l4,l8,l10,l11,l12}
+l13:   }
+l14:   a += c;              {l0,l1,l2,l3,l4,l8,l10,l11,l12}}
+l15: }
+l16: print(a);              {l1,l2,l3,l4,l6,l8,l10,l11,l12,l14}
+\end{verbatim}
+
+Noe, we see that at \texttt{l10}, the only definition of \texttt{b} that reaches it is at \texttt{l1}, which is not inside the loop, so we can safely hoist it.
+
+\item
+
+  Another optimisation that could be applied is code hoisting. To perform this transformation, we use very-busy-expression analysis (which finds all expressions that must be calculated in every future path). If we find such an expression, we can lift it.
+
+  In this case, after we left \texttt{c = b + 5}, we get that \texttt{b+5} is busy just before \texttt{l4}, so we get:
+
+\begin{verbatim}
+l0: a = read();          
+l1: b = read();         
+l2: p = &a;            
+l3: q = &b;          
+l4: r = &p;         
+l5: t = b + 5;
+l6: if (read() > 0) { 
+l7:   a = t;     
+l8: } else {
+l9:   i = 0;        
+l10:  c = t;   
+l11:   while (i < 10) { 
+l12:     a += b;     
+l13:     i += 1;    
+l14:   }
+l15:   a += c;     
+l16: }
+l17: print(a);    
+\end{verbatim}
+
+
+
+
+
+        
+    \end{enumerate}
+\end{document}

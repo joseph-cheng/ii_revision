@@ -1,0 +1,72 @@
+\input{../../template.tex}
+
+\begin{document}
+\begin{enumerate}[label=(\alph*)]
+
+  \item
+    We give:
+
+\begin{verbatim}
+fun every p xs = 
+  letcont exit = bool cont in
+  fold(xs,
+       [] => true
+       h::t => if p h
+         then r
+         else throw(exit, false))
+\end{verbatim}
+
+Here, we use the fold eliminator as seen in the lectures.
+
+\item
+  \begin{enumerate}[label=(\roman*)]
+
+    \item
+      
+  Yes, this rule is still type safe. Type safety simply requires both progress and preservation. We can retain these with state even without tracking monadic effects, it is just that we lose termination.
+
+  \item
+
+    We give the following counterexample:
+
+    \texttt{e1 = !l}
+
+    \texttt{e2 = l := !l + 1}
+
+    \texttt{e3 = x}
+
+    The LHS code is:
+
+\begin{verbatim}
+let x = return !l;
+let y = l := !l + 1;
+let z = return !l;
+x
+\end{verbatim}
+
+The RHS code is:
+
+\begin{verbatim}
+let x = return !l;
+let y = l := !l + 1;
+!l
+\end{verbatim}
+
+If $l$ maps to some value $X$ before this code, then clearly before the optimisation the code ends with value $X$, but after the transformation we  end with value $X+1$.
+  \end{enumerate}
+
+  \item
+    We give:
+
+    $Nat := \exists \alpha. \alpha \times (\alpha \rightarrow \alpha) \times (\forall \beta. \alpha \rightarrow \beta \rightarrow (\beta \rightarrow \beta) \rightarrow \beta)$
+
+    This type consists of three components: zero, successor, and an iterator. We assume that the language is augmented with products, and if not then we can easily encode them using the Church encoding.
+
+    Then we give the following implementation:
+
+    $pack_{\alpha, Nat}(\forall \gamma. \gamma \rightarrow (\gamma \rightarrow \gamma) \rightarrow \gamma. \langle \Lambda \gamma. \lambda n : \forall \gamma. \gamma \rightarrow (\gamma \rightarrow \gamma) \rightarrow \gamma. \Lambda \gamma. \lambda z : \gamma. \lambda s : \gamma \rightarrow \gamma. s (n \gamma z s), \Lambda \beta. \lambda n : \forall \gamma. \gamma \rightarrow (\gamma \rightarrow \gamma) \rightarrow \gamma. \lambda e_z : \beta. \lambda e_s : \beta \rightarrow \beta. n \beta e_z e_s\rangle)
+
+
+        
+    \end{enumerate}
+\end{document}
